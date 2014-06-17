@@ -11,17 +11,18 @@ import android.util.Log;
 public class RecordManager {
     private MediaRecorder mMediaRecorder;
     private String mPhoneNumber;
+    private boolean mRecording;
     
     private Context mContext;
     public RecordManager(Context c) {
         mContext = c;
-        
+        mRecording = false;
     }
     
-    public void setPhoneNumber(String phoneNumber) {
+    public synchronized void setPhoneNumber(String phoneNumber) {
         mPhoneNumber = phoneNumber;
     }
-    public void initRecorder() {
+    public synchronized void initRecorder() {
         mMediaRecorder = new MediaRecorder();
         mMediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
         mMediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.RAW_AMR);
@@ -43,18 +44,24 @@ public class RecordManager {
             stopRecorder();
         }
     }
-    public void startRecorder() {
+    public synchronized void startRecorder() {
         if (mMediaRecorder != null) {
             mMediaRecorder.start();
+            mRecording = true;
         }
     }
     
-    public void stopRecorder() {
+    public synchronized void stopRecorder() {
         if (mMediaRecorder != null) {
             mMediaRecorder.stop();
             mMediaRecorder.reset();
             mMediaRecorder.release();
+            mRecording = false;
             mMediaRecorder = null;
         }
+    }
+    
+    public boolean recording() {
+        return mRecording;
     }
 }
