@@ -4,7 +4,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.telephony.TelephonyManager;
-import android.util.Log;
 
 import com.android.phonerecorder.util.Constant;
 
@@ -25,8 +24,8 @@ public class PhoneRecorderReceiver extends BroadcastReceiver {
             TelephonyManager tm = (TelephonyManager) context
                     .getSystemService(Context.TELEPHONY_SERVICE);
             if (tm.getCallState() == TelephonyManager.CALL_STATE_RINGING) {
-                String incomingNumber = intent.getStringExtra(TelephonyManager.EXTRA_INCOMING_NUMBER);
                 Intent serviceIntent = new Intent(Constant.ACTION_INCOMING_PHONE);
+                String incomingNumber = intent.getStringExtra(TelephonyManager.EXTRA_INCOMING_NUMBER);
                 serviceIntent.putExtra(Constant.EXTRA_PHONE_NUMBER, incomingNumber);
                 context.startService(serviceIntent);
             }

@@ -18,11 +18,8 @@ public class RecordManager {
         mContext = c;
         mRecording = false;
     }
-    
-    public synchronized void setPhoneNumber(String phoneNumber) {
+    public synchronized void initRecorder(String phoneNumber) {
         mPhoneNumber = phoneNumber;
-    }
-    public synchronized void initRecorder() {
         mMediaRecorder = new MediaRecorder();
         mMediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
         mMediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.RAW_AMR);
@@ -33,7 +30,7 @@ public class RecordManager {
         }
         String fileName = "recorder_" + System.currentTimeMillis() + "_" + mPhoneNumber + ".amr";
         mMediaRecorder.setOutputFile(recordDir.getAbsolutePath() + "/" + fileName);
-        Log.d("taugin", "fileName = " + fileName);
+        logv("prepare recorder file : " + fileName);
         try {
             mMediaRecorder.prepare();
         } catch (IllegalStateException e) {
@@ -46,6 +43,7 @@ public class RecordManager {
     }
     public synchronized void startRecorder() {
         if (mMediaRecorder != null) {
+            logv("startRecorder");
             mMediaRecorder.start();
             mRecording = true;
         }
@@ -53,6 +51,7 @@ public class RecordManager {
     
     public synchronized void stopRecorder() {
         if (mMediaRecorder != null) {
+            logv("stopRecorder");
             mMediaRecorder.stop();
             mMediaRecorder.reset();
             mMediaRecorder.release();
@@ -63,5 +62,15 @@ public class RecordManager {
     
     public boolean recording() {
         return mRecording;
+    }
+    
+    private void logd(String msg) {
+        Log.d("taugin", msg);
+    }
+    private void logv(String msg) {
+        Log.v("taugin", msg);
+    }
+    private void logw(String msg) {
+        Log.w("taugin", msg);
     }
 }

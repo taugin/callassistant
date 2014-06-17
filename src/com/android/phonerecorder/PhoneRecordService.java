@@ -1,22 +1,28 @@
 package com.android.phonerecorder;
 
-import com.android.phonerecorder.util.Constant;
+import java.util.List;
 
+import android.app.ActivityManager;
+import android.app.ActivityManager.RunningTaskInfo;
 import android.app.Service;
+import android.content.ComponentName;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.IBinder;
-import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 
+import com.android.phonerecorder.util.Constant;
+
 public class PhoneRecordService extends Service {
 
-    private TelephonyManager mTelephonyManager;
+    private static final boolean DEBUG = true;
+    private static final int DELAY_TIME = 1000;
     private RecordManager mRecordManager;
-    private Handler mHandler;
     private boolean mIncomingFlag = false;
     private String mPhoneNumber = null;
+    private Handler mHandler;
+
     @Override
     public IBinder onBind(Intent arg0) {
         return null;
@@ -25,15 +31,14 @@ public class PhoneRecordService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        mTelephonyManager = (TelephonyManager) getSystemService(Service.TELEPHONY_SERVICE);
-        mTelephonyManager.listen(mPhoneStateListener, PhoneStateListener.LISTEN_CALL_STATE);
+        logv("onCreate");
         mRecordManager = new RecordManager(this);
         mHandler = new Handler();
     }
 
     @Override
     public void onDestroy() {
-        mTelephonyManager.listen(mPhoneStateListener, PhoneStateListener.LISTEN_NONE);
+        logv("onDestroy");
         super.onDestroy();
     }
 
@@ -45,41 +50,75 @@ public class PhoneRecordService extends Service {
         }
         if (Constant.ACTION_INCOMING_PHONE.equals(intent.getAction())) {
             mIncomingFlag = true;
+            mPhoneNumber = intent.getStringExtra(Constant.EXTRA_PHONE_NUMBER);
+            mHandler.postDelayed(mMonitorIncallScreen, DELAY_TIME);
         } else if (Constant.ACTION_OUTGOING_PHONE.equals(intent.getAction())) {
             mIncomingFlag = false;
+            mPhoneNumber = intent.getStringExtra(Constant.EXTRA_PHONE_NUMBER);
+            mHandler.postDelayed(mMonitorIncallScreen, DELAY_TIME);
+        } else if (Constant.ACTION_START_RECORDING.equals(intent.getAction())) {
+            
         }
-        mPhoneNumber = intent.getStringExtra(Constant.EXTRA_PHONE_NUMBER);
-        logd((mIncomingFlag ? "Incoming PhoneNumber" : "Outgoing PhoneNumber") + " : " + mPhoneNumber);
-        mRecordManager.setPhoneNumber(mPhoneNumber);
-        mRecordManager.initRecorder();
+        logv((mIncomingFlag ? "Incoming PhoneNumber" : "Outgoing PhoneNumber") + " : " + mPhoneNumber);
 
         return super.onStartCommand(intent, flags, startId);
     }
 
-    private PhoneStateListener mPhoneStateListener = new PhoneStateListener() {
-        public void onCallStateChanged(int state, String phoneNumber) {
-            switch(state) {
-            case TelephonyManager.CALL_STATE_IDLE:
-                logd("CALL_STATE_IDLE recording = " + mRecordManager.recording());
-                if (mRecordManager.recording()) {
-                    mRecordManager.stopRecorder();
-                }
-                break;
-            case TelephonyManager.CALL_STATE_OFFHOOK:
-                logd("CALL_STATE_OFFHOOK recording = " + mRecordManager.recording());
-                if (!mRecordManager.recording()) {
-                    mRecordManager.startRecorder();
-                }
-                break;
-            case TelephonyManager.CALL_STATE_RINGING:
-                logd("CALL_STATE_RINGING phoneNumber = " + phoneNumber);
-                break;
-            default:
-                break;
+    private Runnable mMonitorIncallScreen = new Runnable() {
+        @Override
+        public void run() {
+            if (!topIncallScreen()) {
+                stopRecord();
+                stopSelf();
+                return ;
             }
+            startRecord();
+            mHandler.postDelayed(mMonitorIncallScreen, DELAY_TIME);
         }
     };
+
+    private void startRecord() {
+        TelephonyManager tm = (TelephonyManager) getSystemService(Service.TELEPHONY_SERVICE);
+        if (tm.getCallState() == TelephonyManager.CALL_STATE_OFFHOOK && !mRecordManager.recording()) {
+            mRecordManager.initRecorder(mPhoneNumber);;
+            mRecordManager.startRecorder();
+        }
+    }
+
+    private void stopRecord() {
+        if (mRecordManager.recording()) {
+            mRecordManager.stopRecorder();
+        }
+    }
+
+    private boolean topIncallScreen() {
+        ActivityManager am = (ActivityManager) getSystemService(Service.ACTIVITY_SERVICE);
+        if (am == null) {
+            return false;
+        }
+        List<RunningTaskInfo> taskList = am.getRunningTasks(5);
+        if (taskList == null) {
+            return false;
+        }
+        if (taskList.get(0) == null) {
+            return false;
+        }
+        ComponentName topActivity = taskList.get(0).topActivity;
+        if (topActivity == null) {
+            return false;
+        }
+        logd(topActivity.getClassName());
+        return "com.android.phone.InCallScreen".equals(topActivity.getClassName());
+    }
     private void logd(String msg) {
-        Log.d("taugin", msg);
+        if (DEBUG) {
+            Log.d("taugin", msg);
+        }
+    }
+    private void logv(String msg) {
+        Log.v("taugin", msg);
+    }
+    private void logw(String msg) {
+        Log.w("taugin", msg);
     }
 }
