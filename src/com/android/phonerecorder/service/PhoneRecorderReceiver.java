@@ -1,4 +1,4 @@
-package com.android.phonerecorder;
+package com.android.phonerecorder.service;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;

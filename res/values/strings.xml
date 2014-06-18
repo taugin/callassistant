@@ -5,4 +5,9 @@
     <string name="action_settings">Settings</string>
     <string name="hello_world">Hello world!</string>
 
+    <string name="recording">Recording...</string>
+    <string name="show_notification">Show Notification</string>
+    <string name="show">Show</string>
+    <string name="hide">Hide</string>
+    <string name="filename">FileName</string>
 </resources>
