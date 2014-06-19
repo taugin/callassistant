@@ -12,14 +12,11 @@ import android.content.Intent;
 import android.os.Handler;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
-import android.support.v4.app.NotificationCompat;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 
 import com.android.phonerecorder.R;
-import com.android.phonerecorder.R.drawable;
-import com.android.phonerecorder.R.string;
 import com.android.phonerecorder.util.Constant;
 
 public class PhoneRecordService extends Service {
@@ -164,7 +161,7 @@ public class PhoneRecordService extends Service {
         if (!show) {
             return ;
         }
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
+        Notification.Builder builder = new Notification.Builder(this);
         builder.setWhen(System.currentTimeMillis());
         builder.setOngoing(true);
         builder.setSmallIcon(R.drawable.ic_recording);
@@ -172,7 +169,7 @@ public class PhoneRecordService extends Service {
         builder.setContentText(getResources().getString(R.string.recording));
         builder.setContentTitle(getResources().getString(R.string.app_name));
         
-        Notification notification = builder.build();
+        Notification notification = builder.getNotification();
         NotificationManager nm = (NotificationManager) getSystemService(Service.NOTIFICATION_SERVICE);
         nm.notify(123456, notification);
     }
