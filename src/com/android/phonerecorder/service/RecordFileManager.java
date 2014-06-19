@@ -31,13 +31,14 @@ public class RecordFileManager {
             return null;
         }
         
-        String files[] = recordDir.list();
+        File files[] = recordDir.listFiles();
         if (files != null) {
             ArrayList<RecordInfo> list = new ArrayList<RecordInfo>();
             RecordInfo info = null;
-            for (String file : files) {
+            for (File file : files) {
                 info = new RecordInfo();
-                info.fileName = file;
+                info.fileName = file.getName();
+                info.fileSize = file.length();
                 list.add(info);
             }
             return list;
@@ -85,5 +86,9 @@ public class RecordFileManager {
             e.printStackTrace();
         }
         return false;
+    }
+    
+    public String getRecordFolder() {
+        return Environment.getExternalStorageDirectory() + "/" + Constant.FILE_RECORD_FOLDER;
     }
 }

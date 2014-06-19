@@ -3,6 +3,6 @@ package com.android.phonerecorder;
 public class RecordInfo {
     public boolean play;
     public String fileName;
-    public int fileSize;
+    public long fileSize;
     public boolean checked;
 }

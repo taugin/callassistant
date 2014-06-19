@@ -1,5 +1,6 @@
 package com.android.phonerecorder;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 import android.app.ListFragment;
@@ -11,6 +12,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
@@ -20,18 +22,23 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.android.phonerecorder.RecordPlayer.OnCompletionListener;
 import com.android.phonerecorder.service.RecordFileManager;
 
-public class RecordListFragment extends ListFragment {
+public class RecordListFragment extends ListFragment implements OnCheckedChangeListener, OnClickListener, OnCompletionListener {
 
     private RecordListAdapter mListAdapter;
-    ArrayList<RecordInfo> mRecordList;
+    private ArrayList<RecordInfo> mRecordList;
+    private RecordInfo mCurRecPlaying;
+    private RecordPlayer mRecordPlayer;
 
     
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+        mRecordPlayer = RecordPlayer.getInstance(getActivity());
+        mRecordPlayer.setOnCompletionListener(this);
     }
 
     @Override
@@ -74,7 +81,7 @@ public class RecordListFragment extends ListFragment {
         TextView fileSize;
         CheckBox checkBox;
     }
-    private class RecordListAdapter extends ArrayAdapter<RecordInfo> implements OnCheckedChangeListener {
+    private class RecordListAdapter extends ArrayAdapter<RecordInfo>{
 
         private Context mContext;
         public RecordListAdapter(Context context, ArrayList<RecordInfo> listInfos) {
@@ -89,30 +96,64 @@ public class RecordListFragment extends ListFragment {
                 viewHolder = new ViewHolder();
                 convertView = LayoutInflater.from(mContext).inflate(R.layout.record_item_layout, null);
                 viewHolder.mediaControl = (ImageView) convertView.findViewById(R.id.media_control);
+                viewHolder.mediaControl.setOnClickListener(RecordListFragment.this);
+                viewHolder.mediaControl.setTag(position);
                 viewHolder.fileName = (TextView) convertView.findViewById(R.id.filename);
                 viewHolder.fileSize = (TextView) convertView.findViewById(R.id.filesize);
                 viewHolder.checkBox = (CheckBox) convertView.findViewById(R.id.check_box);
-                viewHolder.checkBox.setOnCheckedChangeListener(this);
+                viewHolder.checkBox.setOnCheckedChangeListener(RecordListFragment.this);
                 viewHolder.checkBox.setTag(position);
                 convertView.setTag(viewHolder);
             } else {
                 viewHolder = (ViewHolder) convertView.getTag();
             }
             RecordInfo info = getItem(position);
-            viewHolder.mediaControl.getDrawable().setLevel(info.play ? 0 : 1);
+            viewHolder.mediaControl.getDrawable().setLevel(!info.play ? 0 : 1);
             viewHolder.fileName.setText(info.fileName);
-            viewHolder.fileSize.setText("" + info.fileSize);
+            viewHolder.fileSize.setText(byteToString(info.fileSize));
             viewHolder.checkBox.setChecked(info.checked);
             return convertView;
         }
-
-        @Override
-        public void onCheckedChanged(CompoundButton buttonView,
-                boolean isChecked) {
-            int position = (Integer) buttonView.getTag();
-            RecordInfo info = getItem(position);
-            info.checked = isChecked;
-        }
         
+        private String byteToString(long size) {
+            DecimalFormat df = new DecimalFormat("###.##");
+            float f;
+            if (size < 1024 * 1024) {
+                f = (float) ((float) size / (float) 1024);
+                return (df.format(new Float(f).doubleValue()) + "KB");
+            } else {
+                f = (float) ((float) size / (float) (1024 * 1024));
+                return (df.format(new Float(f).doubleValue()) + "MB");
+            }
+        }
+    }
+    @Override
+    public void onCheckedChanged(CompoundButton buttonView,
+            boolean isChecked) {
+        int position = (Integer) buttonView.getTag();
+        RecordInfo info = mListAdapter.getItem(position);
+        info.checked = isChecked;
+    }
+
+    @Override
+    public void onClick(View view) {
+        int position = (Integer) view.getTag();
+        RecordInfo info = mListAdapter.getItem(position);
+        if (mRecordPlayer.isPlaying()) {
+            mRecordPlayer.stopPlay();
+            if (mRecordPlayer.getCurRecord() != info) {
+                mRecordPlayer.setCurRecord(info);
+                mRecordPlayer.startPlay();
+            }
+        } else {
+            mRecordPlayer.setCurRecord(info);
+            mRecordPlayer.startPlay();
+        }
+        mListAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onCompletion() {
+        mListAdapter.notifyDataSetChanged();
     }
 }
