@@ -29,7 +29,6 @@ public class RecordListFragment extends ListFragment implements OnCheckedChangeL
 
     private RecordListAdapter mListAdapter;
     private ArrayList<RecordInfo> mRecordList;
-    private RecordInfo mCurRecPlaying;
     private RecordPlayer mRecordPlayer;
 
     
@@ -84,6 +83,7 @@ public class RecordListFragment extends ListFragment implements OnCheckedChangeL
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()) {
         case R.id.action_delete:
+            stopPlayWhenDeleting();
             RecordFileManager.getInstance(getActivity()).deleteRecordFiles(mRecordList);
             mListAdapter.notifyDataSetChanged();
             break;
@@ -91,6 +91,12 @@ public class RecordListFragment extends ListFragment implements OnCheckedChangeL
         return true;
     }
 
+    private void stopPlayWhenDeleting() {
+        RecordInfo info = mRecordPlayer.getCurRecord();
+        if (info != null && info.checked) {
+            mRecordPlayer.stopPlay();
+        }
+    }
 
     class ViewHolder {
         ImageView mediaControl;
