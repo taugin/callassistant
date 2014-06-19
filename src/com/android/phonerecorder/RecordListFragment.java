@@ -39,14 +39,31 @@ public class RecordListFragment extends ListFragment implements OnCheckedChangeL
         setHasOptionsMenu(true);
         mRecordPlayer = RecordPlayer.getInstance(getActivity());
         mRecordPlayer.setOnCompletionListener(this);
+        Log.d("taugin", "onCreate");
     }
 
     @Override
     public void onResume() {
         super.onResume();
+        Log.d("taugin", "onResume");
         updateUI();
     }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        Log.d("taugin", "onResume");
+        mRecordPlayer.stopPlay();
+    }
+
     
+    @Override
+    public void onDestroy() {
+        mRecordPlayer.release();
+        super.onDestroy();
+        Log.d("taugin", "onDestroy");
+    }
+
     private void updateUI() {
         mRecordList = RecordFileManager.getInstance(getActivity()).listRecordFiles();
         if (mRecordList == null) {

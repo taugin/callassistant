@@ -29,7 +29,12 @@ public class RecordPlayer implements OnCompletionListener, OnErrorListener {
         mContext = context;
         mMediaPlayer = new MediaPlayer();
     }
-    
+
+    public void release() {
+        mMediaPlayer.release();
+        sRecordPlayer = null;
+    }
+
     public void prepareRecorder() {
         if (mCurRecordInfo == null) {
             return ;
