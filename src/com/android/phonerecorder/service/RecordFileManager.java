@@ -43,6 +43,7 @@ public class RecordFileManager {
                 info.displayName = getDisplayName(info.fileName);
                 info.fileSize = file.length();
                 info.fileCreateTime = getCreateTime(info.fileName);
+                info.incoming = incomingCall(info.fileName);
                 info.fileLastTime = file.lastModified();
                 list.add(info);
             }
@@ -62,7 +63,7 @@ public class RecordFileManager {
         }
         return parts[0] + "_" + parts[3];
     }
-    
+
     private long getCreateTime(String fileName) {
         if (TextUtils.isEmpty(fileName)) {
             return 0;
@@ -75,6 +76,17 @@ public class RecordFileManager {
             return Long.parseLong(parts[1]);
         }
         return 0;
+    }
+
+    private boolean incomingCall(String fileName) {
+        if (TextUtils.isEmpty(fileName)) {
+            return false;
+        }
+        String []parts = fileName.split("_");
+        if (parts == null || parts.length != 4) {
+            return false;
+        }
+        return "in".equals(parts[2]);
     }
 
     public String getProperName(String phoneNumber, boolean incomingFlag) {
@@ -114,7 +126,7 @@ public class RecordFileManager {
             }
         }
     }
-    
+
     public boolean deleteRecordFile(String file) {
         try {
             File recordFile = new File(file);

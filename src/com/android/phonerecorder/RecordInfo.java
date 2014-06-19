@@ -7,5 +7,6 @@ public class RecordInfo {
     public long fileSize;
     public long fileCreateTime;
     public long fileLastTime;
+    public boolean incoming;
     public boolean checked;
 }

@@ -149,7 +149,8 @@ public class RecordListFragment extends ListFragment implements OnCheckedChangeL
             viewHolder.fileSize.setText(byteToString(info.fileSize));
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-DD HH:mm:ss");
             viewHolder.fileTime.setText(sdf.format(new Date(info.fileCreateTime)));
-            viewHolder.timeDuration.setText(getTimeExperence(info.fileLastTime - info.fileCreateTime));
+            String text = info.incoming ? "Incoming : " : "Outgoing : ";
+            viewHolder.timeDuration.setText(text + getTimeExperence(info.fileLastTime - info.fileCreateTime));
             viewHolder.checkBox.setChecked(info.checked);
             return convertView;
         }
@@ -168,16 +169,18 @@ public class RecordListFragment extends ListFragment implements OnCheckedChangeL
     }
 
     private String getTimeExperence(long timeExperence) {
-        if (timeExperence < 60 * 1000) {
-            float s = timeExperence / (float)1000;
-            return String.valueOf(s + "s");
-        } else if (timeExperence < 60 * 60 * 1000) {
-            float s = timeExperence / (float)1000;
-            s = s / (float)60;
-            return String.valueOf(s + "s");
+        int allsec = Math.round(timeExperence / (float)1000);
+        Log.d("taugin", "allsec = " + allsec);
+        int min = allsec / 60;
+        int sec = allsec % 60;
+        int hour = min / 60;
+        if (hour > 0) {
+            min = min % 60;
         }
-        return String.valueOf("0s");
-        
+        String sHour = hour > 0 ? hour + "h" : "";
+        String sMin = min > 0 ? min + "m" : "";
+        String sSec = sec > 0 ? sec + "s" : "";
+        return String.valueOf(sHour + sMin + sSec);
     }
 
     @Override
