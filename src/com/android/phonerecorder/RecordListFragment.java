@@ -149,8 +149,9 @@ public class RecordListFragment extends ListFragment implements OnCheckedChangeL
             viewHolder.fileSize.setText(byteToString(info.fileSize));
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             viewHolder.fileTime.setText(sdf.format(new Date(info.fileCreateTime)));
-            String text = info.incoming ? "Incoming : " : "Outgoing : ";
-            viewHolder.timeDuration.setText(text + getTimeExperence(info.fileLastTime - info.fileCreateTime));
+            int resId = info.incoming ? R.drawable.ic_incoming : R.drawable.ic_outgoing;
+            viewHolder.timeDuration.setCompoundDrawablesWithIntrinsicBounds(resId, 0, 0, 0);
+            viewHolder.timeDuration.setText(getTimeExperence(info.fileLastTime - info.fileCreateTime));
             viewHolder.checkBox.setChecked(info.checked);
             return convertView;
         }

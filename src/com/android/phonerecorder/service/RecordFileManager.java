@@ -3,6 +3,7 @@ package com.android.phonerecorder.service;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 
 import android.content.Context;
@@ -47,12 +48,12 @@ public class RecordFileManager {
                 info.fileLastTime = file.lastModified();
                 list.add(info);
             }
+            Collections.sort(list);
             return list;
         } else {
             return null;
         }
     }
-    
     private String getDisplayName(String fileName) {
         if (TextUtils.isEmpty(fileName)) {
             return null;
