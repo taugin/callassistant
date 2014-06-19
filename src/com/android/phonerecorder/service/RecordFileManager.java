@@ -1,12 +1,14 @@
 package com.android.phonerecorder.service;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 
 import android.content.Context;
 import android.os.Environment;
+import android.util.Log;
 
+import com.android.phonerecorder.RecordInfo;
 import com.android.phonerecorder.util.Constant;
 
 public class RecordFileManager {
@@ -23,13 +25,25 @@ public class RecordFileManager {
     private RecordFileManager(Context context) {
         mContext = context;
     }
-    public String [] listRecordFiles() {
+    public ArrayList<RecordInfo> listRecordFiles() {
         File recordDir = new File(Environment.getExternalStorageDirectory() + "/" + Constant.FILE_RECORD_FOLDER);
         if (!recordDir.exists()) {
             return null;
         }
         
-        return recordDir.list();
+        String files[] = recordDir.list();
+        if (files != null) {
+            ArrayList<RecordInfo> list = new ArrayList<RecordInfo>();
+            RecordInfo info = null;
+            for (String file : files) {
+                info = new RecordInfo();
+                info.fileName = file;
+                list.add(info);
+            }
+            return list;
+        } else {
+            return null;
+        }
     }
     
     public String getProperName(String phoneNumber, boolean incomingFlag) {
@@ -49,5 +63,27 @@ public class RecordFileManager {
         String incoming = incomingFlag ? "in" : "out";
         String fileName = "recorder_" + builder.toString() + "_" + incoming + "_" + phoneNumber + ".amr";
         return Environment.getExternalStorageDirectory() + "/" + Constant.FILE_RECORD_FOLDER + "/" + fileName;
+    }
+    
+    public void deleteRecordFiles(ArrayList<RecordInfo> list) {
+        String recordFile = null;
+        for (RecordInfo info : list) {
+            Log.d("taugin", "info = " + info.fileName);
+            if (info.checked) {
+                recordFile =  Environment.getExternalStorageDirectory() + "/" + Constant.FILE_RECORD_FOLDER + "/" + info.fileName;
+                deleteRecordFile(recordFile);
+                list.remove(info);
+            }
+        }
+    }
+    
+    public boolean deleteRecordFile(String file) {
+        try {
+            File recordFile = new File(file);
+            return recordFile.delete();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 }

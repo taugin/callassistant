@@ -3,6 +3,7 @@
 
     <string name="app_name">PhoneRecorder</string>
     <string name="action_settings">Settings</string>
+    <string name="action_delete">Delete</string>
     <string name="hello_world">Hello world!</string>
 
     <string name="recording">Recording...</string>
