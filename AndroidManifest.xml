@@ -31,9 +31,8 @@
         <activity
             android:name="com.android.phonerecorder.PhoneRecordSettings"
             android:configChanges="orientation|screenSize"
-            android:label="@string/app_name" >
+            android:label="@string/action_settings" >
         </activity>
-
         <service
             android:name="com.android.phonerecorder.service.PhoneRecordService"
             android:exported="false" >
