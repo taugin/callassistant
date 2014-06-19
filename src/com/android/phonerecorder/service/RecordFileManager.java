@@ -68,7 +68,13 @@ public class RecordFileManager {
     
     public void deleteRecordFiles(ArrayList<RecordInfo> list) {
         String recordFile = null;
-        for (RecordInfo info : list) {
+        int count = list.size();
+        RecordInfo info = null;
+        for (int index = count - 1; index >=0; index --) {
+            info = list.get(index);
+            if (info == null) {
+                continue;
+            }
             Log.d("taugin", "info = " + info.fileName);
             if (info.checked) {
                 recordFile =  Environment.getExternalStorageDirectory() + "/" + Constant.FILE_RECORD_FOLDER + "/" + info.fileName;
@@ -87,6 +93,8 @@ public class RecordFileManager {
         }
         return false;
     }
+    
+    
     
     public String getRecordFolder() {
         return Environment.getExternalStorageDirectory() + "/" + Constant.FILE_RECORD_FOLDER;
