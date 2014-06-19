@@ -147,7 +147,7 @@ public class RecordListFragment extends ListFragment implements OnCheckedChangeL
             viewHolder.mediaControl.getDrawable().setLevel(!info.play ? 0 : 1);
             viewHolder.fileName.setText(TextUtils.isEmpty(info.displayName) ? info.fileName : info.displayName);
             viewHolder.fileSize.setText(byteToString(info.fileSize));
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-DD HH:mm:ss");
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             viewHolder.fileTime.setText(sdf.format(new Date(info.fileCreateTime)));
             String text = info.incoming ? "Incoming : " : "Outgoing : ";
             viewHolder.timeDuration.setText(text + getTimeExperence(info.fileLastTime - info.fileCreateTime));
