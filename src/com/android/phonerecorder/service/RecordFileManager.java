@@ -3,9 +3,11 @@ package com.android.phonerecorder.service;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 
 import android.content.Context;
 import android.os.Environment;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.android.phonerecorder.RecordInfo;
@@ -38,7 +40,10 @@ public class RecordFileManager {
             for (File file : files) {
                 info = new RecordInfo();
                 info.fileName = file.getName();
+                info.displayName = getDisplayName(info.fileName);
                 info.fileSize = file.length();
+                info.fileCreateTime = getCreateTime(info.fileName);
+                info.fileLastTime = file.lastModified();
                 list.add(info);
             }
             return list;
@@ -47,6 +52,31 @@ public class RecordFileManager {
         }
     }
     
+    private String getDisplayName(String fileName) {
+        if (TextUtils.isEmpty(fileName)) {
+            return null;
+        }
+        String []parts = fileName.split("_");
+        if (parts == null || parts.length != 4) {
+            return null;
+        }
+        return parts[0] + "_" + parts[3];
+    }
+    
+    private long getCreateTime(String fileName) {
+        if (TextUtils.isEmpty(fileName)) {
+            return 0;
+        }
+        String []parts = fileName.split("_");
+        if (parts == null || parts.length != 4) {
+            return 0;
+        }
+        if (TextUtils.isDigitsOnly(parts[1])) {
+            return Long.parseLong(parts[1]);
+        }
+        return 0;
+    }
+
     public String getProperName(String phoneNumber, boolean incomingFlag) {
         Calendar calendar = Calendar.getInstance();
         StringBuilder builder = new StringBuilder();
@@ -62,7 +92,8 @@ public class RecordFileManager {
         builder.append("-");
         builder.append(calendar.get(Calendar.SECOND));;
         String incoming = incomingFlag ? "in" : "out";
-        String fileName = "recorder_" + builder.toString() + "_" + incoming + "_" + phoneNumber + ".amr";
+        // String fileName = "recorder_" + builder.toString() + "_" + incoming + "_" + phoneNumber + ".amr";
+        String fileName = "recorder_" + calendar.getTimeInMillis() + "_" + incoming + "_" + phoneNumber + ".amr";
         return Environment.getExternalStorageDirectory() + "/" + Constant.FILE_RECORD_FOLDER + "/" + fileName;
     }
     
@@ -93,9 +124,7 @@ public class RecordFileManager {
         }
         return false;
     }
-    
-    
-    
+
     public String getRecordFolder() {
         return Environment.getExternalStorageDirectory() + "/" + Constant.FILE_RECORD_FOLDER;
     }

@@ -1,12 +1,15 @@
 package com.android.phonerecorder;
 
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 import android.app.ListFragment;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -108,6 +111,8 @@ public class RecordListFragment extends ListFragment implements OnCheckedChangeL
         ImageView mediaControl;
         TextView fileName;
         TextView fileSize;
+        TextView fileTime;
+        TextView timeDuration;
         CheckBox checkBox;
     }
     private class RecordListAdapter extends ArrayAdapter<RecordInfo>{
@@ -129,6 +134,8 @@ public class RecordListFragment extends ListFragment implements OnCheckedChangeL
                 viewHolder.mediaControl.setTag(position);
                 viewHolder.fileName = (TextView) convertView.findViewById(R.id.filename);
                 viewHolder.fileSize = (TextView) convertView.findViewById(R.id.filesize);
+                viewHolder.fileTime = (TextView) convertView.findViewById(R.id.filetime);
+                viewHolder.timeDuration = (TextView) convertView.findViewById(R.id.timeduration);
                 viewHolder.checkBox = (CheckBox) convertView.findViewById(R.id.check_box);
                 viewHolder.checkBox.setOnCheckedChangeListener(RecordListFragment.this);
                 viewHolder.checkBox.setTag(position);
@@ -138,12 +145,15 @@ public class RecordListFragment extends ListFragment implements OnCheckedChangeL
             }
             RecordInfo info = getItem(position);
             viewHolder.mediaControl.getDrawable().setLevel(!info.play ? 0 : 1);
-            viewHolder.fileName.setText(info.fileName);
+            viewHolder.fileName.setText(TextUtils.isEmpty(info.displayName) ? info.fileName : info.displayName);
             viewHolder.fileSize.setText(byteToString(info.fileSize));
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-DD HH:mm:ss");
+            viewHolder.fileTime.setText(sdf.format(new Date(info.fileCreateTime)));
+            viewHolder.timeDuration.setText(getTimeExperence(info.fileLastTime - info.fileCreateTime));
             viewHolder.checkBox.setChecked(info.checked);
             return convertView;
         }
-        
+
         private String byteToString(long size) {
             DecimalFormat df = new DecimalFormat("###.##");
             float f;
@@ -156,6 +166,20 @@ public class RecordListFragment extends ListFragment implements OnCheckedChangeL
             }
         }
     }
+
+    private String getTimeExperence(long timeExperence) {
+        if (timeExperence < 60 * 1000) {
+            float s = timeExperence / (float)1000;
+            return String.valueOf(s + "s");
+        } else if (timeExperence < 60 * 60 * 1000) {
+            float s = timeExperence / (float)1000;
+            s = s / (float)60;
+            return String.valueOf(s + "s");
+        }
+        return String.valueOf("0s");
+        
+    }
+
     @Override
     public void onCheckedChanged(CompoundButton buttonView,
             boolean isChecked) {
