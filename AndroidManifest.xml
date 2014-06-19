@@ -11,8 +11,8 @@
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
-    <uses-permission android:name="android.permission.PROCESS_OUTGOING_CALLS"/>
-    <uses-permission android:name="android.permission.GET_TASKS"/>
+    <uses-permission android:name="android.permission.PROCESS_OUTGOING_CALLS" />
+    <uses-permission android:name="android.permission.GET_TASKS" />
 
     <application
         android:allowBackup="true"
@@ -20,28 +20,33 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name="com.android.phonerecorder.PhoneRecordSettings"
+            android:name="com.android.phonerecorder.PhoneRecordList"
             android:configChanges="orientation|screenSize"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name="com.android.phonerecorder.PhoneRecordSettings"
+            android:configChanges="orientation|screenSize"
+            android:label="@string/app_name" >
+        </activity>
 
-        <service android:name="com.android.phonerecorder.service.PhoneRecordService"
-            android:exported="false">
+        <service
+            android:name="com.android.phonerecorder.service.PhoneRecordService"
+            android:exported="false" >
             <intent-filter>
-                <action android:name="com.android.phonerecorder.action.INCOMING_PHONE"/>
-                <action android:name="com.android.phonerecorder.action.OUTGOING_PHONE"/>
+                <action android:name="com.android.phonerecorder.action.INCOMING_PHONE" />
+                <action android:name="com.android.phonerecorder.action.OUTGOING_PHONE" />
             </intent-filter>
         </service>
 
-        <receiver android:name="com.android.phonerecorder.service.PhoneRecorderReceiver">
+        <receiver android:name="com.android.phonerecorder.service.PhoneRecorderReceiver" >
             <intent-filter>
-                <action android:name="android.intent.action.NEW_OUTGOING_CALL"/>
-                <action android:name="android.intent.action.PHONE_STATE"/>
+                <action android:name="android.intent.action.NEW_OUTGOING_CALL" />
+                <action android:name="android.intent.action.PHONE_STATE" />
             </intent-filter>
         </receiver>
     </application>

@@ -10,6 +10,4 @@ public class PhoneRecordSettingsFragment extends PreferenceFragment {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.settings);
     }
-
-    
 }

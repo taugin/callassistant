@@ -1,10 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <CheckBoxPreference
+        android:key="key_automatic_record"
+        android:persistent="true"
+        android:defaultValue="true"
+        android:summaryOff="@string/off"
+        android:summaryOn="@string/on"
+        android:title="@string/automatic_record" />
     <CheckBoxPreference
         android:key="key_show_notification"
-        android:title="@string/show_notification"
-        android:summaryOn="@string/show"
+        android:persistent="true"
+        android:defaultValue="true"
         android:summaryOff="@string/hide"
-        android:persistent="true"/>
+        android:summaryOn="@string/show"
+        android:title="@string/show_notification" />
 
 </PreferenceScreen>

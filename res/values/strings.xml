@@ -7,6 +7,9 @@
     <string name="hello_world">Hello world!</string>
 
     <string name="recording">Recording...</string>
+    <string name="automatic_record">Automatic Record</string>
+    <string name="on">On</string>
+    <string name="off">Off</string>
     <string name="show_notification">Show Notification</string>
     <string name="show">Show</string>
     <string name="hide">Hide</string>

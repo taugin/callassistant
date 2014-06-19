@@ -93,6 +93,10 @@ public class PhoneRecordService extends Service {
     };
 
     private void startRecord() {
+        boolean record = PreferenceManager.getDefaultSharedPreferences(this).getBoolean("key_automatic_record", true);
+        if (!record) {
+            return ;
+        }
         TelephonyManager tm = (TelephonyManager) getSystemService(Service.TELEPHONY_SERVICE);
         if (tm.getCallState() == TelephonyManager.CALL_STATE_OFFHOOK && !mRecordManager.recording()) {
             mRecordManager.initRecorder(mPhoneNumber, mIncomingFlag);
@@ -102,6 +106,10 @@ public class PhoneRecordService extends Service {
     }
 
     private void stopRecord() {
+        boolean record = PreferenceManager.getDefaultSharedPreferences(this).getBoolean("key_automatic_record", true);
+        if (!record) {
+            return ;
+        }
         if (mRecordManager.recording()) {
             mRecordManager.stopRecorder();
             cancel();

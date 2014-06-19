@@ -5,6 +5,7 @@ import java.util.ArrayList;
 
 import android.app.ListFragment;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -86,6 +87,11 @@ public class RecordListFragment extends ListFragment implements OnCheckedChangeL
             stopPlayWhenDeleting();
             RecordFileManager.getInstance(getActivity()).deleteRecordFiles(mRecordList);
             mListAdapter.notifyDataSetChanged();
+            break;
+        case R.id.action_settings: {
+            Intent intent = new Intent(getActivity(), PhoneRecordSettings.class);
+            getActivity().startActivity(intent);;
+        }
             break;
         }
         return true;
