@@ -5,8 +5,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
+import android.app.AlertDialog;
 import android.app.ListFragment;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -31,9 +33,13 @@ import com.android.phonerecorder.service.RecordFileManager;
 
 public class RecordListFragment extends ListFragment implements OnCheckedChangeListener, OnClickListener, OnCompletionListener {
 
+    private static final int VIEW_STATE_NORMAL = 0;
+    private static final int VIEW_STATE_DELETE = 1;
     private RecordListAdapter mListAdapter;
     private ArrayList<RecordInfo> mRecordList;
     private RecordPlayer mRecordPlayer;
+    private int mViewState;
+    private AlertDialog mAlertDialog;
 
     
     @Override
@@ -42,6 +48,7 @@ public class RecordListFragment extends ListFragment implements OnCheckedChangeL
         setHasOptionsMenu(true);
         mRecordPlayer = RecordPlayer.getInstance(getActivity());
         mRecordPlayer.setOnCompletionListener(this);
+        mViewState = VIEW_STATE_NORMAL;
         Log.d("taugin", "onCreate");
     }
 
@@ -59,7 +66,15 @@ public class RecordListFragment extends ListFragment implements OnCheckedChangeL
         mRecordPlayer.stopPlay();
     }
 
-    
+    public boolean onBackPressed() {
+        if (mViewState == VIEW_STATE_DELETE) {
+            mViewState = VIEW_STATE_NORMAL;
+            mListAdapter.notifyDataSetChanged();
+            return true;
+        }
+        return false;
+    }
+
     @Override
     public void onDestroy() {
         mRecordPlayer.release();
@@ -73,7 +88,6 @@ public class RecordListFragment extends ListFragment implements OnCheckedChangeL
             return ;
         }
         mListAdapter = new RecordListAdapter(getActivity(), mRecordList);
-        getListView().setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
         getListView().setAdapter(mListAdapter);
         setListShown(true);
     }
@@ -87,9 +101,17 @@ public class RecordListFragment extends ListFragment implements OnCheckedChangeL
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()) {
         case R.id.action_delete:
-            stopPlayWhenDeleting();
-            RecordFileManager.getInstance(getActivity()).deleteRecordFiles(mRecordList);
-            mListAdapter.notifyDataSetChanged();
+            if (mViewState == VIEW_STATE_NORMAL) {
+                mViewState = VIEW_STATE_DELETE;
+                mListAdapter.notifyDataSetChanged();
+            } else if (mViewState == VIEW_STATE_DELETE) {
+                if (RecordInfo.checkedNumber > 0) {
+                    showConfirmDialog();
+                } else {
+                    mViewState = VIEW_STATE_NORMAL;
+                    mListAdapter.notifyDataSetChanged();
+                }
+            }
             break;
         case R.id.action_settings: {
             Intent intent = new Intent(getActivity(), PhoneRecordSettings.class);
@@ -105,6 +127,27 @@ public class RecordListFragment extends ListFragment implements OnCheckedChangeL
         if (info != null && info.checked) {
             mRecordPlayer.stopPlay();
         }
+    }
+    
+    private void showConfirmDialog() {
+        if (mAlertDialog == null) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            builder.setMessage(R.string.confirm_message);
+            builder.setCancelable(false);
+            builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    stopPlayWhenDeleting();
+                    RecordFileManager.getInstance(getActivity()).deleteRecordFiles(mRecordList);
+                    mViewState = VIEW_STATE_NORMAL;
+                    mListAdapter.notifyDataSetChanged();
+                }
+            });
+            builder.setNegativeButton(R.string.cancel, null);
+            mAlertDialog = builder.create();
+            mAlertDialog.setCanceledOnTouchOutside(false);
+        }
+        mAlertDialog.show();
     }
 
     class ViewHolder {
@@ -153,6 +196,11 @@ public class RecordListFragment extends ListFragment implements OnCheckedChangeL
             viewHolder.timeDuration.setCompoundDrawablesWithIntrinsicBounds(resId, 0, 0, 0);
             viewHolder.timeDuration.setText(getTimeExperence(info.fileLastTime - info.fileCreateTime));
             viewHolder.checkBox.setChecked(info.checked);
+            if (mViewState == VIEW_STATE_NORMAL) {
+                viewHolder.checkBox.setVisibility(View.GONE);
+            } else if (mViewState == VIEW_STATE_DELETE) {
+                viewHolder.checkBox.setVisibility(View.VISIBLE);
+            }
             return convertView;
         }
 
@@ -190,6 +238,11 @@ public class RecordListFragment extends ListFragment implements OnCheckedChangeL
         int position = (Integer) buttonView.getTag();
         RecordInfo info = mListAdapter.getItem(position);
         info.checked = isChecked;
+        if (isChecked) {
+            RecordInfo.checkedNumber ++;
+        } else {
+            RecordInfo.checkedNumber --;
+        }
     }
 
     @Override
