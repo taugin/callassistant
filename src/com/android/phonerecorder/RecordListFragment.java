@@ -49,20 +49,26 @@ public class RecordListFragment extends ListFragment implements OnCheckedChangeL
         mRecordPlayer = RecordPlayer.getInstance(getActivity());
         mRecordPlayer.setOnCompletionListener(this);
         mViewState = VIEW_STATE_NORMAL;
-        Log.d("taugin", "onCreate");
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        mRecordList = new ArrayList<RecordInfo>();
+        mListAdapter = new RecordListAdapter(getActivity(), mRecordList);
+        getListView().setAdapter(mListAdapter);
+        setListShown(true);
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        Log.d("taugin", "onResume");
         updateUI();
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        Log.d("taugin", "onResume");
         mRecordPlayer.stopPlay();
     }
 
@@ -79,18 +85,13 @@ public class RecordListFragment extends ListFragment implements OnCheckedChangeL
     public void onDestroy() {
         mRecordPlayer.release();
         super.onDestroy();
-        Log.d("taugin", "onDestroy");
     }
 
     private void updateUI() {
-        mRecordList = RecordFileManager.getInstance(getActivity()).listRecordFiles();
-        if (mRecordList == null) {
-            return ;
-        }
-        mListAdapter = new RecordListAdapter(getActivity(), mRecordList);
-        getListView().setAdapter(mListAdapter);
-        setListShown(true);
+        mRecordList = RecordFileManager.getInstance(getActivity()).listRecordFiles(mRecordList);
+        mListAdapter.notifyDataSetChanged();
     }
+
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.main, menu);
@@ -219,7 +220,6 @@ public class RecordListFragment extends ListFragment implements OnCheckedChangeL
 
     private String getTimeExperence(long timeExperence) {
         int allsec = Math.round(timeExperence / (float)1000);
-        Log.d("taugin", "allsec = " + allsec);
         int min = allsec / 60;
         int sec = allsec % 60;
         int hour = min / 60;

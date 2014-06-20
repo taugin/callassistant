@@ -28,15 +28,14 @@ public class RecordFileManager {
     private RecordFileManager(Context context) {
         mContext = context;
     }
-    public ArrayList<RecordInfo> listRecordFiles() {
+    public ArrayList<RecordInfo> listRecordFiles(ArrayList<RecordInfo> list) {
         File recordDir = new File(Environment.getExternalStorageDirectory() + "/" + Constant.FILE_RECORD_FOLDER);
         if (!recordDir.exists()) {
             return null;
         }
-        
+        list.clear();
         File files[] = recordDir.listFiles();
         if (files != null) {
-            ArrayList<RecordInfo> list = new ArrayList<RecordInfo>();
             RecordInfo info = null;
             for (File file : files) {
                 info = new RecordInfo();
@@ -49,10 +48,8 @@ public class RecordFileManager {
                 list.add(info);
             }
             Collections.sort(list);
-            return list;
-        } else {
-            return null;
         }
+        return list;
     }
     private String getDisplayName(String fileName) {
         if (TextUtils.isEmpty(fileName)) {
