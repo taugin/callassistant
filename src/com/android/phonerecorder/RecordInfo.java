@@ -2,6 +2,7 @@ package com.android.phonerecorder;
 
 public class RecordInfo implements Comparable<RecordInfo> {
     public static int checkedNumber = 0;
+    public int recordId;
     public boolean play;
     public String recordFile;
     public String recordName;

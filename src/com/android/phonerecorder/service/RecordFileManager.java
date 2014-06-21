@@ -91,15 +91,38 @@ public class RecordFileManager {
     }
 
     public String getProperName(String phoneNumber, long time) {
-        Calendar calendar = Calendar.getInstance();
         String fileName = "recorder_" + time + "_" + phoneNumber + ".amr";
         return Environment.getExternalStorageDirectory() + "/" + Constant.FILE_RECORD_FOLDER + "/" + fileName;
     }
     
+    private boolean deleteRecordFromDB(ArrayList<RecordInfo> list) {
+        if (list == null || list.size() == 0) {
+            return false;
+        }
+        StringBuilder builder = new StringBuilder();
+        builder.append("(");
+        for (RecordInfo info : list) {
+            if (info.checked) {
+                builder.append(info.recordId);
+                builder.append(",");
+            }
+        }
+        builder.append(")");
+        builder.deleteCharAt(builder.length() - 2);
+        String area = builder.toString();
+        String where = DBConstant._ID + " IN " + area;
+        Log.d("taugin", "where = " + where);
+        int ret = mContext.getContentResolver().delete(DBConstant.RECORD_URI, where, null);
+        Log.d("taugin", "deleteRecordFromDB ret = " + ret);
+        return ret > 0;
+    }
     public void deleteRecordFiles(ArrayList<RecordInfo> list) {
         String recordFile = null;
         int count = list.size();
         RecordInfo info = null;
+        if (!deleteRecordFromDB(list)) {
+            return ;
+        }
         for (int index = count - 1; index >=0; index --) {
             info = list.get(index);
             if (info == null) {
@@ -145,6 +168,7 @@ public class RecordFileManager {
                     RecordInfo info = null;
                     do {
                         info = new RecordInfo();
+                        info.recordId = c.getInt(c.getColumnIndex(DBConstant._ID));
                         info.recordFile = c.getString(c.getColumnIndex(DBConstant.RECORD_FILE));
                         info.recordName = c.getString(c.getColumnIndex(DBConstant.RECORD_NAME));
                         info.recordSize = c.getLong(c.getColumnIndex(DBConstant.RECORD_SIZE));
@@ -155,6 +179,8 @@ public class RecordFileManager {
                         Log.d("taugin", "info.recordSize = " + info.recordSize + " , info.recordEnd = " + info.recordEnd);
                         if (recordExists(info.recordFile)) {
                             list.add(info);
+                        } else {
+                            deleteRecordByFile(info.recordFile);
                         }
                     } while(c.moveToNext());
                 }
@@ -176,5 +202,11 @@ public class RecordFileManager {
             return true;
         }
         return false;
+    }
+
+    private void deleteRecordByFile(String file) {
+        String where = DBConstant.RECORD_FILE + "=" + "'" + file + "'";
+        int ret = mContext.getContentResolver().delete(DBConstant.RECORD_URI, where, null);
+        Log.d("taugin", "delete record by file : " + file + " , ret = " + ret);
     }
 }
