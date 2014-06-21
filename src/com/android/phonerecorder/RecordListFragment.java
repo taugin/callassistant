@@ -168,7 +168,11 @@ public class RecordListFragment extends ListFragment implements OnCheckedChangeL
             }
             BaseInfo info = getItem(position);
             if (info != null) {
-                viewHolder.displayName.setText(TextUtils.isEmpty(info.baseInfoName) ? info.phoneNumber : info.baseInfoName);
+                String displayName = info.phoneNumber;
+                if (!TextUtils.isEmpty(info.baseInfoName)) {
+                    displayName += "(" + info.baseInfoName + ")";
+                }
+                viewHolder.displayName.setText(displayName);
                 String callLog = String.format("%d%s", info.callLogCount, RecordListFragment.this.getResources().getString(R.string.call_log_count));
                 viewHolder.callLogCount.setText(callLog);
                 viewHolder.checkBox.setChecked(info.checked);
