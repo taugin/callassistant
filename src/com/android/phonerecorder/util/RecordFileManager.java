@@ -1,20 +1,20 @@
-package com.android.phonerecorder.service;
+package com.android.phonerecorder.util;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collections;
-import java.util.Date;
 
+import android.content.ContentUris;
 import android.content.Context;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Environment;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.android.phonerecorder.BaseInfo;
 import com.android.phonerecorder.RecordInfo;
 import com.android.phonerecorder.provider.DBConstant;
-import com.android.phonerecorder.util.Constant;
 
 public class RecordFileManager {
 
@@ -151,7 +151,66 @@ public class RecordFileManager {
         return Environment.getExternalStorageDirectory() + "/" + Constant.FILE_RECORD_FOLDER;
     }
 
-    public ArrayList<RecordInfo> getRecordsFromDB(ArrayList<RecordInfo> list) {
+    public void deleteBaseInfoFromDB(ArrayList<BaseInfo> list) {
+        
+    }
+
+    public BaseInfo getSingleBaseInfo(int id) {
+        Cursor c = null;
+        BaseInfo info = null;
+        try {
+            Uri uri = ContentUris.withAppendedId(DBConstant.BASEINFO_URI, id);
+            c = mContext.getContentResolver().query(uri, null, null, null, null);
+            if (c != null) {
+                if (c.moveToFirst()) {
+                    info = new BaseInfo();
+                    info._id = c.getInt(c.getColumnIndex(DBConstant._ID));
+                    info.baseInfoName = c.getString(c.getColumnIndex(DBConstant.BASEINFO_NAME));
+                    info.phoneNumber = c.getString(c.getColumnIndex(DBConstant.BASEINFO_NUMBER));
+                    info.callLogCount = c.getInt(c.getColumnIndex(DBConstant.BASEINFO_CALL_LOG_COUNT));
+                } 
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (c != null) {
+                c.close();
+            }
+        }
+        return info;
+    }
+    public ArrayList<BaseInfo> getBaseInfoFromDB(ArrayList<BaseInfo> list) {
+        if (list == null) {
+            return null;
+        }
+        list.clear();
+        Cursor c = null;
+        try {
+            c = mContext.getContentResolver().query(DBConstant.BASEINFO_URI, null, null, null, DBConstant.BASEINFO_UPDATE + " DESC");
+            if (c != null) {
+                if (c.moveToFirst()) {
+                    BaseInfo info = null;
+                    do {
+                        info = new BaseInfo();
+                        info._id = c.getInt(c.getColumnIndex(DBConstant._ID));
+                        info.baseInfoName = c.getString(c.getColumnIndex(DBConstant.BASEINFO_NAME));
+                        info.phoneNumber = c.getString(c.getColumnIndex(DBConstant.BASEINFO_NUMBER));
+                        info.callLogCount = c.getInt(c.getColumnIndex(DBConstant.BASEINFO_CALL_LOG_COUNT));
+                        list.add(info);
+                    } while(c.moveToNext());
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (c != null) {
+                c.close();
+            }
+        }
+        //Collections.sort(list);
+        return list;
+    }
+    public ArrayList<RecordInfo> getRecordsFromDB(ArrayList<RecordInfo> list, int id) {
         File recordDir = new File(Environment.getExternalStorageDirectory() + "/" + Constant.FILE_RECORD_FOLDER);
         if (!recordDir.exists()) {
             return list;
@@ -161,8 +220,12 @@ public class RecordFileManager {
         }
         list.clear();
         Cursor c = null;
+        String selection = null;
+        if (id != -1) {
+            selection = DBConstant.RECORD_BASEINFO_ID + "=" + id;
+        }
         try {
-            c = mContext.getContentResolver().query(DBConstant.RECORD_URI, null, null, null, DBConstant.RECORD_START + " DESC");
+            c = mContext.getContentResolver().query(DBConstant.RECORD_URI, null, selection, null, DBConstant.RECORD_START + " DESC");
             if (c != null) {
                 if (c.moveToFirst()) {
                     RecordInfo info = null;
@@ -177,11 +240,10 @@ public class RecordFileManager {
                         int flag = c.getInt(c.getColumnIndex(DBConstant.RECORD_FLAG));
                         info.incoming = flag == DBConstant.FLAG_INCOMING;
                         Log.d("taugin", "info.recordSize = " + info.recordSize + " , info.recordEnd = " + info.recordEnd);
-                        if (recordExists(info.recordFile)) {
-                            list.add(info);
-                        } else {
-                            deleteRecordByFile(info.recordFile);
+                        if (!recordExists(info.recordFile)) {
+                            info.recordFile = null;
                         }
+                        list.add(info);
                     } while(c.moveToNext());
                 }
             }

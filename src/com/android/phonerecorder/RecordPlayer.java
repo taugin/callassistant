@@ -2,7 +2,7 @@ package com.android.phonerecorder;
 
 import java.io.IOException;
 
-import com.android.phonerecorder.service.RecordFileManager;
+import com.android.phonerecorder.util.RecordFileManager;
 
 import android.content.Context;
 import android.media.MediaPlayer;

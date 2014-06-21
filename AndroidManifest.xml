@@ -25,7 +25,8 @@
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-                <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
+
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
@@ -33,6 +34,7 @@
             android:configChanges="orientation|screenSize"
             android:label="@string/action_settings" >
         </activity>
+
         <service
             android:name="com.android.phonerecorder.service.PhoneRecordService"
             android:exported="false" >
@@ -48,17 +50,18 @@
                 <action android:name="android.intent.action.PHONE_STATE" />
             </intent-filter>
         </receiver>
+
         <provider
             android:name="com.android.phonerecorder.provider.RecordProvider"
-            android:authorities="com.android.phonerecorder"
-            />
-                <activity
+            android:authorities="com.android.phonerecorder" />
+
+        <activity
             android:name="com.android.phonerecorder.customer.CustomerDetailActivity"
             android:configChanges="orientation|screenSize"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
+                <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
             </intent-filter>
         </activity>
     </application>

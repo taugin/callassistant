@@ -12,6 +12,7 @@ import android.content.ComponentName;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.IBinder;
@@ -23,6 +24,7 @@ import android.util.Log;
 import com.android.phonerecorder.R;
 import com.android.phonerecorder.provider.DBConstant;
 import com.android.phonerecorder.util.Constant;
+import com.android.phonerecorder.util.RecordFileManager;
 
 public class PhoneRecordService extends Service {
 
@@ -94,8 +96,41 @@ public class PhoneRecordService extends Service {
         }
     };
 
-    private int addNewRecord(String fileName, long timeStart, boolean incoming, String phoneNumber) {
+    private int addOrThrowBaseInfo(String phoneNumber, long time) {
+        Cursor c = null;
+        int _id = -1;
+        int count = 0;
+        String selection = DBConstant.BASEINFO_NUMBER + " LIKE '%" + phoneNumber + "'";
+        try {
+            c = this.getContentResolver().query(DBConstant.BASEINFO_URI, new String[]{DBConstant._ID, DBConstant.BASEINFO_CALL_LOG_COUNT}, selection, null, null);
+            if (c != null && c.moveToFirst() && c.getCount() > 0) {
+                _id = c.getInt(c.getColumnIndex(DBConstant._ID));
+                count = c.getInt(c.getColumnIndex(DBConstant.BASEINFO_CALL_LOG_COUNT));
+            }
+        } catch (Exception e) {
+            
+        } finally {
+            if (c != null) {
+                c.close();
+            }
+        }
+        if (_id != -1) {
+            ContentValues values = new ContentValues();
+            values.put(DBConstant.BASEINFO_CALL_LOG_COUNT, (count + 1));
+            values.put(DBConstant.BASEINFO_UPDATE, time);
+            getContentResolver().update(ContentUris.withAppendedId(DBConstant.BASEINFO_URI, _id), values, null, null);
+            return _id;
+        }
         ContentValues values = new ContentValues();
+        values.put(DBConstant.BASEINFO_NUMBER, phoneNumber);
+        values.put(DBConstant.BASEINFO_CALL_LOG_COUNT, 1);
+        values.put(DBConstant.BASEINFO_UPDATE, time);
+        Uri contentUri = getContentResolver().insert(DBConstant.BASEINFO_URI, values);
+        return (int) ContentUris.parseId(contentUri);
+    }
+    private int addNewRecord(int baseInfoId, String fileName, long timeStart, boolean incoming, String phoneNumber) {
+        ContentValues values = new ContentValues();
+        values.put(DBConstant.RECORD_BASEINFO_ID, baseInfoId);
         values.put(DBConstant.RECORD_NAME, "record_" + phoneNumber + ".amr");
         values.put(DBConstant.RECORD_FILE, fileName);
         values.put(DBConstant.RECORD_NUMBER, phoneNumber);
@@ -126,8 +161,9 @@ public class PhoneRecordService extends Service {
         TelephonyManager tm = (TelephonyManager) getSystemService(Service.TELEPHONY_SERVICE);
         if (tm.getCallState() == TelephonyManager.CALL_STATE_OFFHOOK && !mRecordManager.recording()) {
             long time = System.currentTimeMillis();
+            int baseInfoId = addOrThrowBaseInfo(mPhoneNumber, time);
             String fileName = RecordFileManager.getInstance(PhoneRecordService.this).getProperName(mPhoneNumber, time);
-            int id = addNewRecord(fileName, time, mIncomingFlag, mPhoneNumber);
+            int id = addNewRecord(baseInfoId, fileName, time, mIncomingFlag, mPhoneNumber);
             mRecordManager.setDBId(id);
             mRecordManager.initRecorder(fileName);
             mRecordManager.startRecorder();

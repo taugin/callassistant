@@ -11,6 +11,7 @@ public class DBConstant {
     public static final String FOO = "foo";
 
     public static final String TABLE_RECORD = "record_table";
+    public static final String RECORD_BASEINFO_ID = "record_baseinfo_id";
     public static final String RECORD_NAME = "record_name";
     public static final String RECORD_FILE = "record_file";
     public static final String RECORD_NUMBER = "record_number";
@@ -37,6 +38,7 @@ public class DBConstant {
     public static final String BASEINFO_CALL_LOG_COUNT = "baseinfo_call_log_count";
     public static final String BASEINFO_ALLOW_RECORD = "baseinfo_allow_record";
     public static final String BASEINFO_STATE = "baseinfo_state";
+    public static final String BASEINFO_UPDATE = "baseinfo_update";
 
     public static final int ALLOW_RECORD = 1;
     public static final int FORBID_RECORD = 0;

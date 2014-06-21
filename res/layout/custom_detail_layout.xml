@@ -101,6 +101,7 @@
         <View style="@style/horizontal_line" />
 
         <com.android.phonerecorder.customer.CallLogListView
+            android:id="@+id/call_log_listview"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" 
             />

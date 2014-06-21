@@ -21,4 +21,5 @@
     <string name="customer_name">姓名 :</string>
     <string name="customer_state">状态 :</string>
     <string name="call_log">通话记录 :</string>
+    <string name="call_log_count">条通话记录</string>
 </resources>
