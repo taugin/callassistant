@@ -26,4 +26,23 @@ public class DBConstant {
     public static final String RECORD_CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.record.item";
 
     public static final Uri RECORD_URI = Uri.parse("content://" + AUTHORITIES + "/" + TABLE_RECORD);
+
+
+    public static final String TABLE_BASEINFO = "baseinfo_table";
+    public static final String BASEINFO_NAME = "baseinfo_name";
+    public static final String BASEINFO_SEX = "baseinfo_sex";
+    public static final String BASEINFO_AGE = "baseinfo_age";
+    public static final String BASEINFO_ADDRESS = "baseinfo_address";
+    public static final String BASEINFO_NUMBER = "baseinfo_number";
+    public static final String BASEINFO_CALL_LOG_COUNT = "baseinfo_call_log_count";
+    public static final String BASEINFO_ALLOW_RECORD = "baseinfo_allow_record";
+    public static final String BASEINFO_STATE = "baseinfo_state";
+
+    public static final int ALLOW_RECORD = 1;
+    public static final int FORBID_RECORD = 0;
+
+    public static final String BASEINFO_CONTENT_TYPE = "vnd.android.cursor.item/vnd.baseinfo.items";
+    public static final String BASEINFO_CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.baseinfo.item";
+
+    public static final Uri BASEINFO_URI = Uri.parse("content://" + AUTHORITIES + "/" + TABLE_BASEINFO);
 }

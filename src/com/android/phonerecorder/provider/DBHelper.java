@@ -23,6 +23,22 @@ public class DBHelper extends SQLiteOpenHelper {
           + ")";
     private final String DROP_RECORD_TABLE = "DROP TABLE " + DBConstant.TABLE_RECORD + " IF EXISTS";
 
+    private static final String CREATE_BASEINFO_TABLE =
+            "CREATE TABLE IF NOT EXISTS " + DBConstant.TABLE_BASEINFO
+          + "("
+          + DBConstant._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+          + DBConstant.BASEINFO_NAME + " TEXT,"
+          + DBConstant.BASEINFO_SEX + " TEXT,"
+          + DBConstant.BASEINFO_AGE + " INTEGER,"
+          + DBConstant.BASEINFO_ADDRESS + " TEXT,"
+          + DBConstant.BASEINFO_NUMBER + " TEXT,"
+          + DBConstant.BASEINFO_CALL_LOG_COUNT + " INTEGER DEFAULT 0,"
+          + DBConstant.BASEINFO_ALLOW_RECORD + " INTEGER DEFAULT 1,"
+          + DBConstant.BASEINFO_STATE + " TEXT,"
+          + DBConstant.FOO + " text"
+          + ")";
+    private final String DROP_BASEINFO_TABLE = "DROP TABLE " + DBConstant.TABLE_BASEINFO + " IF EXISTS";
+
     private Context mContext;
     public DBHelper(Context context) {
         super(context, DBConstant.DB_NAME, null, DBConstant.DB_VERSION);
@@ -34,6 +50,7 @@ public class DBHelper extends SQLiteOpenHelper {
         Log.d("taugin", "CREATE_RECORD_FILE = " + CREATE_RECORD_TABLE);
         try{
             db.execSQL(CREATE_RECORD_TABLE);
+            db.execSQL(CREATE_BASEINFO_TABLE);
         }catch(SQLException e){
             Log.d("taugin", "create table failed e = " + e.getLocalizedMessage());
         }
@@ -44,6 +61,7 @@ public class DBHelper extends SQLiteOpenHelper {
         if(newVersion > oldVersion){
             try{
                 db.execSQL(DROP_RECORD_TABLE);
+                db.execSQL(DROP_BASEINFO_TABLE);
             } catch(SQLException e){
                 e.printStackTrace();
             } finally{

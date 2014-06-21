@@ -23,6 +23,8 @@ public class RecordProvider extends ContentProvider {
 
     private static final int TABLE_RECORD = 0;
     private static final int TABLE_RECORD_ID = 1;
+    private static final int TABLE_BASEINFO = 2;
+    private static final int TABLE_BASEINFO_ID = 3;
 
     private static final UriMatcher sUriMatcher;
     static {
@@ -30,6 +32,9 @@ public class RecordProvider extends ContentProvider {
 
         sUriMatcher.addURI(DBConstant.AUTHORITIES, DBConstant.TABLE_RECORD, TABLE_RECORD);
         sUriMatcher.addURI(DBConstant.AUTHORITIES, DBConstant.TABLE_RECORD + "/#", TABLE_RECORD_ID);
+
+        sUriMatcher.addURI(DBConstant.AUTHORITIES, DBConstant.TABLE_BASEINFO, TABLE_BASEINFO);
+        sUriMatcher.addURI(DBConstant.AUTHORITIES, DBConstant.TABLE_BASEINFO + "/#", TABLE_BASEINFO_ID);
     }
     @Override
     public boolean onCreate() {
@@ -49,6 +54,10 @@ public class RecordProvider extends ContentProvider {
             return DBConstant.RECORD_CONTENT_TYPE;
         case TABLE_RECORD_ID:
             return DBConstant.RECORD_CONTENT_ITEM_TYPE;
+        case TABLE_BASEINFO:
+            return DBConstant.BASEINFO_CONTENT_TYPE;
+        case TABLE_BASEINFO_ID:
+            return DBConstant.BASEINFO_CONTENT_ITEM_TYPE;
         default:
             throw new IllegalArgumentException("Unknown URI " + uri);
         }
@@ -69,6 +78,13 @@ public class RecordProvider extends ContentProvider {
                 id = ContentUris.parseId(uri);
                 c = db.query(DBConstant.TABLE_RECORD, projection, DBConstant._ID + "=" + id, selectionArgs, null, null, sortOrder);
                 break;
+            case TABLE_BASEINFO:
+                c = db.query(DBConstant.TABLE_BASEINFO, projection, selection, selectionArgs, null, null, sortOrder);
+                break;
+            case TABLE_BASEINFO_ID:
+                id = ContentUris.parseId(uri);
+                c = db.query(DBConstant.TABLE_BASEINFO, projection, DBConstant._ID + "=" + id, selectionArgs, null, null, sortOrder);
+                break;
             default:
                 throw new IllegalArgumentException("Unknown URI " + uri);
             }
@@ -88,6 +104,9 @@ public class RecordProvider extends ContentProvider {
             switch(sUriMatcher.match(uri)){
             case TABLE_RECORD:
                 id = db.insert(DBConstant.TABLE_RECORD, DBConstant.FOO, values);
+            break;
+            case TABLE_BASEINFO:
+                id = db.insert(DBConstant.TABLE_BASEINFO, DBConstant.FOO, values);
             break;
             default:
                 throw new IllegalArgumentException("Unknown URI " + uri);
@@ -116,6 +135,13 @@ public class RecordProvider extends ContentProvider {
                 id = ContentUris.parseId(uri);
                 ret = db.delete(DBConstant.TABLE_RECORD, DBConstant._ID + "=" + id, selectionArgs);
                 break;
+            case TABLE_BASEINFO:
+                ret = db.delete(DBConstant.TABLE_BASEINFO, selection, selectionArgs);
+                break;
+            case TABLE_BASEINFO_ID:
+                id = ContentUris.parseId(uri);
+                ret = db.delete(DBConstant.TABLE_BASEINFO, DBConstant._ID + "=" + id, selectionArgs);
+                break;
             default:
                 throw new IllegalArgumentException("Unknown URI " + uri);
             }
@@ -140,6 +166,13 @@ public class RecordProvider extends ContentProvider {
             case TABLE_RECORD_ID:
                 id = ContentUris.parseId(uri);
                 ret = db.update(DBConstant.TABLE_RECORD, values, DBConstant._ID + "=" + id, selectionArgs);
+                break;
+            case TABLE_BASEINFO:
+                ret = db.update(DBConstant.TABLE_BASEINFO, values, selection, selectionArgs);
+                break;
+            case TABLE_BASEINFO_ID:
+                id = ContentUris.parseId(uri);
+                ret = db.update(DBConstant.TABLE_BASEINFO, values, DBConstant._ID + "=" + id, selectionArgs);
                 break;
             default:
                 throw new IllegalArgumentException("Unknown URI " + uri);
