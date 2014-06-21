@@ -98,7 +98,7 @@ public class RecordListFragment extends ListFragment implements OnCheckedChangeL
                 mViewState = VIEW_STATE_DELETE;
                 mListAdapter.notifyDataSetChanged();
             } else if (mViewState == VIEW_STATE_DELETE) {
-                if (/*BaseInfo.checkedNumber > 0*/true) {
+                if (getCheckedCount() > 0) {
                     showConfirmDialog();
                 } else {
                     mViewState = VIEW_STATE_NORMAL;
@@ -199,5 +199,15 @@ public class RecordListFragment extends ListFragment implements OnCheckedChangeL
             intent.putExtra(DBConstant._ID, info._id);
             startActivity(intent);
         }
+    }
+
+    private int getCheckedCount() {
+        int count = 0;
+        for (BaseInfo info : mRecordList) {
+            if (info.checked) {
+                count ++;
+            }
+        }
+        return count;
     }
 }

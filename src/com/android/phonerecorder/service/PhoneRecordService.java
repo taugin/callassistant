@@ -114,6 +114,7 @@ public class PhoneRecordService extends Service {
                 c.close();
             }
         }
+        Log.d("taugin", "addOrThrowBaseInfo = id = " + _id);
         if (_id != -1) {
             ContentValues values = new ContentValues();
             values.put(DBConstant.BASEINFO_CALL_LOG_COUNT, (count + 1));
@@ -140,47 +141,47 @@ public class PhoneRecordService extends Service {
         return (int) ContentUris.parseId(uri);
     }
     private void updateRecord(int id) {
-        File file = new File(mRecordManager.getFileName());
+        String fileName = mRecordManager.getFileName();
         long size = 0;
-        if (file.exists()) {
-            size = file.length();
+        if (fileName != null) {
+            File file = new File(fileName);
+            if (file.exists()) {
+                size = file.length();
+            }
         }
-        Log.d("taugin", "file = " + file + " , size = " + size);
         ContentValues values = new ContentValues();
         values.put(DBConstant.RECORD_END, System.currentTimeMillis());
         values.put(DBConstant.RECORD_SIZE, size);
         Uri uri = ContentUris.withAppendedId(DBConstant.RECORD_URI, id);
-        getContentResolver().update(uri, values, null, null);
+        int ret = getContentResolver().update(uri, values, null, null);
     }
     private void startRecord() {
         boolean record = PreferenceManager.getDefaultSharedPreferences(this).getBoolean("key_automatic_record", true);
-        if (!record) {
-            return ;
-        }
         ensureRecordManager();
         TelephonyManager tm = (TelephonyManager) getSystemService(Service.TELEPHONY_SERVICE);
         if (tm.getCallState() == TelephonyManager.CALL_STATE_OFFHOOK && !mRecordManager.recording()) {
             long time = System.currentTimeMillis();
             int baseInfoId = addOrThrowBaseInfo(mPhoneNumber, time);
             String fileName = RecordFileManager.getInstance(PhoneRecordService.this).getProperName(mPhoneNumber, time);
-            int id = addNewRecord(baseInfoId, fileName, time, mIncomingFlag, mPhoneNumber);
+            int id = addNewRecord(baseInfoId, record ? fileName : null, time, mIncomingFlag, mPhoneNumber);
             mRecordManager.setDBId(id);
-            mRecordManager.initRecorder(fileName);
-            mRecordManager.startRecorder();
-            showNotification();
+            if (record) {
+                mRecordManager.initRecorder(fileName);
+                mRecordManager.startRecorder();
+                showNotification();
+            }
         }
     }
 
     private void stopRecord() {
         boolean record = PreferenceManager.getDefaultSharedPreferences(this).getBoolean("key_automatic_record", true);
-        if (!record) {
-            return ;
-        }
         ensureRecordManager();
-        if (mRecordManager.recording()) {
-            mRecordManager.stopRecorder();
-            updateRecord(mRecordManager.getDBId());
-            cancel();
+        updateRecord(mRecordManager.getDBId());
+        if (record) {
+            if (mRecordManager.recording()) {
+                mRecordManager.stopRecorder();
+                cancel();
+            }
         }
     }
 

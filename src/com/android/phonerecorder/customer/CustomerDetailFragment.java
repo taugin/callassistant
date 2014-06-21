@@ -46,7 +46,7 @@ public class CustomerDetailFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
         Log.d("taugin", "CustomerDetailFragment onActivityCreated mBaseId = " + mBaseId);
         mRecordList = new ArrayList<RecordInfo>();
-        mRecordList = RecordFileManager.getInstance(getActivity()).getRecordsFromDB(mRecordList, mBaseId);
+        mRecordList = RecordFileManager.getInstance(getActivity()).getRecordsFromDB(mRecordList, -1);
         mBaseInfo = RecordFileManager.getInstance(getActivity()).getSingleBaseInfo(mBaseId);
         mPhoneNumberView.setText(mBaseInfo.phoneNumber);
         mCustomerNameView.setText(mBaseInfo.baseInfoName);

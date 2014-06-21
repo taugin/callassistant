@@ -31,7 +31,7 @@ public class DBHelper extends SQLiteOpenHelper {
           + DBConstant._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
           + DBConstant.RECORD_BASEINFO_ID + " INTEGER REFERENCES " + DBConstant.TABLE_BASEINFO + "(" + DBConstant._ID + "),"
           + DBConstant.RECORD_NAME + " TEXT,"
-          + DBConstant.RECORD_FILE + " TEXT unique,"
+          + DBConstant.RECORD_FILE + " TEXT,"
           + DBConstant.RECORD_NUMBER + " TEXT,"
           + DBConstant.RECORD_FLAG + " INTEGER DEFAULT 0,"
           + DBConstant.RECORD_SIZE + " LONG DEFAULT 0,"

@@ -224,6 +224,7 @@ public class RecordFileManager {
         if (id != -1) {
             selection = DBConstant.RECORD_BASEINFO_ID + "=" + id;
         }
+        Log.d("taugin", "getRecordsFromDB selection = " + selection);
         try {
             c = mContext.getContentResolver().query(DBConstant.RECORD_URI, null, selection, null, DBConstant.RECORD_START + " DESC");
             if (c != null) {
@@ -239,7 +240,6 @@ public class RecordFileManager {
                         info.recordEnd = c.getLong(c.getColumnIndex(DBConstant.RECORD_END));
                         int flag = c.getInt(c.getColumnIndex(DBConstant.RECORD_FLAG));
                         info.incoming = flag == DBConstant.FLAG_INCOMING;
-                        Log.d("taugin", "info.recordSize = " + info.recordSize + " , info.recordEnd = " + info.recordEnd);
                         if (!recordExists(info.recordFile)) {
                             info.recordFile = null;
                         }
@@ -259,6 +259,9 @@ public class RecordFileManager {
     }
 
     private boolean recordExists(String recordFile) {
+        if (recordFile == null) {
+            return false;
+        }
         File file = new File(recordFile);
         if (file.exists()) {
             return true;

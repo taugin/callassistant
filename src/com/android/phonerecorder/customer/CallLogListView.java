@@ -61,6 +61,7 @@ public class CallLogListView extends LinearLayout implements OnCheckedChangeList
         mImageList.clear();
         int index = 0;
         RecordInfo info = null;
+        Log.d("taugin", "setCallLogList size = " + list.size());
         while (index < list.size()) {
             info = list.get(index);
             View view = LayoutInflater.from(getContext()).inflate(R.layout.call_log_item, null);
@@ -97,7 +98,7 @@ public class CallLogListView extends LinearLayout implements OnCheckedChangeList
         }
         String sHour = hour > 0 ? hour + "h" : "";
         String sMin = min > 0 ? min + "m" : "";
-        String sSec = sec > 0 ? sec + "s" : "";
+        String sSec = sec + "s";
         return String.valueOf(sHour + sMin + sSec);
     }
     @Override
