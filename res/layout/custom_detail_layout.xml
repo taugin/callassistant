@@ -28,13 +28,14 @@
             <View style="@style/vertical_line" />
 
             <LinearLayout
+                android:id="@+id/dial_number"
                 android:layout_width="56dp"
                 android:layout_height="56dp"
                 android:layout_weight="0"
+                android:background="?android:attr/selectableItemBackground"
                 android:gravity="center" >
 
                 <ImageView
-                    android:id="@+id/dial_number"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:src="@drawable/ic_dial_number" />
@@ -52,7 +53,7 @@
                 style="@style/customer_detail_label"
                 android:text="@string/customer_name" />
 
-            <TextView
+            <EditText
                 android:id="@+id/customer_name"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
@@ -64,13 +65,14 @@
             <View style="@style/vertical_line" />
 
             <LinearLayout
+                android:id="@+id/edit_save"
                 android:layout_width="56dp"
                 android:layout_height="56dp"
                 android:layout_weight="0"
+                android:background="?android:attr/selectableItemBackground"
                 android:gravity="center" >
 
                 <ImageView
-                    android:id="@+id/edit"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:src="@drawable/ic_edit" />

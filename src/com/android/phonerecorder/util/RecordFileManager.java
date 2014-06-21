@@ -152,7 +152,36 @@ public class RecordFileManager {
     }
 
     public void deleteBaseInfoFromDB(ArrayList<BaseInfo> list) {
-        
+        if (list == null || list.size() == 0) {
+            return ;
+        }
+        StringBuilder builder = new StringBuilder();
+        builder.append("(");
+        for (BaseInfo info : list) {
+            if (info.checked) {
+                builder.append(info._id);
+                builder.append(",");
+            }
+        }
+        builder.append(")");
+        builder.deleteCharAt(builder.length() - 2);
+        String area = builder.toString();
+        String whereBaseInfo = DBConstant._ID + " IN " + area;
+        Log.d("taugin", "deleteBaseInfoFromDB where = " + whereBaseInfo);
+        mContext.getContentResolver().delete(DBConstant.BASEINFO_URI, whereBaseInfo, null);
+        String whereRecord = DBConstant.RECORD_BASEINFO_ID + " IN " + area;
+        Log.d("taugin", "deleteBaseInfoFromDB where = " + whereRecord);
+        ArrayList<RecordInfo> list2 = queryRecordFiles(whereRecord);
+        mContext.getContentResolver().delete(DBConstant.RECORD_URI, whereRecord, null);
+        for (RecordInfo info : list2) {
+            deleteRecordFile(info.recordFile);
+        }
+        for (int index = list.size() - 1; index >=0; index--) {
+            BaseInfo info = list.get(index);
+            if (info.checked) {
+                list.remove(index);
+            }
+        }
     }
 
     public BaseInfo getSingleBaseInfo(int id) {
@@ -258,6 +287,31 @@ public class RecordFileManager {
         return list;
     }
 
+    private ArrayList<RecordInfo> queryRecordFiles(String selection) {
+        Cursor c = null;
+        ArrayList<RecordInfo> list = null;
+        try {
+            c = mContext.getContentResolver().query(DBConstant.RECORD_URI, null, selection, null, null);
+            if (c != null) {
+                if (c.moveToFirst()) {
+                    RecordInfo info = null;
+                    list = new ArrayList<RecordInfo>();
+                    do {
+                        info = new RecordInfo();
+                        info.recordFile = c.getString(c.getColumnIndex(DBConstant.RECORD_FILE));
+                        list.add(info);
+                    } while(c.moveToNext());
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (c != null) {
+                c.close();
+            }
+        }
+        return list;
+    }
     private boolean recordExists(String recordFile) {
         if (recordFile == null) {
             return false;

@@ -46,6 +46,7 @@ public class CallLogListView extends LinearLayout implements OnCheckedChangeList
         mCallLogContainer = (LinearLayout) view.findViewById(R.id.calllog_container);
         mCheckBox = (CheckBox) view.findViewById(R.id.call_log_show_control);
         mCheckBox.setOnCheckedChangeListener(this);
+        mCheckBox.setChecked(true);
         mCallLogContainer.setVisibility(mCheckBox.isChecked() ? View.VISIBLE : View.GONE);
         mRecordPlayer = RecordPlayer.getInstance(getContext());
         mRecordPlayer.setOnCompletionListener(this);

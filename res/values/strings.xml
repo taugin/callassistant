@@ -22,4 +22,6 @@
     <string name="customer_state">State :</string>
     <string name="call_log">Calllog :</string>
     <string name="call_log_count">call logs</string>
+    <string name="save_success">Saved Successfully</string>
+    <string name="save_failure">Saved failure</string>
 </resources>
