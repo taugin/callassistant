@@ -12,18 +12,26 @@ import android.util.Log;
 
 public class RecordManager {
     private MediaRecorder mMediaRecorder;
-    private String mPhoneNumber;
     private boolean mRecording;
     private boolean mIncomingFlag;
+    private String mFileName = null;
+    private int mCurDBId;
     
     private Context mContext;
-    public RecordManager(Context c) {
-        mContext = c;
-        mRecording = false;
+    private static RecordManager sRecordManager;
+    public static RecordManager getInstance(Context context) {
+        if (sRecordManager == null) {
+            sRecordManager = new RecordManager(context);
+        }
+        return sRecordManager;
     }
-    public synchronized void initRecorder(String phoneNumber, boolean incomingFlag) {
-        mPhoneNumber = phoneNumber;
+    private RecordManager(Context c) {
+        mContext = c;
         mMediaRecorder = new MediaRecorder();
+    }
+    public synchronized void initRecorder(String fileName) {
+        mFileName = fileName;
+        mRecording = false;
         mMediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
         mMediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.RAW_AMR);
         mMediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
@@ -31,7 +39,6 @@ public class RecordManager {
         if (!recordDir.exists()) {
             recordDir.mkdirs();
         }
-        String fileName = RecordFileManager.getInstance(mContext).getProperName(mPhoneNumber, incomingFlag);
         mMediaRecorder.setOutputFile(fileName);
         logv("prepare recorder file : " + fileName);
         try {
@@ -57,12 +64,23 @@ public class RecordManager {
             logv("stopRecorder");
             mMediaRecorder.stop();
             mMediaRecorder.reset();
-            mMediaRecorder.release();
+//            mMediaRecorder.release();
             mRecording = false;
-            mMediaRecorder = null;
         }
     }
-    
+
+    public void setDBId(int id) {
+        mCurDBId = id;
+    }
+
+    public int getDBId() {
+        return mCurDBId;
+    }
+
+    public String getFileName() {
+        return mFileName;
+    }
+
     public boolean recording() {
         return mRecording;
     }

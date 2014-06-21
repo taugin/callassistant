@@ -1,5 +1,6 @@
 package com.android.phonerecorder.service;
 
+import java.io.File;
 import java.util.List;
 
 import android.app.ActivityManager;
@@ -8,7 +9,10 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.Service;
 import android.content.ComponentName;
+import android.content.ContentUris;
+import android.content.ContentValues;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Handler;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
@@ -17,6 +21,7 @@ import android.telephony.TelephonyManager;
 import android.util.Log;
 
 import com.android.phonerecorder.R;
+import com.android.phonerecorder.provider.DBConstant;
 import com.android.phonerecorder.util.Constant;
 
 public class PhoneRecordService extends Service {
@@ -39,7 +44,7 @@ public class PhoneRecordService extends Service {
     public void onCreate() {
         super.onCreate();
         logv("onCreate");
-        mRecordManager = new RecordManager(this);
+        mRecordManager = RecordManager.getInstance(this);
         mHandler = new Handler();
         mTelephonyManager = (TelephonyManager) getSystemService(Service.TELEPHONY_SERVICE);
         mTelephonyManager.listen(mPhoneStateListener, PhoneStateListener.LISTEN_CALL_STATE);
@@ -89,14 +94,42 @@ public class PhoneRecordService extends Service {
         }
     };
 
+    private int addNewRecord(String fileName, long timeStart, boolean incoming, String phoneNumber) {
+        ContentValues values = new ContentValues();
+        values.put(DBConstant.RECORD_NAME, "record_" + phoneNumber + ".amr");
+        values.put(DBConstant.RECORD_FILE, fileName);
+        values.put(DBConstant.RECORD_NUMBER, phoneNumber);
+        values.put(DBConstant.RECORD_FLAG, incoming ? DBConstant.FLAG_INCOMING : DBConstant.FLAG_OUTGOING);
+        values.put(DBConstant.RECORD_START, timeStart);
+        Uri uri = getContentResolver().insert(DBConstant.RECORD_URI, values);
+        return (int) ContentUris.parseId(uri);
+    }
+    private void updateRecord(int id) {
+        File file = new File(mRecordManager.getFileName());
+        long size = 0;
+        if (file.exists()) {
+            size = file.length();
+        }
+        Log.d("taugin", "file = " + file + " , size = " + size);
+        ContentValues values = new ContentValues();
+        values.put(DBConstant.RECORD_END, System.currentTimeMillis());
+        values.put(DBConstant.RECORD_SIZE, size);
+        Uri uri = ContentUris.withAppendedId(DBConstant.RECORD_URI, id);
+        getContentResolver().update(uri, values, null, null);
+    }
     private void startRecord() {
         boolean record = PreferenceManager.getDefaultSharedPreferences(this).getBoolean("key_automatic_record", true);
         if (!record) {
             return ;
         }
+        ensureRecordManager();
         TelephonyManager tm = (TelephonyManager) getSystemService(Service.TELEPHONY_SERVICE);
         if (tm.getCallState() == TelephonyManager.CALL_STATE_OFFHOOK && !mRecordManager.recording()) {
-            mRecordManager.initRecorder(mPhoneNumber, mIncomingFlag);
+            long time = System.currentTimeMillis();
+            String fileName = RecordFileManager.getInstance(PhoneRecordService.this).getProperName(mPhoneNumber, time);
+            int id = addNewRecord(fileName, time, mIncomingFlag, mPhoneNumber);
+            mRecordManager.setDBId(id);
+            mRecordManager.initRecorder(fileName);
             mRecordManager.startRecorder();
             showNotification();
         }
@@ -107,12 +140,19 @@ public class PhoneRecordService extends Service {
         if (!record) {
             return ;
         }
+        ensureRecordManager();
         if (mRecordManager.recording()) {
             mRecordManager.stopRecorder();
+            updateRecord(mRecordManager.getDBId());
             cancel();
         }
     }
 
+    private void ensureRecordManager() {
+        if (mRecordManager == null) {
+            mRecordManager = RecordManager.getInstance(this);
+        }
+    }
     private boolean topIncallScreen() {
         ActivityManager am = (ActivityManager) getSystemService(Service.ACTIVITY_SERVICE);
         if (am == null) {

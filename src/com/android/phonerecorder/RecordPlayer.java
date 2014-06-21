@@ -40,7 +40,7 @@ public class RecordPlayer implements OnCompletionListener, OnErrorListener {
             return ;
         }
         try {
-            String fileName = RecordFileManager.getInstance(mContext).getRecordFolder() + "/" + mCurRecordInfo.fileName;
+            String fileName = mCurRecordInfo.recordFile;
             mMediaPlayer.setDataSource(fileName);
             mMediaPlayer.setOnCompletionListener(this);
             mMediaPlayer.setOnErrorListener(this);

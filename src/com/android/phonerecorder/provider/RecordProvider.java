@@ -82,6 +82,7 @@ public class RecordProvider extends ContentProvider {
     @Override
     public Uri insert(Uri uri, ContentValues values) {
         SQLiteDatabase db = mDBHelper.getReadableDatabase();
+        Log.d("taugin", "insert uri = " + uri);
         long id = -1;
         try{
             switch(sUriMatcher.match(uri)){
@@ -92,11 +93,12 @@ public class RecordProvider extends ContentProvider {
                 throw new IllegalArgumentException("Unknown URI " + uri);
             }
         }catch(SQLException e){
-            Log.e(TAG, "The item has inserted into the database ! : " + e.getLocalizedMessage());
+            Log.e("taugin", "The item has inserted into the database ! : " + e.getLocalizedMessage());
             Uri resultUri = ContentUris.withAppendedId(uri, 0);
             return resultUri;
         }
         Uri resultUri = ContentUris.withAppendedId(uri, id);
+        Log.d("taugin", "resultUri = " + resultUri);
         return resultUri;
     }
 
@@ -136,6 +138,7 @@ public class RecordProvider extends ContentProvider {
                 ret = db.update(DBConstant.TABLE_RECORD, values, selection, selectionArgs);
                 break;
             case TABLE_RECORD_ID:
+                id = ContentUris.parseId(uri);
                 ret = db.update(DBConstant.TABLE_RECORD, values, DBConstant._ID + "=" + id, selectionArgs);
                 break;
             default:

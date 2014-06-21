@@ -88,7 +88,7 @@ public class RecordListFragment extends ListFragment implements OnCheckedChangeL
     }
 
     private void updateUI() {
-        mRecordList = RecordFileManager.getInstance(getActivity()).listRecordFiles(mRecordList);
+        mRecordList = RecordFileManager.getInstance(getActivity()).getRecordsFromDB(mRecordList);
         mListAdapter.notifyDataSetChanged();
     }
 
@@ -189,13 +189,13 @@ public class RecordListFragment extends ListFragment implements OnCheckedChangeL
             }
             RecordInfo info = getItem(position);
             viewHolder.mediaControl.getDrawable().setLevel(!info.play ? 0 : 1);
-            viewHolder.fileName.setText(TextUtils.isEmpty(info.displayName) ? info.fileName : info.displayName);
-            viewHolder.fileSize.setText(byteToString(info.fileSize));
+            viewHolder.fileName.setText(TextUtils.isEmpty(info.recordName) ? info.recordFile : info.recordName);
+            viewHolder.fileSize.setText(byteToString(info.recordSize));
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            viewHolder.fileTime.setText(sdf.format(new Date(info.fileCreateTime)));
+            viewHolder.fileTime.setText(sdf.format(new Date(info.recordStart)));
             int resId = info.incoming ? R.drawable.ic_incoming : R.drawable.ic_outgoing;
             viewHolder.timeDuration.setCompoundDrawablesWithIntrinsicBounds(resId, 0, 0, 0);
-            viewHolder.timeDuration.setText(getTimeExperence(info.fileLastTime - info.fileCreateTime));
+            viewHolder.timeDuration.setText(getTimeExperence(info.recordEnd - info.recordStart));
             viewHolder.checkBox.setChecked(info.checked);
             if (mViewState == VIEW_STATE_NORMAL) {
                 viewHolder.checkBox.setVisibility(View.GONE);
