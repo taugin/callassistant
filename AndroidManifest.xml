@@ -48,6 +48,10 @@
                 <action android:name="android.intent.action.PHONE_STATE" />
             </intent-filter>
         </receiver>
+        <provider
+            android:name="com.android.phonerecorder.provider.RecordProvider"
+            android:authorities="com.android.phonerecorder"
+            />
     </application>
 
 </manifest>
