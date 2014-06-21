@@ -17,4 +17,8 @@
     <string name="hide">Hide</string>
     <string name="filename">FileName</string>
     <string name="confirm_message">Confirm Delete ?</string>
+    <string name="customer_number">Phone :</string>
+    <string name="customer_name">Name :</string>
+    <string name="customer_state">State :</string>
+    <string name="call_log">Calllog :</string>
 </resources>

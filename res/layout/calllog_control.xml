@@ -1,0 +1,39 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+
+        <TextView
+            style="@style/calllog_label"
+            android:text="@string/call_log" />
+
+        <View style="@style/vertical_line" />
+
+        <LinearLayout
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:layout_weight="0"
+            android:gravity="center" >
+
+            <CheckBox
+                android:id="@+id/call_log_show_control"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:button="@drawable/calllog_control_selector" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <View style="@style/horizontal_line" />
+
+    <LinearLayout
+        android:id="@+id/calllog_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" />
+
+</LinearLayout>

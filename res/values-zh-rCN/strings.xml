@@ -17,4 +17,8 @@
     <string name="hide">隐藏</string>
     <string name="filename">文件名</string>
     <string name="confirm_message">确认删除 ?</string>
+    <string name="customer_number">电话 :</string>
+    <string name="customer_name">姓名 :</string>
+    <string name="customer_state">状态 :</string>
+    <string name="call_log">通话记录 :</string>
 </resources>
