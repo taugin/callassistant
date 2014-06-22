@@ -7,6 +7,19 @@
     <string name="hello_world">Hello world!</string>
     <string name="ok">Ok</string>
     <string name="cancel">Cancel</string>
+    <string name="warning_tone">黑名单提示音</string>
+    <string-array name="warnig_tone_show">
+        <item>空号</item>
+        <item>停机</item>
+        <item>关机</item>
+        <item>忙机</item>
+    </string-array>
+    <string-array name="warning_tone_value">
+        <item>empty</item>
+        <item>stop</item>
+        <item>shutdown</item>
+        <item>busy</item>
+    </string-array>
 
     <string name="recording">Recording...</string>
     <string name="automatic_record">Automatic Record</string>

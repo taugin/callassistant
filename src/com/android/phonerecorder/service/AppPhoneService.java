@@ -14,8 +14,10 @@ import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.telephony.TelephonyManager;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.android.phonerecorder.R;
+import com.android.phonerecorder.manager.BlackNameManager;
 import com.android.phonerecorder.manager.CallManager;
 import com.android.phonerecorder.manager.RecordManager;
 import com.android.phonerecorder.util.Constant;
@@ -66,6 +68,10 @@ public class AppPhoneService extends Service {
             mPhoneNumber = intent.getStringExtra(Constant.EXTRA_PHONE_NUMBER);
             int state = intent.getIntExtra(Constant.EXTRA_PHONE_STATE, TelephonyManager.CALL_STATE_IDLE);
             //mHandler.postDelayed(mMonitorIncallScreen, DELAY_TIME);
+            if (mPhoneNumber.equals("15261828876")) {
+                CallManager.getInstance(getBaseContext()).endCall();
+                Toast.makeText(getBaseContext(), "∫≈¬Î“—¿πΩÿ : " + mPhoneNumber, Toast.LENGTH_LONG).show();
+            }
             onCallStateChanged(state);
             logv((mIncomingFlag ? "Incoming PhoneNumber" : "Outgoing PhoneNumber") + " : " + mPhoneNumber);
         } else if (Constant.ACTION_OUTGOING_PHONE.equals(intent.getAction())) {

@@ -8,4 +8,10 @@
         android:summaryOff="@string/off"
         android:summaryOn="@string/on"
         android:title="@string/automatic_record" />
+    <ListPreference
+        android:key="key_warning_tone"
+        android:title="@string/warning_tone"
+        android:entries="@array/warnig_tone_show"
+        android:entryValues="@array/warning_tone_value"
+        android:defaultValue="busy"/>
 </PreferenceScreen>
