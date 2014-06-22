@@ -12,8 +12,8 @@ import android.os.Environment;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.android.phonerecorder.BaseInfo;
-import com.android.phonerecorder.RecordInfo;
+import com.android.phonerecorder.info.BaseInfo;
+import com.android.phonerecorder.info.RecordInfo;
 import com.android.phonerecorder.provider.DBConstant;
 
 public class RecordFileManager {

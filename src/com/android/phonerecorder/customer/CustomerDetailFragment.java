@@ -21,9 +21,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.phonerecorder.BaseInfo;
 import com.android.phonerecorder.R;
-import com.android.phonerecorder.RecordInfo;
+import com.android.phonerecorder.info.BaseInfo;
+import com.android.phonerecorder.info.RecordInfo;
 import com.android.phonerecorder.provider.DBConstant;
 import com.android.phonerecorder.util.RecordFileManager;
 

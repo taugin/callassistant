@@ -1,4 +1,4 @@
-package com.android.phonerecorder;
+package com.android.phonerecorder.customer;
 
 import java.util.ArrayList;
 
@@ -24,8 +24,14 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.android.phonerecorder.customer.CustomerDetailActivity;
+import com.android.phonerecorder.R;
+import com.android.phonerecorder.R.id;
+import com.android.phonerecorder.R.layout;
+import com.android.phonerecorder.R.menu;
+import com.android.phonerecorder.R.string;
+import com.android.phonerecorder.info.BaseInfo;
 import com.android.phonerecorder.provider.DBConstant;
+import com.android.phonerecorder.settings.AppSettings;
 import com.android.phonerecorder.util.RecordFileManager;
 
 public class RecordListFragment extends ListFragment implements OnCheckedChangeListener, OnClickListener {
@@ -107,7 +113,7 @@ public class RecordListFragment extends ListFragment implements OnCheckedChangeL
             }
             break;
         case R.id.action_settings: {
-            Intent intent = new Intent(getActivity(), PhoneRecordSettings.class);
+            Intent intent = new Intent(getActivity(), AppSettings.class);
             getActivity().startActivity(intent);;
         }
             break;

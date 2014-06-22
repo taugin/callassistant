@@ -18,16 +18,16 @@ import android.widget.TextView;
 import android.view.View.OnClickListener;
 
 import com.android.phonerecorder.R;
-import com.android.phonerecorder.RecordInfo;
-import com.android.phonerecorder.RecordPlayer;
-import com.android.phonerecorder.RecordPlayer.OnCompletionListener;
+import com.android.phonerecorder.info.RecordInfo;
+import com.android.phonerecorder.manager.RecordPlayerManager;
+import com.android.phonerecorder.manager.RecordPlayerManager.OnCompletionListener;
 
 public class CallLogListView extends LinearLayout implements OnCheckedChangeListener, OnClickListener, OnCompletionListener {
 
     private CheckBox mCheckBox;
     private LinearLayout mCallLogContainer;
     private ArrayList<ImageView> mImageList;
-    private RecordPlayer mRecordPlayer;
+    private RecordPlayerManager mRecordPlayer;
     public CallLogListView(Context context) {
         super(context, null);
     }
@@ -48,7 +48,7 @@ public class CallLogListView extends LinearLayout implements OnCheckedChangeList
         mCheckBox.setOnCheckedChangeListener(this);
         mCheckBox.setChecked(true);
         mCallLogContainer.setVisibility(mCheckBox.isChecked() ? View.VISIBLE : View.GONE);
-        mRecordPlayer = RecordPlayer.getInstance(getContext());
+        mRecordPlayer = RecordPlayerManager.getInstance(getContext());
         mRecordPlayer.setOnCompletionListener(this);
     }
     @Override

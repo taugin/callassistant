@@ -1,4 +1,4 @@
-package com.android.phonerecorder;
+package com.android.phonerecorder.info;
 
 public class RecordInfo implements Comparable<RecordInfo> {
     public static int checkedNumber = 0;

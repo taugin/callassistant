@@ -1,4 +1,4 @@
-package com.android.phonerecorder;
+package com.android.phonerecorder.customer;
 
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -28,7 +28,16 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.android.phonerecorder.RecordPlayer.OnCompletionListener;
+import com.android.phonerecorder.R;
+import com.android.phonerecorder.R.drawable;
+import com.android.phonerecorder.R.id;
+import com.android.phonerecorder.R.layout;
+import com.android.phonerecorder.R.menu;
+import com.android.phonerecorder.R.string;
+import com.android.phonerecorder.info.RecordInfo;
+import com.android.phonerecorder.manager.RecordPlayerManager;
+import com.android.phonerecorder.manager.RecordPlayerManager.OnCompletionListener;
+import com.android.phonerecorder.settings.AppSettings;
 import com.android.phonerecorder.util.RecordFileManager;
 
 public class CopyOfRecordListFragment extends ListFragment implements OnCheckedChangeListener, OnClickListener, OnCompletionListener {
@@ -37,7 +46,7 @@ public class CopyOfRecordListFragment extends ListFragment implements OnCheckedC
     private static final int VIEW_STATE_DELETE = 1;
     private RecordListAdapter mListAdapter;
     private ArrayList<RecordInfo> mRecordList;
-    private RecordPlayer mRecordPlayer;
+    private RecordPlayerManager mRecordPlayer;
     private int mViewState;
     private AlertDialog mAlertDialog;
 
@@ -46,7 +55,7 @@ public class CopyOfRecordListFragment extends ListFragment implements OnCheckedC
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-        mRecordPlayer = RecordPlayer.getInstance(getActivity());
+        mRecordPlayer = RecordPlayerManager.getInstance(getActivity());
         mRecordPlayer.setOnCompletionListener(this);
         mViewState = VIEW_STATE_NORMAL;
     }
@@ -115,7 +124,7 @@ public class CopyOfRecordListFragment extends ListFragment implements OnCheckedC
             }
             break;
         case R.id.action_settings: {
-            Intent intent = new Intent(getActivity(), PhoneRecordSettings.class);
+            Intent intent = new Intent(getActivity(), AppSettings.class);
             getActivity().startActivity(intent);;
         }
             break;

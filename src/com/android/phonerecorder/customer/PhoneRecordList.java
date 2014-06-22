@@ -1,4 +1,7 @@
-package com.android.phonerecorder;
+package com.android.phonerecorder.customer;
+
+import com.android.phonerecorder.R;
+import com.android.phonerecorder.R.layout;
 
 import android.app.Activity;
 import android.os.Bundle;
