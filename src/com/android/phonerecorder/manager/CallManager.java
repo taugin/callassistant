@@ -14,6 +14,7 @@ public class CallManager {
 
     public static CallManager sCallManager = null;
     private Context mContext;
+    private ITelephony telephony;
     
     public static CallManager getInstance(Context context) {
         if (sCallManager == null) {
@@ -23,26 +24,30 @@ public class CallManager {
     }
     private CallManager(Context context) {
         mContext = context;
-    }
-
-    public void endCall() {
-        Log.d("taugin", "CallManager endCall");
         try {
             Method method = Class.forName("android.os.ServiceManager").getMethod("getService", String.class);
             IBinder binder = (IBinder)method.invoke(null, new Object[]{Context.TELEPHONY_SERVICE});
-            ITelephony telephony = ITelephony.Stub.asInterface(binder);
-            telephony.endCall();
+            telephony = ITelephony.Stub.asInterface(binder);
         } catch (NoSuchMethodException e) {
             Log.d("taugin", e.getLocalizedMessage());
         } catch (ClassNotFoundException e) {
-            Log.d("taugin", e.getLocalizedMessage());
-        } catch (RemoteException e) {
             Log.d("taugin", e.getLocalizedMessage());
         } catch (IllegalAccessException e) {
             Log.d("taugin", e.getLocalizedMessage());
         } catch (IllegalArgumentException e) {
             Log.d("taugin", e.getLocalizedMessage());
         } catch (InvocationTargetException e) {
+            Log.d("taugin", e.getLocalizedMessage());
+        }
+    }
+
+    public void endCall() {
+        Log.d("taugin", "CallManager endCall");
+        try {
+            telephony.endCall();
+        } catch (RemoteException e) {
+            Log.d("taugin", e.getLocalizedMessage());
+        } catch (IllegalArgumentException e) {
             Log.d("taugin", e.getLocalizedMessage());
         }
     }

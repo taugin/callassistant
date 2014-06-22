@@ -22,5 +22,4 @@ public class CustomerDetailActivity extends Activity {
         }
         Log.d("taugin", "CustomerDetailActivity onCreate");
     }
-
 }

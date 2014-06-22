@@ -60,6 +60,11 @@ public class CustomerDetailFragment extends Fragment implements OnClickListener,
         super.onActivityCreated(savedInstanceState);
         Log.d("taugin", "CustomerDetailFragment onActivityCreated mBaseId = " + mBaseId);
         mRecordList = new ArrayList<RecordInfo>();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
         mRecordList = RecordFileManager.getInstance(getActivity()).getRecordsFromDB(mRecordList, mBaseId);
         mBaseInfo = RecordFileManager.getInstance(getActivity()).getSingleBaseInfo(mBaseId);
         mPhoneNumberView.setText(mBaseInfo.phoneNumber);

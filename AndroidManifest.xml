@@ -42,6 +42,7 @@
             <intent-filter>
                 <action android:name="com.android.phonerecorder.action.INCOMING_PHONE" />
                 <action android:name="com.android.phonerecorder.action.OUTGOING_PHONE" />
+                <action android:name="com.android.phonerecorder.action.PHONE_STATE" />
             </intent-filter>
         </service>
 

@@ -28,6 +28,11 @@ public class CallStateReceiver extends BroadcastReceiver {
                 Intent serviceIntent = new Intent(Constant.ACTION_INCOMING_PHONE);
                 String incomingNumber = intent.getStringExtra(TelephonyManager.EXTRA_INCOMING_NUMBER);
                 serviceIntent.putExtra(Constant.EXTRA_PHONE_NUMBER, incomingNumber);
+                serviceIntent.putExtra(Constant.EXTRA_PHONE_STATE, tm.getCallState());
+                context.startService(serviceIntent);
+            } else {
+                Intent serviceIntent = new Intent(Constant.ACTION_PHONE_STATE);
+                serviceIntent.putExtra(Constant.EXTRA_PHONE_STATE, tm.getCallState());
                 context.startService(serviceIntent);
             }
         }
