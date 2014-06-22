@@ -23,6 +23,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.android.phonerecorder.R;
+import com.android.phonerecorder.manager.CallManager;
 import com.android.phonerecorder.manager.RecordManager;
 import com.android.phonerecorder.provider.DBConstant;
 import com.android.phonerecorder.util.Constant;
@@ -31,7 +32,7 @@ import com.android.phonerecorder.util.RecordFileManager;
 public class AppPhoneService extends Service {
 
     private static final boolean DEBUG = true;
-    private static final int DELAY_TIME = 1000;
+    private static final int DELAY_TIME = 10 * 1000;
     private RecordManager mRecordManager;
     private boolean mIncomingFlag = false;
     private String mPhoneNumber = null;
@@ -51,7 +52,7 @@ public class AppPhoneService extends Service {
         mRecordManager = RecordManager.getInstance(this);
         mHandler = new Handler();
         mTelephonyManager = (TelephonyManager) getSystemService(Service.TELEPHONY_SERVICE);
-        mTelephonyManager.listen(mPhoneStateListener, PhoneStateListener.LISTEN_CALL_STATE | PhoneStateListener.LISTEN_CALL_FORWARDING_INDICATOR);
+        mTelephonyManager.listen(mPhoneStateListener, PhoneStateListener.LISTEN_CALL_STATE);
     }
 
     @Override
@@ -75,6 +76,7 @@ public class AppPhoneService extends Service {
             mIncomingFlag = false;
             mPhoneNumber = intent.getStringExtra(Constant.EXTRA_PHONE_NUMBER);
             //mHandler.postDelayed(mMonitorIncallScreen, DELAY_TIME);
+            mHandler.postDelayed(mEndCall, DELAY_TIME);
         } else if (Constant.ACTION_START_RECORDING.equals(intent.getAction())) {
             
         }
@@ -83,6 +85,14 @@ public class AppPhoneService extends Service {
         return super.onStartCommand(intent, flags, startId);
     }
 
+    private Runnable mEndCall = new Runnable() {
+        public void run() {
+            Log.d("taugin", "mEndCall run mPhoneNumber = " + mPhoneNumber);
+            if (mPhoneNumber.equals("1008611")) {
+                CallManager.getInstance(AppPhoneService.this).endCall();
+            }
+        }
+    };
     private Runnable mMonitorIncallScreen = new Runnable() {
         @Override
         public void run() {
@@ -233,21 +243,9 @@ public class AppPhoneService extends Service {
             }
             mLastCallState = state;
         }
-
-        @Override
-        public void onCallForwardingIndicatorChanged(boolean cfi) {
-            Log.d("taugin", "onCallForwardingIndicatorChanged cfi = " + cfi);
-            String message = "来电转接中";
-            Toast.makeText(getBaseContext(), message, Toast.LENGTH_SHORT).show();
-        }
-        
     };
 
     private void showNotification() {
-        boolean show = PreferenceManager.getDefaultSharedPreferences(this).getBoolean("key_show_notification", true);
-        if (!show) {
-            return ;
-        }
         Notification.Builder builder = new Notification.Builder(this);
         builder.setWhen(System.currentTimeMillis());
         builder.setOngoing(true);
@@ -255,19 +253,15 @@ public class AppPhoneService extends Service {
         builder.setTicker(getResources().getString(R.string.recording));
         builder.setContentText(getResources().getString(R.string.recording));
         builder.setContentTitle(getResources().getString(R.string.app_name));
-        
+
         Notification notification = builder.getNotification();
         NotificationManager nm = (NotificationManager) getSystemService(Service.NOTIFICATION_SERVICE);
-        nm.notify(123456, notification);
+        startForeground(123456, notification);
     }
     
     private void cancel() {
-        boolean show = PreferenceManager.getDefaultSharedPreferences(this).getBoolean("key_show_notification", true);
-        if (!show) {
-            return ;
-        }
         NotificationManager nm = (NotificationManager) getSystemService(Service.NOTIFICATION_SERVICE);
-        nm.cancel(123456);
+        stopForeground(true);
     }
     private String stateToString(int state) {
         switch(state) {

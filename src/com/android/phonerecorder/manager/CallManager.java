@@ -3,11 +3,12 @@ package com.android.phonerecorder.manager;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-import com.android.internal.telephony.ITelephony;
-
 import android.content.Context;
 import android.os.IBinder;
 import android.os.RemoteException;
+import android.util.Log;
+
+import com.android.internal.telephony.ITelephony;
 
 public class CallManager {
 
@@ -25,23 +26,24 @@ public class CallManager {
     }
 
     public void endCall() {
+        Log.d("taugin", "CallManager endCall");
         try {
             Method method = Class.forName("android.os.ServiceManager").getMethod("getService", String.class);
             IBinder binder = (IBinder)method.invoke(null, new Object[]{Context.TELEPHONY_SERVICE});
             ITelephony telephony = ITelephony.Stub.asInterface(binder);
             telephony.endCall();
         } catch (NoSuchMethodException e) {
-            e.printStackTrace();
+            Log.d("taugin", e.getLocalizedMessage());
         } catch (ClassNotFoundException e) {
-            e.printStackTrace();
+            Log.d("taugin", e.getLocalizedMessage());
         } catch (RemoteException e) {
-            e.printStackTrace();
+            Log.d("taugin", e.getLocalizedMessage());
         } catch (IllegalAccessException e) {
-            e.printStackTrace();
+            Log.d("taugin", e.getLocalizedMessage());
         } catch (IllegalArgumentException e) {
-            e.printStackTrace();
+            Log.d("taugin", e.getLocalizedMessage());
         } catch (InvocationTargetException e) {
-            e.printStackTrace();
+            Log.d("taugin", e.getLocalizedMessage());
         }
     }
 }

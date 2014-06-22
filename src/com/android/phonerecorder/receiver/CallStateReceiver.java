@@ -5,9 +5,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.telephony.TelephonyManager;
 
+import com.android.phonerecorder.manager.CallManager;
 import com.android.phonerecorder.util.Constant;
 
-public class PhoneRecorderReceiver extends BroadcastReceiver {
+public class CallStateReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {

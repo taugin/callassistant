@@ -3,7 +3,6 @@
     android:layout_height="wrap_content"
     android:descendantFocusability="afterDescendants"
     >
-
     <ImageView
         android:id="@+id/media_control"
         android:layout_width="wrap_content"

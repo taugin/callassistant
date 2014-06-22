@@ -45,7 +45,7 @@
             </intent-filter>
         </service>
 
-        <receiver android:name="com.android.phonerecorder.receiver.PhoneRecorderReceiver" >
+        <receiver android:name="com.android.phonerecorder.receiver.CallStateReceiver" >
             <intent-filter>
                 <action android:name="android.intent.action.NEW_OUTGOING_CALL" />
                 <action android:name="android.intent.action.PHONE_STATE" />

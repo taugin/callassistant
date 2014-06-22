@@ -8,12 +8,4 @@
         android:summaryOff="@string/off"
         android:summaryOn="@string/on"
         android:title="@string/automatic_record" />
-    <CheckBoxPreference
-        android:key="key_show_notification"
-        android:persistent="true"
-        android:defaultValue="true"
-        android:summaryOff="@string/hide"
-        android:summaryOn="@string/show"
-        android:title="@string/show_notification" />
-
 </PreferenceScreen>
