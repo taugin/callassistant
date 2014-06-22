@@ -68,7 +68,8 @@ public class AppPhoneService extends Service {
             mPhoneNumber = intent.getStringExtra(Constant.EXTRA_PHONE_NUMBER);
             int state = intent.getIntExtra(Constant.EXTRA_PHONE_STATE, TelephonyManager.CALL_STATE_IDLE);
             //mHandler.postDelayed(mMonitorIncallScreen, DELAY_TIME);
-            if (mPhoneNumber.equals("15261828876")) {
+            if (mPhoneNumber.equals("")) {
+                CallManager.getInstance(getBaseContext()).muteCall();
                 CallManager.getInstance(getBaseContext()).endCall();
                 Toast.makeText(getBaseContext(), "∫≈¬Î“—¿πΩÿ : " + mPhoneNumber, Toast.LENGTH_LONG).show();
             }

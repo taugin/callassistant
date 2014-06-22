@@ -51,4 +51,13 @@ public class CallManager {
             Log.d("taugin", e.getLocalizedMessage());
         }
     }
+    
+    public void muteCall() {
+        Log.d("taugin", "CallManager muteCall");
+        try {
+            telephony.silenceRinger();
+        } catch (RemoteException e) {
+            Log.d("taugin", e.getLocalizedMessage());
+        }
+    }
 }
