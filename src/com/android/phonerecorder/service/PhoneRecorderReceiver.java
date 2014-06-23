@@ -1,14 +1,13 @@
-package com.android.phonerecorder.receiver;
+package com.android.phonerecorder.service;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.telephony.TelephonyManager;
 
-import com.android.phonerecorder.manager.CallManager;
 import com.android.phonerecorder.util.Constant;
 
-public class CallStateReceiver extends BroadcastReceiver {
+public class PhoneRecorderReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -28,11 +27,6 @@ public class CallStateReceiver extends BroadcastReceiver {
                 Intent serviceIntent = new Intent(Constant.ACTION_INCOMING_PHONE);
                 String incomingNumber = intent.getStringExtra(TelephonyManager.EXTRA_INCOMING_NUMBER);
                 serviceIntent.putExtra(Constant.EXTRA_PHONE_NUMBER, incomingNumber);
-                serviceIntent.putExtra(Constant.EXTRA_PHONE_STATE, tm.getCallState());
-                context.startService(serviceIntent);
-            } else {
-                Intent serviceIntent = new Intent(Constant.ACTION_PHONE_STATE);
-                serviceIntent.putExtra(Constant.EXTRA_PHONE_STATE, tm.getCallState());
                 context.startService(serviceIntent);
             }
         }

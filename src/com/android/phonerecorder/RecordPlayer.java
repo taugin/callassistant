@@ -1,8 +1,7 @@
-package com.android.phonerecorder.manager;
+package com.android.phonerecorder;
 
 import java.io.IOException;
 
-import com.android.phonerecorder.info.RecordInfo;
 import com.android.phonerecorder.util.RecordFileManager;
 
 import android.content.Context;
@@ -10,23 +9,23 @@ import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
 import android.media.MediaPlayer.OnErrorListener;
 
-public class RecordPlayerManager implements OnCompletionListener, OnErrorListener {
+public class RecordPlayer implements OnCompletionListener, OnErrorListener {
 
     private MediaPlayer mMediaPlayer;
     private Context mContext;
     private RecordInfo mCurRecordInfo;
     private OnCompletionListener mOnCompletionListener;
     
-    private static RecordPlayerManager sRecordPlayer = null;
+    private static RecordPlayer sRecordPlayer = null;
     
-    public static RecordPlayerManager getInstance(Context context) {
+    public static RecordPlayer getInstance(Context context) {
         if (sRecordPlayer == null) {
-            sRecordPlayer = new RecordPlayerManager(context);
+            sRecordPlayer = new RecordPlayer(context);
         }
         return sRecordPlayer;
     }
     
-    private RecordPlayerManager(Context context) {
+    private RecordPlayer(Context context) {
         mContext = context;
         mMediaPlayer = new MediaPlayer();
     }

@@ -1,4 +1,4 @@
-package com.android.phonerecorder.info;
+package com.android.phonerecorder;
 
 public class BaseInfo {
     public int _id;
