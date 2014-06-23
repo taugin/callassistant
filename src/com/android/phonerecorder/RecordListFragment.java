@@ -1,7 +1,5 @@
 package com.android.phonerecorder;
 
-import java.util.ArrayList;
-
 import android.app.AlertDialog;
 import android.app.ListFragment;
 import android.content.Context;
@@ -9,7 +7,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -25,8 +22,11 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.android.phonerecorder.customer.CustomerDetailActivity;
+import com.android.phonerecorder.info.BaseInfo;
 import com.android.phonerecorder.provider.DBConstant;
 import com.android.phonerecorder.util.RecordFileManager;
+
+import java.util.ArrayList;
 
 public class RecordListFragment extends ListFragment implements OnCheckedChangeListener, OnClickListener {
 
