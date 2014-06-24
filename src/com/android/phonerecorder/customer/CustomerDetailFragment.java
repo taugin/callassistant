@@ -127,7 +127,7 @@ public class CustomerDetailFragment extends Fragment implements OnClickListener,
     @Override
     public void afterTextChanged(Editable s) {
         String newName = mCustomerNameView.getText().toString();
-        if (TextUtils.isEmpty(newName)) {
+        if (newName != null && newName.equals(mBaseInfo.baseInfoName)) {
             mEditSave.setEnabled(false);
         } else {
             mEditSave.setEnabled(true);

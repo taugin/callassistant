@@ -14,13 +14,13 @@ import com.android.phonerecorder.R;
 public class SettingsFragment extends PreferenceFragment implements
         OnPreferenceChangeListener {
 
-    // Õ¼ÏßÊ±×ªÒÆ£¬ÌáÊ¾Ëù²¦µÄºÅÂëÎª¿ÕºÅ
+    // Õ¼ï¿½ï¿½Ê±×ªï¿½Æ£ï¿½ï¿½ï¿½Ê¾ï¿½ï¿½Äºï¿½ï¿½ï¿½Îªï¿½Õºï¿½
     private final String ENABLE_SERVICE = "tel:**67*13800000000%23";
-    // Õ¼ÏßÊ±×ªÒÆ£¬ÌáÊ¾Ëù²¦µÄºÅÂëÎª¹Ø»ú
+    // Õ¼ï¿½ï¿½Ê±×ªï¿½Æ£ï¿½ï¿½ï¿½Ê¾ï¿½ï¿½Äºï¿½ï¿½ï¿½Îªï¿½Ø»ï¿½
     private final String ENABLE_POWEROFF_SERVICE = "tel:**67*13810538911%23";
-    // Õ¼ÏßÊ±×ªÒÆ£¬ÌáÊ¾Ëù²¦µÄºÅÂëÎªÍ£»ú
+    // Õ¼ï¿½ï¿½Ê±×ªï¿½Æ£ï¿½ï¿½ï¿½Ê¾ï¿½ï¿½Äºï¿½ï¿½ï¿½ÎªÍ£ï¿½ï¿½
     private final String ENABLE_STOP_SERVICE = "tel:**67*13701110216%23";
-    // Õ¼ÏßÊ±×ªÒÆ
+    // Õ¼ï¿½ï¿½Ê±×ªï¿½ï¿½
     //private final String DISABLE_SERVICE = "tel:%23%2321%23";
     private final String DISABLE_SERVICE = "tel:%23%2367%23";
     
