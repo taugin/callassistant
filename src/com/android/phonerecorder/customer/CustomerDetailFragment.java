@@ -1,13 +1,13 @@
 package com.android.phonerecorder.customer;
 
-import java.util.ArrayList;
-
 import android.app.Fragment;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Intent;
+import android.database.ContentObserver;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -17,7 +17,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,6 +25,8 @@ import com.android.phonerecorder.info.BaseInfo;
 import com.android.phonerecorder.info.RecordInfo;
 import com.android.phonerecorder.provider.DBConstant;
 import com.android.phonerecorder.util.RecordFileManager;
+
+import java.util.ArrayList;
 
 public class CustomerDetailFragment extends Fragment implements OnClickListener, TextWatcher {
 
@@ -60,11 +61,11 @@ public class CustomerDetailFragment extends Fragment implements OnClickListener,
         super.onActivityCreated(savedInstanceState);
         Log.d("taugin", "CustomerDetailFragment onActivityCreated mBaseId = " + mBaseId);
         mRecordList = new ArrayList<RecordInfo>();
+        updateUI();
+        getActivity().getContentResolver().registerContentObserver(DBConstant.RECORD_URI, true, mRecordObserver);
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
+    private void updateUI() {
         mRecordList = RecordFileManager.getInstance(getActivity()).getRecordsFromDB(mRecordList, mBaseId);
         mBaseInfo = RecordFileManager.getInstance(getActivity()).getSingleBaseInfo(mBaseId);
         mPhoneNumberView.setText(mBaseInfo.phoneNumber);
@@ -87,6 +88,7 @@ public class CustomerDetailFragment extends Fragment implements OnClickListener,
     public void onDestroy() {
         super.onDestroy();
         mCallLogListView.onDestroy();
+        getActivity().getContentResolver().unregisterContentObserver(mRecordObserver);
     }
 
     @Override
@@ -134,5 +136,17 @@ public class CustomerDetailFragment extends Fragment implements OnClickListener,
         }
     }
     
-    
+    private RecordObserver mRecordObserver = new RecordObserver();
+    private class RecordObserver extends ContentObserver {
+        public RecordObserver() {
+            super(new Handler());
+        }
+
+        @Override
+        public void onChange(boolean selfChange, Uri uri) {
+            Log.d("taugin", "onChange selfChange = " + selfChange + " , uri = " + uri);
+            updateUI();
+        }
+        
+    }
 }

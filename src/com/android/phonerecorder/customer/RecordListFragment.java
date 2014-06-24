@@ -145,6 +145,7 @@ public class RecordListFragment extends ListFragment implements OnCheckedChangeL
         TextView displayName;
         TextView callLogCount;
         CheckBox checkBox;
+        View checkboxContainer;
     }
     private class RecordListAdapter extends ArrayAdapter<BaseInfo>{
 
@@ -165,6 +166,7 @@ public class RecordListFragment extends ListFragment implements OnCheckedChangeL
                 viewHolder.itemContainer.setTag(position);
                 viewHolder.displayName = (TextView) convertView.findViewById(R.id.display_name);
                 viewHolder.callLogCount = (TextView) convertView.findViewById(R.id.call_log_count);
+                viewHolder.checkboxContainer = (LinearLayout) convertView.findViewById(R.id.checkbox_container);
                 viewHolder.checkBox = (CheckBox) convertView.findViewById(R.id.check_box);
                 viewHolder.checkBox.setOnCheckedChangeListener(RecordListFragment.this);
                 viewHolder.checkBox.setTag(position);
@@ -184,9 +186,9 @@ public class RecordListFragment extends ListFragment implements OnCheckedChangeL
                 viewHolder.checkBox.setChecked(info.checked);
             }
             if (mViewState == VIEW_STATE_NORMAL) {
-                viewHolder.checkBox.setVisibility(View.GONE);
+                viewHolder.checkboxContainer.setVisibility(View.GONE);
             } else if (mViewState == VIEW_STATE_DELETE) {
-                viewHolder.checkBox.setVisibility(View.VISIBLE);
+                viewHolder.checkboxContainer.setVisibility(View.VISIBLE);
             }
             return convertView;
         }

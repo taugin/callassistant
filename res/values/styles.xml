@@ -16,6 +16,7 @@
         <!-- All customizations that are NOT specific to a particular API-level can go here. -->
         <item name="android:actionButtonStyle">@style/action_button_style</item>
         <item name="android:listViewStyle">@style/list_view_style</item>
+        <item name="android:listChoiceIndicatorMultiple">@drawable/btn_check</item>
     </style>
 
     <style name="action_button_style" parent="@android:Widget.ActionButton">

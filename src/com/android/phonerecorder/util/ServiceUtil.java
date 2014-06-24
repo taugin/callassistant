@@ -55,6 +55,7 @@ public class ServiceUtil {
         values.put(DBConstant.RECORD_NUMBER, phoneNumber);
         values.put(DBConstant.RECORD_FLAG, incoming ? DBConstant.FLAG_INCOMING : DBConstant.FLAG_OUTGOING);
         values.put(DBConstant.RECORD_START, timeStart);
+        values.put(DBConstant.RECORD_END, timeStart);
         Uri uri = context.getContentResolver().insert(DBConstant.RECORD_URI, values);
         return (int) ContentUris.parseId(uri);
     }
