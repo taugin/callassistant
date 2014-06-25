@@ -1,7 +1,5 @@
 package com.android.phonerecorder.service;
 
-import java.util.List;
-
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningTaskInfo;
 import android.app.Notification;
@@ -17,24 +15,30 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.android.phonerecorder.R;
-import com.android.phonerecorder.manager.BlackNameManager;
 import com.android.phonerecorder.manager.CallManager;
 import com.android.phonerecorder.manager.RecordManager;
 import com.android.phonerecorder.util.Constant;
 import com.android.phonerecorder.util.RecordFileManager;
 import com.android.phonerecorder.util.ServiceUtil;
 
+import java.util.List;
+
 public class AppPhoneService extends Service {
 
     private static final boolean DEBUG = true;
     private static final int DELAY_TIME = 10 * 1000;
     private RecordManager mRecordManager;
-    private boolean mIncomingFlag = false;
+    private CallFlag mCallFlag = CallFlag.UNDEFIED;
     private String mPhoneNumber = null;
     private Handler mHandler;
     private TelephonyManager mTelephonyManager;
     private int mLastCallState = TelephonyManager.CALL_STATE_IDLE;
 
+    public enum CallFlag {
+        INCOMING,
+        OUTGOING,
+        UNDEFIED
+    }
     @Override
     public IBinder onBind(Intent arg0) {
         return null;
@@ -64,23 +68,26 @@ public class AppPhoneService extends Service {
             return super.onStartCommand(intent, flags, startId);
         }
         if (Constant.ACTION_INCOMING_PHONE.equals(intent.getAction())) {
-            mIncomingFlag = true;
+            mCallFlag = CallFlag.INCOMING;
             mPhoneNumber = intent.getStringExtra(Constant.EXTRA_PHONE_NUMBER);
             int state = intent.getIntExtra(Constant.EXTRA_PHONE_STATE, TelephonyManager.CALL_STATE_IDLE);
             //mHandler.postDelayed(mMonitorIncallScreen, DELAY_TIME);
             if (mPhoneNumber.equals("")) {
                 CallManager.getInstance(getBaseContext()).muteCall();
                 CallManager.getInstance(getBaseContext()).endCall();
-                Toast.makeText(getBaseContext(), "ºÅÂëÒÑÀ¹½Ø : " + mPhoneNumber, Toast.LENGTH_LONG).show();
+                Toast.makeText(getBaseContext(), "ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ : " + mPhoneNumber, Toast.LENGTH_LONG).show();
             }
             onCallStateChanged(state);
-            logv((mIncomingFlag ? "Incoming PhoneNumber" : "Outgoing PhoneNumber") + " : " + mPhoneNumber);
+            logv("Incoming PhoneNumber" + " : " + mPhoneNumber);
         } else if (Constant.ACTION_OUTGOING_PHONE.equals(intent.getAction())) {
-            mIncomingFlag = false;
+            mCallFlag = CallFlag.OUTGOING;
             mPhoneNumber = intent.getStringExtra(Constant.EXTRA_PHONE_NUMBER);
             //mHandler.postDelayed(mMonitorIncallScreen, DELAY_TIME);
             //mHandler.postDelayed(mEndCall, DELAY_TIME);
-            logv((mIncomingFlag ? "Incoming PhoneNumber" : "Outgoing PhoneNumber") + " : " + mPhoneNumber);
+            logv("Outgoing PhoneNumber" + " : " + mPhoneNumber);
+            if (mCallFlag == CallFlag.OUTGOING) {
+                startRecord();
+            }
         } else if (Constant.ACTION_PHONE_STATE.equals(intent.getAction())) {
             int state = intent.getIntExtra(Constant.EXTRA_PHONE_STATE, TelephonyManager.CALL_STATE_IDLE);
             Log.d("taugin", "onStartCommand state = " + stateToString(state));
@@ -92,17 +99,20 @@ public class AppPhoneService extends Service {
     private void onCallStateChanged(int state) {
         switch(state) {
         case TelephonyManager.CALL_STATE_IDLE:
-            logv("mLastCallState = " + stateToString(mLastCallState) + " , state = [CALL_STATE_IDLE]");
+            logv("mLastCallState = " + stateToString(mLastCallState) + " , state = [CALL_STATE_IDLE]" + " , CallFlag = " + mCallFlag.name());
             if (mLastCallState == TelephonyManager.CALL_STATE_OFFHOOK) {
                 stopRecord();
             }
+            mCallFlag = CallFlag.UNDEFIED;
             break;
         case TelephonyManager.CALL_STATE_OFFHOOK:
-            logv("mLastCallState = " + stateToString(mLastCallState) + " , state = [CALL_STATE_OFFHOOK]");
-            startRecord();
+            logv("mLastCallState = " + stateToString(mLastCallState) + " , state = [CALL_STATE_OFFHOOK]" + " , CallFlag = " + mCallFlag.name());
+            if (mCallFlag == CallFlag.INCOMING) {
+                startRecord();
+            }
             break;
         case TelephonyManager.CALL_STATE_RINGING:
-            logv("mLastCallState = " + stateToString(mLastCallState) + " , state = [CALL_STATE_RINGING]");
+            logv("mLastCallState = " + stateToString(mLastCallState) + " , state = [CALL_STATE_RINGING]" + " , CallFlag = " + mCallFlag.name());
             break;
         default:
             break;
@@ -140,7 +150,7 @@ public class AppPhoneService extends Service {
             long time = System.currentTimeMillis();
             int baseInfoId = ServiceUtil.addOrThrowBaseInfo(this, mPhoneNumber, time);
             String fileName = RecordFileManager.getInstance(AppPhoneService.this).getProperName(mPhoneNumber, time);
-            int id = ServiceUtil.addNewRecord(this, baseInfoId, record ? fileName : null, time, mIncomingFlag, mPhoneNumber);
+            int id = ServiceUtil.addNewRecord(this, baseInfoId, record ? fileName : null, time, mCallFlag, mPhoneNumber);
             mRecordManager.setDBId(id);
             if (record) {
                 mRecordManager.initRecorder(fileName);

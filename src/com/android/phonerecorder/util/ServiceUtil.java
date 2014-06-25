@@ -1,7 +1,5 @@
 package com.android.phonerecorder.util;
 
-import java.io.File;
-
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
@@ -10,6 +8,9 @@ import android.net.Uri;
 import android.util.Log;
 
 import com.android.phonerecorder.provider.DBConstant;
+import com.android.phonerecorder.service.AppPhoneService;
+
+import java.io.File;
 
 public class ServiceUtil {
 
@@ -47,13 +48,13 @@ public class ServiceUtil {
         return (int) ContentUris.parseId(contentUri);
     }
 
-    public static int addNewRecord(Context context, int baseInfoId, String fileName, long timeStart, boolean incoming, String phoneNumber) {
+    public static int addNewRecord(Context context, int baseInfoId, String fileName, long timeStart, AppPhoneService.CallFlag callFlag, String phoneNumber) {
         ContentValues values = new ContentValues();
         values.put(DBConstant.RECORD_BASEINFO_ID, baseInfoId);
         values.put(DBConstant.RECORD_NAME, "record_" + phoneNumber + ".amr");
         values.put(DBConstant.RECORD_FILE, fileName);
         values.put(DBConstant.RECORD_NUMBER, phoneNumber);
-        values.put(DBConstant.RECORD_FLAG, incoming ? DBConstant.FLAG_INCOMING : DBConstant.FLAG_OUTGOING);
+        values.put(DBConstant.RECORD_FLAG, callFlag.ordinal());
         values.put(DBConstant.RECORD_START, timeStart);
         values.put(DBConstant.RECORD_END, timeStart);
         Uri uri = context.getContentResolver().insert(DBConstant.RECORD_URI, values);
