@@ -5,7 +5,6 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
-import android.util.Log;
 
 import com.android.phonerecorder.provider.DBConstant;
 import com.android.phonerecorder.service.AppPhoneService;
@@ -32,7 +31,7 @@ public class ServiceUtil {
                 c.close();
             }
         }
-        Log.d("taugin", "addOrThrowBaseInfo = id = " + _id);
+        Log.d(Log.TAG, "addOrThrowBaseInfo = id = " + _id);
         if (_id != -1) {
             ContentValues values = new ContentValues();
             values.put(DBConstant.BASEINFO_CALL_LOG_COUNT, (count + 1));

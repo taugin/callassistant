@@ -7,9 +7,9 @@ import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.PreferenceFragment;
-import android.util.Log;
 
 import com.android.phonerecorder.R;
+import com.android.phonerecorder.util.Log;
 
 public class SettingsFragment extends PreferenceFragment implements
         OnPreferenceChangeListener {
@@ -25,6 +25,7 @@ public class SettingsFragment extends PreferenceFragment implements
     private final String DISABLE_SERVICE = "tel:%23%2367%23";
     
     private static final String KEY_WARNING_TONE = "key_warning_tone";
+    private static final String KEY_AUTOMATIC_RECORD = "key_automatic_record";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -32,6 +33,8 @@ public class SettingsFragment extends PreferenceFragment implements
         addPreferencesFromResource(R.xml.settings);
         ListPreference preference = (ListPreference) findPreference(KEY_WARNING_TONE);
         preference.setOnPreferenceChangeListener(this);
+        
+        findPreference(KEY_AUTOMATIC_RECORD).setOnPreferenceChangeListener(this);
     }
 
     @Override
@@ -48,7 +51,7 @@ public class SettingsFragment extends PreferenceFragment implements
     public boolean onPreferenceChange(Preference preference, Object newValue) {
         if (preference.getKey().equals(KEY_WARNING_TONE)) {
             String value = (String) newValue;
-            Log.d("taugin", "value = " + value);
+            Log.d(Log.TAG, "value = " + value);
             ListPreference list = (ListPreference) preference;
             list.setValue(value);
             int index = list.findIndexOfValue(value);
@@ -56,6 +59,12 @@ public class SettingsFragment extends PreferenceFragment implements
                 preference.setSummary(list.getEntries()[index]);
             }
             setCallForward(value);
+            Log.getLog(getActivity()).recordOperation("Set ringtone tip to " + list.getEntries()[index]);
+            return true;
+        } else if (preference.getKey().equals(KEY_AUTOMATIC_RECORD)) {
+            Boolean value = (Boolean) newValue;
+            String operation = value ? "Open automatic record" : "Close automatic record";
+            Log.getLog(getActivity()).recordOperation(operation);
             return true;
         }
 

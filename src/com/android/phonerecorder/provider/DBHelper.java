@@ -4,7 +4,8 @@ import android.content.Context;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
+
+import com.android.phonerecorder.util.Log;
 
 public class DBHelper extends SQLiteOpenHelper {
 
@@ -49,12 +50,12 @@ public class DBHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        Log.d("taugin", "CREATE_RECORD_FILE = " + CREATE_RECORD_TABLE);
+        Log.d(Log.TAG, "CREATE_RECORD_FILE = " + CREATE_RECORD_TABLE);
         try{
             db.execSQL(CREATE_BASEINFO_TABLE);
             db.execSQL(CREATE_RECORD_TABLE);
         }catch(SQLException e){
-            Log.d("taugin", "create table failed e = " + e.getLocalizedMessage());
+            Log.d(Log.TAG, "create table failed e = " + e.getLocalizedMessage());
         }
     }
 

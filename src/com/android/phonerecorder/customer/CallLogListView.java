@@ -1,26 +1,26 @@
 package com.android.phonerecorder.customer;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-
 import android.content.Context;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.view.View.OnClickListener;
 
 import com.android.phonerecorder.R;
 import com.android.phonerecorder.info.RecordInfo;
 import com.android.phonerecorder.manager.RecordPlayerManager;
 import com.android.phonerecorder.manager.RecordPlayerManager.OnCompletionListener;
+import com.android.phonerecorder.util.Log;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 
 public class CallLogListView extends LinearLayout implements OnCheckedChangeListener, OnClickListener, OnCompletionListener {
 
@@ -40,7 +40,7 @@ public class CallLogListView extends LinearLayout implements OnCheckedChangeList
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
-        Log.d("taugin", "onFinishInflate");
+        Log.d(Log.TAG, "onFinishInflate");
         View view = LayoutInflater.from(getContext()).inflate(R.layout.calllog_control, this);
         mImageList = new ArrayList<ImageView>();
         mCallLogContainer = (LinearLayout) view.findViewById(R.id.calllog_container);
@@ -53,7 +53,7 @@ public class CallLogListView extends LinearLayout implements OnCheckedChangeList
     }
     @Override
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-        Log.d("taugin", "onCheckedChanged isChecked = " + isChecked);
+        Log.d(Log.TAG, "onCheckedChanged isChecked = " + isChecked);
         mCallLogContainer.setVisibility(isChecked ? View.VISIBLE : View.GONE);
     }
 
@@ -62,7 +62,7 @@ public class CallLogListView extends LinearLayout implements OnCheckedChangeList
         mImageList.clear();
         int index = 0;
         RecordInfo info = null;
-        Log.d("taugin", "setCallLogList size = " + list.size());
+        Log.d(Log.TAG, "setCallLogList size = " + list.size());
         while (index < list.size()) {
             info = list.get(index);
             View view = LayoutInflater.from(getContext()).inflate(R.layout.call_log_item, null);
@@ -117,7 +117,7 @@ public class CallLogListView extends LinearLayout implements OnCheckedChangeList
                 mRecordPlayer.startPlay();
             }
             resetControlState();
-            Log.d("taugin", "fileName = " + info.recordFile);
+            Log.d(Log.TAG, "fileName = " + info.recordFile);
         }
     }
     private void resetControlState() {

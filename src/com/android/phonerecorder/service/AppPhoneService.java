@@ -11,13 +11,14 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.telephony.TelephonyManager;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.android.phonerecorder.R;
 import com.android.phonerecorder.manager.CallManager;
 import com.android.phonerecorder.manager.RecordManager;
+import com.android.phonerecorder.sersor.FlipManager;
 import com.android.phonerecorder.util.Constant;
+import com.android.phonerecorder.util.Log;
 import com.android.phonerecorder.util.RecordFileManager;
 import com.android.phonerecorder.util.ServiceUtil;
 
@@ -78,7 +79,9 @@ public class AppPhoneService extends Service {
                 Toast.makeText(getBaseContext(), "���������� : " + mPhoneNumber, Toast.LENGTH_LONG).show();
             }
             onCallStateChanged(state);
+            FlipManager.getInstance(getBaseContext()).registerAccelerometerListener();
             logv("Incoming PhoneNumber" + " : " + mPhoneNumber);
+            Log.getLog(getBaseContext()).recordOperation("Incoming call : " + mPhoneNumber);
         } else if (Constant.ACTION_OUTGOING_PHONE.equals(intent.getAction())) {
             mCallFlag = CallFlag.OUTGOING;
             mPhoneNumber = intent.getStringExtra(Constant.EXTRA_PHONE_NUMBER);
@@ -88,9 +91,10 @@ public class AppPhoneService extends Service {
             if (mCallFlag == CallFlag.OUTGOING) {
                 startRecord();
             }
+            Log.getLog(getBaseContext()).recordOperation("Outgoing call : " + mPhoneNumber);
         } else if (Constant.ACTION_PHONE_STATE.equals(intent.getAction())) {
             int state = intent.getIntExtra(Constant.EXTRA_PHONE_STATE, TelephonyManager.CALL_STATE_IDLE);
-            Log.d("taugin", "onStartCommand state = " + stateToString(state));
+            Log.d(Log.TAG, "onStartCommand state = " + stateToString(state));
             onCallStateChanged(state);
         }
         return super.onStartCommand(intent, flags, startId);
@@ -103,6 +107,17 @@ public class AppPhoneService extends Service {
             if (mLastCallState == TelephonyManager.CALL_STATE_OFFHOOK) {
                 stopRecord();
             }
+            if (mCallFlag == CallFlag.INCOMING) {
+                FlipManager.getInstance(getBaseContext()).unregisterAccelerometerListener();
+            }
+            String operation = null;
+            if (mCallFlag == CallFlag.INCOMING) {
+                operation = "INCOMING phoneNumber : " + mPhoneNumber + " call_idle";
+             } else if (mCallFlag == CallFlag.OUTGOING) {
+                 operation = "OUTGOING phoneNumber : " + mPhoneNumber + " call_idle";
+            }
+            Log.getLog(getBaseContext()).recordOperation(operation);
+            
             mCallFlag = CallFlag.UNDEFIED;
             break;
         case TelephonyManager.CALL_STATE_OFFHOOK:
@@ -110,6 +125,14 @@ public class AppPhoneService extends Service {
             if (mCallFlag == CallFlag.INCOMING) {
                 startRecord();
             }
+
+            operation = null;
+            if (mCallFlag == CallFlag.INCOMING) {
+                operation = "INCOMING phoneNumber : " + mPhoneNumber + " offhook";
+             } else if (mCallFlag == CallFlag.OUTGOING) {
+                 operation = "OUTGOING phoneNumber : " + mPhoneNumber + " offhook";
+            }
+            Log.getLog(getBaseContext()).recordOperation(operation);
             break;
         case TelephonyManager.CALL_STATE_RINGING:
             logv("mLastCallState = " + stateToString(mLastCallState) + " , state = [CALL_STATE_RINGING]" + " , CallFlag = " + mCallFlag.name());
@@ -122,7 +145,7 @@ public class AppPhoneService extends Service {
 
     private Runnable mEndCall = new Runnable() {
         public void run() {
-            Log.d("taugin", "mEndCall run mPhoneNumber = " + mPhoneNumber);
+            Log.d(Log.TAG, "mEndCall run mPhoneNumber = " + mPhoneNumber);
             if (mPhoneNumber.equals("1008611")) {
                 CallManager.getInstance(AppPhoneService.this).endCall();
             }
@@ -168,6 +191,7 @@ public class AppPhoneService extends Service {
         if (record) {
             if (mRecordManager.recording()) {
                 mRecordManager.stopRecorder();
+                Log.getLog(getBaseContext()).recordOperation("Saved record file " + fileName);
                 cancel();
             }
         }
@@ -253,13 +277,10 @@ public class AppPhoneService extends Service {
     }
     private void logd(String msg) {
         if (DEBUG) {
-            Log.d("taugin", msg);
+            Log.d(Log.TAG, msg);
         }
     }
     private void logv(String msg) {
-        Log.v("taugin", msg);
-    }
-    private void logw(String msg) {
-        Log.w("taugin", msg);
+        Log.v(Log.TAG, msg);
     }
 }

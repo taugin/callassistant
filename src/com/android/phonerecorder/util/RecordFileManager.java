@@ -1,20 +1,19 @@
 package com.android.phonerecorder.util;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
-
 import android.content.ContentUris;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Environment;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.android.phonerecorder.info.BaseInfo;
 import com.android.phonerecorder.info.RecordInfo;
 import com.android.phonerecorder.provider.DBConstant;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
 
 public class RecordFileManager {
 
@@ -111,9 +110,9 @@ public class RecordFileManager {
         builder.deleteCharAt(builder.length() - 2);
         String area = builder.toString();
         String where = DBConstant._ID + " IN " + area;
-        Log.d("taugin", "where = " + where);
+        Log.d(Log.TAG, "where = " + where);
         int ret = mContext.getContentResolver().delete(DBConstant.RECORD_URI, where, null);
-        Log.d("taugin", "deleteRecordFromDB ret = " + ret);
+        Log.d(Log.TAG, "deleteRecordFromDB ret = " + ret);
         return ret > 0;
     }
     public void deleteRecordFiles(ArrayList<RecordInfo> list) {
@@ -128,7 +127,7 @@ public class RecordFileManager {
             if (info == null) {
                 continue;
             }
-            Log.d("taugin", "info = " + info.recordFile);
+            Log.d(Log.TAG, "info = " + info.recordFile);
             if (info.checked) {
                 recordFile =  Environment.getExternalStorageDirectory() + "/" + Constant.FILE_RECORD_FOLDER + "/" + info.recordFile;
                 deleteRecordFile(recordFile);
@@ -167,10 +166,10 @@ public class RecordFileManager {
         builder.deleteCharAt(builder.length() - 2);
         String area = builder.toString();
         String whereBaseInfo = DBConstant._ID + " IN " + area;
-        Log.d("taugin", "deleteBaseInfoFromDB where = " + whereBaseInfo);
+        Log.d(Log.TAG, "deleteBaseInfoFromDB where = " + whereBaseInfo);
         mContext.getContentResolver().delete(DBConstant.BASEINFO_URI, whereBaseInfo, null);
         String whereRecord = DBConstant.RECORD_BASEINFO_ID + " IN " + area;
-        Log.d("taugin", "deleteBaseInfoFromDB where = " + whereRecord);
+        Log.d(Log.TAG, "deleteBaseInfoFromDB where = " + whereRecord);
         ArrayList<RecordInfo> list2 = queryRecordFiles(whereRecord);
         mContext.getContentResolver().delete(DBConstant.RECORD_URI, whereRecord, null);
         for (RecordInfo info : list2) {
@@ -179,6 +178,7 @@ public class RecordFileManager {
         for (int index = list.size() - 1; index >=0; index--) {
             BaseInfo info = list.get(index);
             if (info.checked) {
+                Log.getLog(mContext).recordOperation("Remove record " + info.phoneNumber);
                 list.remove(index);
             }
         }
@@ -253,7 +253,7 @@ public class RecordFileManager {
         if (id != -1) {
             selection = DBConstant.RECORD_BASEINFO_ID + "=" + id;
         }
-        Log.d("taugin", "getRecordsFromDB selection = " + selection);
+        Log.d(Log.TAG, "getRecordsFromDB selection = " + selection);
         try {
             c = mContext.getContentResolver().query(DBConstant.RECORD_URI, null, selection, null, DBConstant.RECORD_START + " DESC");
             if (c != null) {
@@ -326,6 +326,6 @@ public class RecordFileManager {
     private void deleteRecordByFile(String file) {
         String where = DBConstant.RECORD_FILE + "=" + "'" + file + "'";
         int ret = mContext.getContentResolver().delete(DBConstant.RECORD_URI, where, null);
-        Log.d("taugin", "delete record by file : " + file + " , ret = " + ret);
+        Log.d(Log.TAG, "delete record by file : " + file + " , ret = " + ret);
     }
 }

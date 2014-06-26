@@ -3,10 +3,10 @@ package com.android.phonerecorder.customer;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 
 import com.android.phonerecorder.R;
 import com.android.phonerecorder.provider.DBConstant;
+import com.android.phonerecorder.util.Log;
 
 public class CustomerDetailActivity extends Activity {
 
@@ -20,6 +20,6 @@ public class CustomerDetailActivity extends Activity {
             int id = intent.getIntExtra(DBConstant._ID, -1);
             fragment.setBaseInfoId(id);
         }
-        Log.d("taugin", "CustomerDetailActivity onCreate");
+        Log.d(Log.TAG, "CustomerDetailActivity onCreate");
     }
 }

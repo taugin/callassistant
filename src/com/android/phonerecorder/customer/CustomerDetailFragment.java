@@ -11,7 +11,6 @@ import android.os.Handler;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -24,6 +23,7 @@ import com.android.phonerecorder.R;
 import com.android.phonerecorder.info.BaseInfo;
 import com.android.phonerecorder.info.RecordInfo;
 import com.android.phonerecorder.provider.DBConstant;
+import com.android.phonerecorder.util.Log;
 import com.android.phonerecorder.util.RecordFileManager;
 
 import java.util.ArrayList;
@@ -59,7 +59,7 @@ public class CustomerDetailFragment extends Fragment implements OnClickListener,
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        Log.d("taugin", "CustomerDetailFragment onActivityCreated mBaseId = " + mBaseId);
+        Log.d(Log.TAG, "CustomerDetailFragment onActivityCreated mBaseId = " + mBaseId);
         mRecordList = new ArrayList<RecordInfo>();
         updateUI();
         getActivity().getContentResolver().registerContentObserver(DBConstant.RECORD_URI, true, mRecordObserver);
@@ -95,7 +95,7 @@ public class CustomerDetailFragment extends Fragment implements OnClickListener,
     public void onClick(View v) {
         if (v.getId() == R.id.edit_save) {
             String newName = mCustomerNameView.getText().toString();
-            Log.d("taugin", "newName = " + newName);
+            Log.d(Log.TAG, "newName = " + newName);
             if (!TextUtils.isEmpty(newName)) {
                 ContentValues values = new ContentValues();
                 values.put(DBConstant.BASEINFO_NAME, newName);
@@ -108,6 +108,7 @@ public class CustomerDetailFragment extends Fragment implements OnClickListener,
                     message = getActivity().getResources().getString(R.string.save_failure);
                 }
                 Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
+                Log.getLog(getActivity()).recordOperation("Save record name : " + newName);
             }
         } else if (v.getId() == R.id.dial_number) {
             Intent intent = new Intent(Intent.ACTION_CALL);
@@ -129,7 +130,8 @@ public class CustomerDetailFragment extends Fragment implements OnClickListener,
     @Override
     public void afterTextChanged(Editable s) {
         String newName = mCustomerNameView.getText().toString();
-        if (newName != null && newName.equals(mBaseInfo.baseInfoName)) {
+        Log.d(Log.TAG, "afterTextChanged newName = " + newName);
+        if (newName != null && newName.equals(mBaseInfo.baseInfoName == null ? "" : mBaseInfo.baseInfoName)) {
             mEditSave.setEnabled(false);
         } else {
             mEditSave.setEnabled(true);
@@ -144,7 +146,7 @@ public class CustomerDetailFragment extends Fragment implements OnClickListener,
 
         @Override
         public void onChange(boolean selfChange, Uri uri) {
-            Log.d("taugin", "onChange selfChange = " + selfChange + " , uri = " + uri);
+            Log.d(Log.TAG, "onChange selfChange = " + selfChange + " , uri = " + uri);
             updateUI();
         }
         

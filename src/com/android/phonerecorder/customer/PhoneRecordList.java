@@ -2,6 +2,7 @@ package com.android.phonerecorder.customer;
 
 import com.android.phonerecorder.R;
 import com.android.phonerecorder.R.layout;
+import com.android.phonerecorder.sersor.FlipManager;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -20,5 +21,15 @@ public class PhoneRecordList extends Activity {
         if (!mFragment.onBackPressed()) {
             super.onBackPressed();
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
     }
 }

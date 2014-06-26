@@ -1,7 +1,5 @@
 package com.android.phonerecorder.provider;
 
-import java.util.ArrayList;
-
 import android.content.ContentProvider;
 import android.content.ContentProviderOperation;
 import android.content.ContentProviderResult;
@@ -13,7 +11,10 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
-import android.util.Log;
+
+import com.android.phonerecorder.util.Log;
+
+import java.util.ArrayList;
 
 public class RecordProvider extends ContentProvider {
 
@@ -98,7 +99,7 @@ public class RecordProvider extends ContentProvider {
     @Override
     public Uri insert(Uri uri, ContentValues values) {
         SQLiteDatabase db = mDBHelper.getReadableDatabase();
-        Log.d("taugin", "insert uri = " + uri);
+        Log.d(Log.TAG, "insert uri = " + uri);
         long id = -1;
         try{
             switch(sUriMatcher.match(uri)){
@@ -112,12 +113,12 @@ public class RecordProvider extends ContentProvider {
                 throw new IllegalArgumentException("Unknown URI " + uri);
             }
         }catch(SQLException e){
-            Log.e("taugin", "The item has inserted into the database ! : " + e.getLocalizedMessage());
+            Log.e(Log.TAG, "The item has inserted into the database ! : " + e.getLocalizedMessage());
             Uri resultUri = ContentUris.withAppendedId(uri, 0);
             return resultUri;
         }
         Uri resultUri = ContentUris.withAppendedId(uri, id);
-        Log.d("taugin", "resultUri = " + resultUri);
+        Log.d(Log.TAG, "resultUri = " + resultUri);
         return resultUri;
     }
 

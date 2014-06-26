@@ -1,10 +1,5 @@
 package com.android.phonerecorder.customer;
 
-import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-
 import android.app.AlertDialog;
 import android.app.ListFragment;
 import android.content.Context;
@@ -12,7 +7,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -25,20 +19,19 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.android.phonerecorder.R;
-import com.android.phonerecorder.R.drawable;
-import com.android.phonerecorder.R.id;
-import com.android.phonerecorder.R.layout;
-import com.android.phonerecorder.R.menu;
-import com.android.phonerecorder.R.string;
 import com.android.phonerecorder.info.RecordInfo;
 import com.android.phonerecorder.manager.RecordPlayerManager;
 import com.android.phonerecorder.manager.RecordPlayerManager.OnCompletionListener;
 import com.android.phonerecorder.settings.AppSettings;
 import com.android.phonerecorder.util.RecordFileManager;
+
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 
 public class CopyOfRecordListFragment extends ListFragment implements OnCheckedChangeListener, OnClickListener, OnCompletionListener {
 
