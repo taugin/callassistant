@@ -18,6 +18,8 @@ public class FlipManager implements SensorEventListener {
     private Sensor mSensor;
     private AudioManager mAudioManager;
     private int mRingerMode = 0;
+    private boolean shouldFlipMute = false;
+    private boolean mFirstSensorEvent;
     public static FlipManager getInstance(Context context) {
         if (sFlipManager == null) {
             sFlipManager = new FlipManager(context);
@@ -37,6 +39,7 @@ public class FlipManager implements SensorEventListener {
             mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_NORMAL);
             mRingerMode = mAudioManager.getRingerMode();
         }
+        mFirstSensorEvent = true;
     }
     
     public void unregisterAccelerometerListener() {
@@ -48,6 +51,7 @@ public class FlipManager implements SensorEventListener {
         if (mRingerMode != mAudioManager.getRingerMode()) {
             mAudioManager.setRingerMode(mRingerMode);
         }
+        mFirstSensorEvent = false;
     }
 
     private void unregisterListenerInternal() {
@@ -55,6 +59,7 @@ public class FlipManager implements SensorEventListener {
             mSensorManager.unregisterListener(this, mSensor);
             mSensor = null;
         }
+        mFirstSensorEvent = false;
     }
     @Override
     public void onSensorChanged(SensorEvent event) {
@@ -72,12 +77,21 @@ public class FlipManager implements SensorEventListener {
             if (len != 3) {
                 return ;
             }
-            if (event.values[2] < -9) {
+            
+            float x = event.values[0];
+            float y = event.values[1];
+            float z = event.values[2];
+
+            if (!shouldFlipMute && z > 9) {
+                shouldFlipMute = true;
+            }
+            if (shouldFlipMute && z < -9) {
                 Log.getLog(mContext).recordOperation("Flip mute make a call silent");
                 unregisterListenerInternal();
                 if (mAudioManager.getRingerMode() != AudioManager.RINGER_MODE_SILENT) {
                     mAudioManager.setRingerMode(AudioManager.RINGER_MODE_SILENT);
                 }
+                shouldFlipMute = false;
             }
         }
     }

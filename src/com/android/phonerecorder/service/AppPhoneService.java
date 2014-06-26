@@ -114,9 +114,9 @@ public class AppPhoneService extends Service {
             }
             String operation = null;
             if (mCallFlag == CallFlag.INCOMING) {
-                operation = "INCOMING phoneNumber : " + mPhoneNumber + " call_idle";
+                operation = "Incoming phoneNumber : " + mPhoneNumber + " idle";
              } else if (mCallFlag == CallFlag.OUTGOING) {
-                 operation = "OUTGOING phoneNumber : " + mPhoneNumber + " call_idle";
+                 operation = "Outgoing phoneNumber : " + mPhoneNumber + " idle";
             }
             Log.getLog(getBaseContext()).recordOperation(operation);
             
@@ -130,9 +130,9 @@ public class AppPhoneService extends Service {
 
             operation = null;
             if (mCallFlag == CallFlag.INCOMING) {
-                operation = "INCOMING phoneNumber : " + mPhoneNumber + " offhook";
+                operation = "Incoming phoneNumber : " + mPhoneNumber + " offhook";
              } else if (mCallFlag == CallFlag.OUTGOING) {
-                 operation = "OUTGOING phoneNumber : " + mPhoneNumber + " offhook";
+                 operation = "Outgoing phoneNumber : " + mPhoneNumber + " offhook";
             }
             Log.getLog(getBaseContext()).recordOperation(operation);
             break;
