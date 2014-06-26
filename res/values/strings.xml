@@ -39,4 +39,5 @@
     <string name="save_failure">Saved failure</string>
     <string name="show_list">List</string>
     <string name="detail">Detail</string>
+    <string name="flip_mute">FlipMute</string>
 </resources>

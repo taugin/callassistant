@@ -14,6 +14,7 @@ import android.telephony.TelephonyManager;
 import android.widget.Toast;
 
 import com.android.phonerecorder.R;
+import com.android.phonerecorder.manager.BlackNameManager;
 import com.android.phonerecorder.manager.CallManager;
 import com.android.phonerecorder.manager.RecordManager;
 import com.android.phonerecorder.sersor.FlipManager;
@@ -66,20 +67,19 @@ public class AppPhoneService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (intent == null) {
             stopSelf();
-            return super.onStartCommand(intent, flags, startId);
+            return START_STICKY;
         }
         if (Constant.ACTION_INCOMING_PHONE.equals(intent.getAction())) {
             mCallFlag = CallFlag.INCOMING;
             mPhoneNumber = intent.getStringExtra(Constant.EXTRA_PHONE_NUMBER);
             int state = intent.getIntExtra(Constant.EXTRA_PHONE_STATE, TelephonyManager.CALL_STATE_IDLE);
-            //mHandler.postDelayed(mMonitorIncallScreen, DELAY_TIME);
-            if (mPhoneNumber.equals("")) {
-                CallManager.getInstance(getBaseContext()).muteCall();
-                CallManager.getInstance(getBaseContext()).endCall();
-                Toast.makeText(getBaseContext(), "���������� : " + mPhoneNumber, Toast.LENGTH_LONG).show();
+            if (BlackNameManager.getInstance(getBaseContext()).interceptPhoneNumber(mPhoneNumber)) {
+                return START_STICKY;
             }
             onCallStateChanged(state);
-            FlipManager.getInstance(getBaseContext()).registerAccelerometerListener();
+            if (PreferenceManager.getDefaultSharedPreferences(getBaseContext()).getBoolean("key_flip_mute", true)){
+                FlipManager.getInstance(getBaseContext()).registerAccelerometerListener();
+            }
             logv("Incoming PhoneNumber" + " : " + mPhoneNumber);
             Log.getLog(getBaseContext()).recordOperation("Incoming call : " + mPhoneNumber);
         } else if (Constant.ACTION_OUTGOING_PHONE.equals(intent.getAction())) {
@@ -97,7 +97,7 @@ public class AppPhoneService extends Service {
             Log.d(Log.TAG, "onStartCommand state = " + stateToString(state));
             onCallStateChanged(state);
         }
-        return super.onStartCommand(intent, flags, startId);
+        return START_STICKY;
     }
 
     private void onCallStateChanged(int state) {
@@ -108,7 +108,9 @@ public class AppPhoneService extends Service {
                 stopRecord();
             }
             if (mCallFlag == CallFlag.INCOMING) {
-                FlipManager.getInstance(getBaseContext()).unregisterAccelerometerListener();
+                if (PreferenceManager.getDefaultSharedPreferences(getBaseContext()).getBoolean("key_flip_mute", true)){
+                    FlipManager.getInstance(getBaseContext()).unregisterAccelerometerListener();
+                }
             }
             String operation = null;
             if (mCallFlag == CallFlag.INCOMING) {

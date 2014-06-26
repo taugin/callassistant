@@ -26,15 +26,15 @@ public class SettingsFragment extends PreferenceFragment implements
     
     private static final String KEY_WARNING_TONE = "key_warning_tone";
     private static final String KEY_AUTOMATIC_RECORD = "key_automatic_record";
+    private static final String KEY_FLIP_MUTE = "key_flip_mute";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.settings);
-        ListPreference preference = (ListPreference) findPreference(KEY_WARNING_TONE);
-        preference.setOnPreferenceChangeListener(this);
-        
+        findPreference(KEY_WARNING_TONE).setOnPreferenceChangeListener(this);
         findPreference(KEY_AUTOMATIC_RECORD).setOnPreferenceChangeListener(this);
+        findPreference(KEY_FLIP_MUTE).setOnPreferenceChangeListener(this);
     }
 
     @Override
@@ -64,6 +64,11 @@ public class SettingsFragment extends PreferenceFragment implements
         } else if (preference.getKey().equals(KEY_AUTOMATIC_RECORD)) {
             Boolean value = (Boolean) newValue;
             String operation = value ? "Open automatic record" : "Close automatic record";
+            Log.getLog(getActivity()).recordOperation(operation);
+            return true;
+        } else if (preference.getKey().equals(KEY_FLIP_MUTE)) {
+            Boolean value = (Boolean) newValue;
+            String operation = value ? "Open flip mute" : "Close flip mute";
             Log.getLog(getActivity()).recordOperation(operation);
             return true;
         }

@@ -14,4 +14,11 @@
         android:entries="@array/warnig_tone_show"
         android:entryValues="@array/warning_tone_value"
         android:defaultValue="busy"/>
+    <CheckBoxPreference
+        android:key="key_flip_mute"
+        android:persistent="true"
+        android:defaultValue="true"
+        android:summaryOff="@string/off"
+        android:summaryOn="@string/on"
+        android:title="@string/flip_mute" />
 </PreferenceScreen>

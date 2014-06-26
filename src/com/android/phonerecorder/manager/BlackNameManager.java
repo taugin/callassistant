@@ -19,7 +19,14 @@ public class BlackNameManager {
         mContext = context;
     }
 
-    public boolean isBlack(String phoneName) {
+    public boolean isBlack(String phoneNumber) {
+        return false;
+    }
+    
+    public boolean interceptPhoneNumber(String phoneNumber) {
+        if (isBlack(phoneNumber)) {
+            CallManager.getInstance(mContext).endCall();
+        }
         return false;
     }
 }

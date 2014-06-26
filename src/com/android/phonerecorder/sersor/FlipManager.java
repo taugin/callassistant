@@ -73,7 +73,7 @@ public class FlipManager implements SensorEventListener {
                 return ;
             }
             if (event.values[2] < -9) {
-                Log.d(Log.TAG, "Silence ...");
+                Log.getLog(mContext).recordOperation("Flip mute make a call silent");
                 unregisterListenerInternal();
                 if (mAudioManager.getRingerMode() != AudioManager.RINGER_MODE_SILENT) {
                     mAudioManager.setRingerMode(AudioManager.RINGER_MODE_SILENT);
