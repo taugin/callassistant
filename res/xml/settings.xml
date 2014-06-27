@@ -21,4 +21,11 @@
         android:summaryOff="@string/off"
         android:summaryOn="@string/on"
         android:title="@string/flip_mute" />
+    <CheckBoxPreference
+        android:key="key_block_all"
+        android:persistent="true"
+        android:defaultValue="false"
+        android:summaryOff="@string/off"
+        android:summaryOn="@string/on"
+        android:title="@string/block_all_call" />
 </PreferenceScreen>

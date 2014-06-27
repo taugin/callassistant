@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.android.phonerecorder"
+    package="com.android.callassistant"
     android:versionCode="1"
     android:versionName="1.0" >
 
@@ -21,9 +21,9 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name="com.android.phonerecorder.customer.PhoneRecordList"
+            android:name="com.android.callassistant.customer.PhoneRecordList"
             android:configChanges="orientation|screenSize"
-            android:label="@string/show_list" >
+            android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -31,22 +31,22 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.android.phonerecorder.settings.AppSettings"
+            android:name="com.android.callassistant.settings.AppSettings"
             android:configChanges="orientation|screenSize"
             android:label="@string/action_settings" >
         </activity>
 
         <service
-            android:name="com.android.phonerecorder.service.AppPhoneService"
+            android:name="com.android.callassistant.service.AppPhoneService"
             android:exported="false" >
             <intent-filter>
-                <action android:name="com.android.phonerecorder.action.INCOMING_PHONE" />
-                <action android:name="com.android.phonerecorder.action.OUTGOING_PHONE" />
-                <action android:name="com.android.phonerecorder.action.PHONE_STATE" />
+                <action android:name="com.android.callassistant.action.INCOMING_PHONE" />
+                <action android:name="com.android.callassistant.action.OUTGOING_PHONE" />
+                <action android:name="com.android.callassistant.action.PHONE_STATE" />
             </intent-filter>
         </service>
 
-        <receiver android:name="com.android.phonerecorder.receiver.CallStateReceiver" >
+        <receiver android:name="com.android.callassistant.receiver.CallStateReceiver" >
             <intent-filter>
                 <action android:name="android.intent.action.NEW_OUTGOING_CALL" />
                 <action android:name="android.intent.action.PHONE_STATE" />
@@ -54,11 +54,11 @@
         </receiver>
 
         <provider
-            android:name="com.android.phonerecorder.provider.RecordProvider"
-            android:authorities="com.android.phonerecorder" />
+            android:name="com.android.callassistant.provider.RecordProvider"
+            android:authorities="com.android.callassistant" />
 
         <activity
-            android:name="com.android.phonerecorder.customer.CustomerDetailActivity"
+            android:name="com.android.callassistant.customer.CustomerDetailActivity"
             android:configChanges="orientation|screenSize"
             android:windowSoftInputMode="stateHidden"
             android:label="@string/detail" >
