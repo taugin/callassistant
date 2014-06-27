@@ -7,9 +7,10 @@ public class RecordInfo implements Comparable<RecordInfo> {
     public String recordFile;
     public String recordName;
     public long recordSize;
+    public long recordRing;
     public long recordStart;
     public long recordEnd;
-    public boolean incoming;
+    public int callFlag;
     public boolean checked;
 
     @Override

@@ -11,4 +11,5 @@ public class BaseInfo {
     public int allowRecord;
     public int baseInfoState;
     public boolean checked;
+    public boolean blocked;
 }

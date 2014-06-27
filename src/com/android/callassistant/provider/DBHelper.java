@@ -36,6 +36,7 @@ public class DBHelper extends SQLiteOpenHelper {
           + DBConstant.RECORD_NUMBER + " TEXT,"
           + DBConstant.RECORD_FLAG + " INTEGER DEFAULT 0,"
           + DBConstant.RECORD_SIZE + " LONG DEFAULT 0,"
+          + DBConstant.RECORD_RING + " LONG DEFAULT 0,"
           + DBConstant.RECORD_START + " LONG DEFAULT 0,"
           + DBConstant.RECORD_END + " LONG DEFAULT 0,"
           + DBConstant.FOO + " text"

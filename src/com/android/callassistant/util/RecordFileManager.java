@@ -9,6 +9,7 @@ import android.text.TextUtils;
 
 import com.android.callassistant.info.BaseInfo;
 import com.android.callassistant.info.RecordInfo;
+import com.android.callassistant.manager.BlackNameManager;
 import com.android.callassistant.provider.DBConstant;
 
 import java.io.File;
@@ -28,65 +29,6 @@ public class RecordFileManager {
     }
     private RecordFileManager(Context context) {
         mContext = context;
-    }
-    private ArrayList<RecordInfo> listRecordFiles(ArrayList<RecordInfo> list) {
-        File recordDir = new File(Environment.getExternalStorageDirectory() + "/" + Constant.FILE_RECORD_FOLDER);
-        if (!recordDir.exists()) {
-            return null;
-        }
-        list.clear();
-
-        File files[] = recordDir.listFiles();
-        if (files != null) {
-            RecordInfo info = null;
-            for (File file : files) {
-                info = new RecordInfo();
-                info.recordFile = file.getName();
-                info.recordName = getDisplayName(info.recordFile);
-                info.recordSize = file.length();
-                info.recordStart = getCreateTime(info.recordFile);
-                info.incoming = incomingCall(info.recordFile);
-                info.recordEnd = file.lastModified();
-                list.add(info);
-            }
-            Collections.sort(list);
-        }
-        return list;
-    }
-    private String getDisplayName(String fileName) {
-        if (TextUtils.isEmpty(fileName)) {
-            return null;
-        }
-        String []parts = fileName.split("_");
-        if (parts == null || parts.length != 4) {
-            return null;
-        }
-        return parts[0] + "_" + parts[3];
-    }
-
-    private long getCreateTime(String fileName) {
-        if (TextUtils.isEmpty(fileName)) {
-            return 0;
-        }
-        String []parts = fileName.split("_");
-        if (parts == null || parts.length != 4) {
-            return 0;
-        }
-        if (TextUtils.isDigitsOnly(parts[1])) {
-            return Long.parseLong(parts[1]);
-        }
-        return 0;
-    }
-
-    private boolean incomingCall(String fileName) {
-        if (TextUtils.isEmpty(fileName)) {
-            return false;
-        }
-        String []parts = fileName.split("_");
-        if (parts == null || parts.length != 4) {
-            return false;
-        }
-        return "in".equals(parts[2]);
     }
 
     public String getProperName(String phoneNumber, long time) {
@@ -225,6 +167,8 @@ public class RecordFileManager {
                         info.baseInfoName = c.getString(c.getColumnIndex(DBConstant.BASEINFO_NAME));
                         info.phoneNumber = c.getString(c.getColumnIndex(DBConstant.BASEINFO_NUMBER));
                         info.callLogCount = c.getInt(c.getColumnIndex(DBConstant.BASEINFO_CALL_LOG_COUNT));
+                        info.blocked = BlackNameManager.getInstance(mContext).isBlackInDB(info.phoneNumber);
+                        Log.d(Log.TAG, "getBaseInfoFromDB info.blocked = " + info.blocked);
                         list.add(info);
                     } while(c.moveToNext());
                 }
@@ -255,7 +199,7 @@ public class RecordFileManager {
         }
         Log.d(Log.TAG, "getRecordsFromDB selection = " + selection);
         try {
-            c = mContext.getContentResolver().query(DBConstant.RECORD_URI, null, selection, null, DBConstant.RECORD_START + " DESC");
+            c = mContext.getContentResolver().query(DBConstant.RECORD_URI, null, selection, null, DBConstant._ID + " DESC");
             if (c != null) {
                 if (c.moveToFirst()) {
                     RecordInfo info = null;
@@ -265,10 +209,10 @@ public class RecordFileManager {
                         info.recordFile = c.getString(c.getColumnIndex(DBConstant.RECORD_FILE));
                         info.recordName = c.getString(c.getColumnIndex(DBConstant.RECORD_NAME));
                         info.recordSize = c.getLong(c.getColumnIndex(DBConstant.RECORD_SIZE));
+                        info.recordRing = c.getLong(c.getColumnIndex(DBConstant.RECORD_RING));
                         info.recordStart = c.getLong(c.getColumnIndex(DBConstant.RECORD_START));
                         info.recordEnd = c.getLong(c.getColumnIndex(DBConstant.RECORD_END));
-                        int flag = c.getInt(c.getColumnIndex(DBConstant.RECORD_FLAG));
-                        info.incoming = flag == DBConstant.FLAG_INCOMING;
+                        info.callFlag  = c.getInt(c.getColumnIndex(DBConstant.RECORD_FLAG));
                         if (!recordExists(info.recordFile)) {
                             info.recordFile = null;
                         }
@@ -321,11 +265,5 @@ public class RecordFileManager {
             return true;
         }
         return false;
-    }
-
-    private void deleteRecordByFile(String file) {
-        String where = DBConstant.RECORD_FILE + "=" + "'" + file + "'";
-        int ret = mContext.getContentResolver().delete(DBConstant.RECORD_URI, where, null);
-        Log.d(Log.TAG, "delete record by file : " + file + " , ret = " + ret);
     }
 }

@@ -17,11 +17,14 @@ public class DBConstant {
     public static final String RECORD_NUMBER = "record_number";
     public static final String RECORD_FLAG = "record_flag";
     public static final String RECORD_SIZE = "record_size";
+    public static final String RECORD_RING = "record_ring";
     public static final String RECORD_START = "record_start";
     public static final String RECORD_END = "record_end";
 
     public static final int FLAG_INCOMING = 0;
     public static final int FLAG_OUTGOING = 1;
+    public static final int FLAG_MISSCALL = 2;
+    public static final int FLAG_BLOCKCALL = 3;
 
     public static final String RECORD_CONTENT_TYPE = "vnd.android.cursor.item/vnd.record.items";
     public static final String RECORD_CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.record.item";

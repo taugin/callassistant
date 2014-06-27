@@ -30,4 +30,5 @@
     <string name="block_all_call">拦截所有来电</string>
     <string name="warning_tone">黑名单提示音</string>
     <string name="record_content">录音内容</string>
+    <string name="black_name">黑名单</string>
 </resources>

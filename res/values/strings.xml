@@ -30,4 +30,5 @@
     <string name="block_all_call">Block all calls</string>
     <string name="warning_tone">Block call ringtone</string>
     <string name="record_content">Record content</string>
+    <string name="black_name">BlackName</string>
 </resources>

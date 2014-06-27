@@ -8,6 +8,7 @@ import android.net.Uri;
 
 import com.android.callassistant.provider.DBConstant;
 import com.android.callassistant.service.CallAssistantService;
+import com.android.callassistant.service.CallAssistantService.CallFlag;
 
 import java.io.File;
 
@@ -48,18 +49,36 @@ public class ServiceUtil {
         return (int) ContentUris.parseId(contentUri);
     }
 
-    public static int addNewRecord(Context context, int baseInfoId, String fileName, long timeStart, CallAssistantService.CallFlag callFlag, String phoneNumber) {
+    public static int addNewRecord(Context context, int baseInfoId, long timeRing, CallAssistantService.CallFlag callFlag, String phoneNumber) {
         ContentValues values = new ContentValues();
         values.put(DBConstant.RECORD_BASEINFO_ID, baseInfoId);
-        values.put(DBConstant.RECORD_NAME, "record_" + phoneNumber + ".amr");
-        values.put(DBConstant.RECORD_FILE, fileName);
         values.put(DBConstant.RECORD_NUMBER, phoneNumber);
-        values.put(DBConstant.RECORD_FLAG, callFlag.ordinal());
-        values.put(DBConstant.RECORD_START, timeStart);
-        values.put(DBConstant.RECORD_END, timeStart);
+        values.put(DBConstant.RECORD_FLAG, callFlag == CallFlag.INCOMING ? DBConstant.FLAG_MISSCALL : callFlag.ordinal());
+        values.put(DBConstant.RECORD_RING, timeRing);
         Uri uri = context.getContentResolver().insert(DBConstant.RECORD_URI, values);
         return (int) ContentUris.parseId(uri);
     }
+    
+    public static int updateRecordOffHook(Context context, int id, String fileName, long timeStart, String phoneNumber, CallAssistantService.CallFlag callFlag) {
+        ContentValues values = new ContentValues();
+        values.put(DBConstant.RECORD_NAME, "record_" + phoneNumber + ".amr");
+        values.put(DBConstant.RECORD_FILE, fileName);
+        if (callFlag == CallFlag.INCOMING) {
+            values.put(DBConstant.RECORD_FLAG, callFlag.ordinal());
+        }
+        values.put(DBConstant.RECORD_START, timeStart);
+        values.put(DBConstant.RECORD_END, timeStart);
+        Uri uri = ContentUris.withAppendedId(DBConstant.RECORD_URI, id);
+        return context.getContentResolver().update(uri, values, null, null);
+    }
+    
+    public static int updateBlockState(Context context, int id, CallFlag callFlag) {
+        ContentValues values = new ContentValues();
+        values.put(DBConstant.RECORD_FLAG, callFlag.ordinal());
+        Uri uri = ContentUris.withAppendedId(DBConstant.RECORD_URI, id);
+        return context.getContentResolver().update(uri, values, null, null);
+    }
+
     public static void updateRecord(Context context, int id, String fileName) {
         long size = 0;
         if (fileName != null) {

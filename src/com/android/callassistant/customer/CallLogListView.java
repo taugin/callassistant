@@ -16,6 +16,7 @@ import com.android.callassistant.R;
 import com.android.callassistant.info.RecordInfo;
 import com.android.callassistant.manager.RecordPlayerManager;
 import com.android.callassistant.manager.RecordPlayerManager.OnCompletionListener;
+import com.android.callassistant.provider.DBConstant;
 import com.android.callassistant.util.Log;
 
 import java.text.SimpleDateFormat;
@@ -67,11 +68,21 @@ public class CallLogListView extends LinearLayout implements OnCheckedChangeList
             info = list.get(index);
             View view = LayoutInflater.from(getContext()).inflate(R.layout.call_log_item, null);
             ImageView imageView = (ImageView) view.findViewById(R.id.call_log_flag);
-            imageView.setImageResource(info.incoming ? R.drawable.ic_incoming : R.drawable.ic_outgoing);
+            int resId = 0;
+            if (info.callFlag == DBConstant.FLAG_INCOMING) {
+                resId = R.drawable.ic_incoming;
+            } else if (info.callFlag == DBConstant.FLAG_OUTGOING) {
+                resId = R.drawable.ic_outgoing;
+            } else if (info.callFlag == DBConstant.FLAG_MISSCALL){
+                resId = R.drawable.ic_missed_call;
+            } else {
+                resId = R.drawable.ic_block_call;
+            }
+            imageView.setImageResource(resId);
 
             TextView call_date = (TextView) view.findViewById(R.id.call_date);
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            call_date.setText(sdf.format(new Date(info.recordStart)));
+            call_date.setText(sdf.format(new Date(info.recordRing)));
 
             TextView call_duration = (TextView) view.findViewById(R.id.call_duration);
             call_duration.setText(getTimeExperence(info.recordEnd - info.recordStart));

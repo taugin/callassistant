@@ -37,10 +37,13 @@ public class CallAssistantService extends Service {
     private CallLogObserver mCallLogObserver;
     private TelephonyManager mTelephonyManager;
     private int mLastCallState = TelephonyManager.CALL_STATE_IDLE;
+    private boolean mNumberBlocked = false;
 
     public enum CallFlag {
         INCOMING,
         OUTGOING,
+        MISSCALL,
+        BLOCKCALL,
         UNDEFIED
     }
     @Override
@@ -75,12 +78,14 @@ public class CallAssistantService extends Service {
             mCallFlag = CallFlag.INCOMING;
             mPhoneNumber = intent.getStringExtra(Constant.EXTRA_PHONE_NUMBER);
             int state = intent.getIntExtra(Constant.EXTRA_PHONE_STATE, TelephonyManager.CALL_STATE_IDLE);
+            addNewRecord();
             if (BlackNameManager.getInstance(getBaseContext()).interceptPhoneNumber(mPhoneNumber)) {
+                BlackNameManager.getInstance(getBaseContext()).updateBlock(mPhoneNumber);
                 Log.getLog(getBaseContext()).recordOperation("Block a call : " + mPhoneNumber);
+                mNumberBlocked = true;
                 return START_STICKY;
             }
             onCallStateChanged(state);
-
             if (PreferenceManager.getDefaultSharedPreferences(getBaseContext()).getBoolean("key_flip_mute", true)){
                 FlipManager.getInstance(getBaseContext()).registerAccelerometerListener();
             }
@@ -93,6 +98,7 @@ public class CallAssistantService extends Service {
             //mHandler.postDelayed(mEndCall, DELAY_TIME);
             logv("onStartCommand Outgoing PhoneNumber" + " : " + mPhoneNumber);
             if (mCallFlag == CallFlag.OUTGOING) {
+                addNewRecord();
                 startRecord();
             }
             Log.getLog(getBaseContext()).recordOperation("Outgoing call : " + mPhoneNumber);
@@ -108,6 +114,11 @@ public class CallAssistantService extends Service {
         switch(state) {
         case TelephonyManager.CALL_STATE_IDLE:
             logv("onCallStateChanged mLastCallState = " + stateToString(mLastCallState) + " , state = [CALL_STATE_IDLE]" + " , CallFlag = " + mCallFlag.name());
+            if (mNumberBlocked) {
+                ServiceUtil.updateBlockState(getApplication(), mRecordManager.getDBId(), CallFlag.BLOCKCALL);
+                mNumberBlocked = false;
+                return ;
+            }
             if (mLastCallState == TelephonyManager.CALL_STATE_OFFHOOK) {
                 stopRecord();
             }
@@ -173,13 +184,10 @@ public class CallAssistantService extends Service {
     };
     private void startRecord() {
         ensureRecordManager();
-        TelephonyManager tm = (TelephonyManager) getSystemService(Service.TELEPHONY_SERVICE);
         if (!mRecordManager.recording()) {
             long time = System.currentTimeMillis();
-            int baseInfoId = ServiceUtil.addOrThrowBaseInfo(this, mPhoneNumber, time);
             String fileName = RecordFileManager.getInstance(CallAssistantService.this).getProperName(mPhoneNumber, time);
-            int id = ServiceUtil.addNewRecord(this, baseInfoId, needRecord() ? fileName : null, time, mCallFlag, mPhoneNumber);
-            mRecordManager.setDBId(id);
+            ServiceUtil.updateRecordOffHook(this, mRecordManager.getDBId(), needRecord() ? fileName : null, time, mPhoneNumber, mCallFlag);
             if (needRecord()) {
                 mRecordManager.initRecorder(fileName);
                 mRecordManager.startRecorder();
@@ -213,6 +221,13 @@ public class CallAssistantService extends Service {
         }
     }
 
+    private void addNewRecord() {
+        long time = System.currentTimeMillis();
+        int baseInfoId = ServiceUtil.addOrThrowBaseInfo(this, mPhoneNumber, time);
+        int id = ServiceUtil.addNewRecord(this, baseInfoId, time, mCallFlag, mPhoneNumber);
+        Log.d(Log.TAG, "addNewRecord a new call log record id = " + id);
+        mRecordManager.setDBId(id);
+    }
     private void ensureRecordManager() {
         if (mRecordManager == null) {
             mRecordManager = RecordManager.getInstance(this);
@@ -237,29 +252,6 @@ public class CallAssistantService extends Service {
         logd(topActivity.getClassName());
         return "com.android.phone.InCallScreen".equals(topActivity.getClassName());
     }
-    /* PhoneStateListener
-    private PhoneStateListener mPhoneStateListener = new PhoneStateListener() {
-        public void onCallStateChanged(int state, String incomingNumber) {
-            switch(state) {
-            case TelephonyManager.CALL_STATE_IDLE:
-                logv("mLastCallState = " + stateToString(mLastCallState) + " , state = [CALL_STATE_IDLE]");
-                if (mLastCallState == TelephonyManager.CALL_STATE_OFFHOOK) {
-                    stopRecord();
-                }
-                break;
-            case TelephonyManager.CALL_STATE_OFFHOOK:
-                logv("mLastCallState = " + stateToString(mLastCallState) + " , state = [CALL_STATE_OFFHOOK]");
-                startRecord();
-                break;
-            case TelephonyManager.CALL_STATE_RINGING:
-                logv("mLastCallState = " + stateToString(mLastCallState) + " , state = [CALL_STATE_RINGING]");
-                break;
-            default:
-                break;
-            }
-            mLastCallState = state;
-        }
-    };*/
 
     private void showNotification() {
         Notification.Builder builder = new Notification.Builder(this);

@@ -2,9 +2,12 @@ package com.android.callassistant.customer;
 
 import android.app.AlertDialog;
 import android.app.ListFragment;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -14,17 +17,22 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.view.ViewGroup.LayoutParams;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import com.android.callassistant.R;
 import com.android.callassistant.info.BaseInfo;
+import com.android.callassistant.manager.BlackNameManager;
 import com.android.callassistant.provider.DBConstant;
 import com.android.callassistant.settings.CallAssistantSettings;
+import com.android.callassistant.util.Log;
 import com.android.callassistant.util.RecordFileManager;
 
 import java.util.ArrayList;
@@ -37,6 +45,8 @@ public class RecordListFragment extends ListFragment implements OnCheckedChangeL
     private ArrayList<BaseInfo> mRecordList;
     private int mViewState;
     private AlertDialog mAlertDialog;
+    private PopupWindow mPopupWindow;
+    private CheckBox mCheckBox;
 
     
     @Override
@@ -136,11 +146,12 @@ public class RecordListFragment extends ListFragment implements OnCheckedChangeL
     }
 
     class ViewHolder {
+        LinearLayout dialNumber;
         LinearLayout itemContainer;
         TextView displayName;
         TextView callLogCount;
         CheckBox checkBox;
-        View checkboxContainer;
+        View functionMenu;
     }
     private class RecordListAdapter extends ArrayAdapter<BaseInfo>{
 
@@ -156,12 +167,17 @@ public class RecordListFragment extends ListFragment implements OnCheckedChangeL
             if (convertView == null) {
                 viewHolder = new ViewHolder();
                 convertView = LayoutInflater.from(mContext).inflate(R.layout.baseinfo_item_layout, null);
+                viewHolder.dialNumber = (LinearLayout) convertView.findViewById(R.id.dial_number);
+                viewHolder.dialNumber.setOnClickListener(RecordListFragment.this);
+                viewHolder.dialNumber.setTag(position);
                 viewHolder.itemContainer = (LinearLayout) convertView.findViewById(R.id.item_container);
                 viewHolder.itemContainer.setOnClickListener(RecordListFragment.this);
                 viewHolder.itemContainer.setTag(position);
                 viewHolder.displayName = (TextView) convertView.findViewById(R.id.display_name);
                 viewHolder.callLogCount = (TextView) convertView.findViewById(R.id.call_log_count);
-                viewHolder.checkboxContainer = (LinearLayout) convertView.findViewById(R.id.checkbox_container);
+                viewHolder.functionMenu = convertView.findViewById(R.id.function_menu);
+                viewHolder.functionMenu.setTag(position);
+                viewHolder.functionMenu.setOnClickListener(RecordListFragment.this);
                 viewHolder.checkBox = (CheckBox) convertView.findViewById(R.id.check_box);
                 viewHolder.checkBox.setOnCheckedChangeListener(RecordListFragment.this);
                 viewHolder.checkBox.setTag(position);
@@ -181,9 +197,11 @@ public class RecordListFragment extends ListFragment implements OnCheckedChangeL
                 viewHolder.checkBox.setChecked(info.checked);
             }
             if (mViewState == VIEW_STATE_NORMAL) {
-                viewHolder.checkboxContainer.setVisibility(View.GONE);
+                viewHolder.functionMenu.setVisibility(View.VISIBLE);
+                viewHolder.checkBox.setVisibility(View.INVISIBLE);
             } else if (mViewState == VIEW_STATE_DELETE) {
-                viewHolder.checkboxContainer.setVisibility(View.VISIBLE);
+                viewHolder.functionMenu.setVisibility(View.INVISIBLE);
+                viewHolder.checkBox.setVisibility(View.VISIBLE);
             }
             return convertView;
         }
@@ -192,9 +210,11 @@ public class RecordListFragment extends ListFragment implements OnCheckedChangeL
     @Override
     public void onCheckedChanged(CompoundButton buttonView,
             boolean isChecked) {
-        int position = (Integer) buttonView.getTag();
-        BaseInfo info = mListAdapter.getItem(position);
-        info.checked = isChecked;
+        if (buttonView.getId() == R.id.check_box) {
+            int position = (Integer) buttonView.getTag();
+            BaseInfo info = mListAdapter.getItem(position);
+            info.checked = isChecked;
+        }
     }
 
     @Override
@@ -205,6 +225,51 @@ public class RecordListFragment extends ListFragment implements OnCheckedChangeL
             Intent intent = new Intent(getActivity(), CustomerDetailActivity.class);
             intent.putExtra(DBConstant._ID, info._id);
             startActivity(intent);
+        } if (v.getId() == R.id.dial_number) {
+            int position = (Integer) v.getTag();
+            BaseInfo info = mListAdapter.getItem(position);
+            Intent intent = new Intent(Intent.ACTION_CALL);
+            intent.setData(Uri.parse("tel:" + info.phoneNumber));
+            getActivity().startActivity(intent);
+        } else if (v.getId() == R.id.function_menu) {
+            if (mPopupWindow == null) {
+                View view = LayoutInflater.from(getActivity()).inflate(R.layout.pop_menu, null);
+                mCheckBox = (CheckBox) view.findViewById(R.id.add_black_name);
+                mPopupWindow = new PopupWindow(view, LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+                mPopupWindow.setContentView(view);
+                mPopupWindow.setOutsideTouchable(true);
+                mPopupWindow.setBackgroundDrawable(new BitmapDrawable());
+                mPopupWindow.setFocusable(true);
+            }
+            int position = (Integer) v.getTag();
+            BaseInfo info = mListAdapter.getItem(position);
+            mCheckBox.setTag(position);
+            mCheckBox.setOnClickListener(this);
+            Log.d(Log.TAG, "function_menu info.blocked = " + info.blocked + " , position = " + position);
+            mCheckBox.setChecked(info.blocked);
+
+            if (!mPopupWindow.isShowing()) {
+                mPopupWindow.showAsDropDown(v);
+            }
+        } else if (v.getId() == R.id.add_black_name) {
+            int position = (Integer) v.getTag();
+            if (mPopupWindow != null && mPopupWindow.isShowing()) {
+                mPopupWindow.dismiss();
+            }
+
+            BaseInfo info = mListAdapter.getItem(position);
+            Log.d(Log.TAG, "info blocked = " + info.blocked);
+            if (!info.blocked) {
+                ContentValues values = new ContentValues();
+                values.put(DBConstant.BLOCK_NUMBER, info.phoneNumber);
+                if (getActivity().getContentResolver().insert(DBConstant.BLOCK_URI, values) != null) {
+                    info.blocked = true;
+                }
+            } else {
+                if (BlackNameManager.getInstance(getActivity()).deleteBlackName(info.phoneNumber)) {
+                    info.blocked = false;
+                }
+            }
         }
     }
 

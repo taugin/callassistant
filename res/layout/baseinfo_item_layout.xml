@@ -50,20 +50,36 @@
             android:text="@string/app_name" />
     </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/checkbox_container"
+    <View style="@style/vertical_line" />
+
+    <RelativeLayout
         android:layout_width="56dp"
         android:layout_height="56dp"
         android:layout_weight="0"
-        android:clickable="true"
-        android:gravity="center"
-        >
+        android:clickable="true" >
 
         <CheckBox
             android:id="@+id/check_box"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/item_background" />
-    </LinearLayout>
+            android:layout_centerInParent="true"
+            android:gravity="center"
+            android:visibility="invisible" />
+
+        <LinearLayout
+            android:id="@+id/function_menu"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_centerInParent="true"
+            android:gravity="center"
+            android:background="@drawable/item_background"
+            android:visibility="visible" >
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_menu_more" />
+        </LinearLayout>
+    </RelativeLayout>
 
 </LinearLayout>
