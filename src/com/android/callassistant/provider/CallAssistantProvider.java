@@ -26,6 +26,8 @@ public class CallAssistantProvider extends ContentProvider {
     private static final int TABLE_RECORD_ID = 1;
     private static final int TABLE_BASEINFO = 2;
     private static final int TABLE_BASEINFO_ID = 3;
+    private static final int TABLE_BLOCK = 4;
+    private static final int TABLE_BLOCK_ID = 5;
 
     private static final UriMatcher sUriMatcher;
     static {
@@ -36,6 +38,9 @@ public class CallAssistantProvider extends ContentProvider {
 
         sUriMatcher.addURI(DBConstant.AUTHORITIES, DBConstant.TABLE_BASEINFO, TABLE_BASEINFO);
         sUriMatcher.addURI(DBConstant.AUTHORITIES, DBConstant.TABLE_BASEINFO + "/#", TABLE_BASEINFO_ID);
+
+        sUriMatcher.addURI(DBConstant.AUTHORITIES, DBConstant.TABLE_BLOCK, TABLE_BLOCK);
+        sUriMatcher.addURI(DBConstant.AUTHORITIES, DBConstant.TABLE_BLOCK + "/#", TABLE_BLOCK_ID);
     }
     @Override
     public boolean onCreate() {
@@ -59,6 +64,10 @@ public class CallAssistantProvider extends ContentProvider {
             return DBConstant.BASEINFO_CONTENT_TYPE;
         case TABLE_BASEINFO_ID:
             return DBConstant.BASEINFO_CONTENT_ITEM_TYPE;
+        case TABLE_BLOCK:
+            return DBConstant.BLOCK_CONTENT_TYPE;
+        case TABLE_BLOCK_ID:
+            return DBConstant.BLOCK_CONTENT_ITEM_TYPE;
         default:
             throw new IllegalArgumentException("Unknown URI " + uri);
         }
@@ -86,6 +95,13 @@ public class CallAssistantProvider extends ContentProvider {
                 id = ContentUris.parseId(uri);
                 c = db.query(DBConstant.TABLE_BASEINFO, projection, DBConstant._ID + "=" + id, selectionArgs, null, null, sortOrder);
                 break;
+            case TABLE_BLOCK:
+                c = db.query(DBConstant.TABLE_BLOCK, projection, selection, selectionArgs, null, null, sortOrder);
+                break;
+            case TABLE_BLOCK_ID:
+                id = ContentUris.parseId(uri);
+                c = db.query(DBConstant.TABLE_BLOCK, projection, DBConstant._ID + "=" + id, selectionArgs, null, null, sortOrder);
+                break;
             default:
                 throw new IllegalArgumentException("Unknown URI " + uri);
             }
@@ -108,6 +124,9 @@ public class CallAssistantProvider extends ContentProvider {
             break;
             case TABLE_BASEINFO:
                 id = db.insert(DBConstant.TABLE_BASEINFO, DBConstant.FOO, values);
+            break;
+            case TABLE_BLOCK:
+                id = db.insert(DBConstant.TABLE_BLOCK, DBConstant.FOO, values);
             break;
             default:
                 throw new IllegalArgumentException("Unknown URI " + uri);
@@ -143,6 +162,13 @@ public class CallAssistantProvider extends ContentProvider {
                 id = ContentUris.parseId(uri);
                 ret = db.delete(DBConstant.TABLE_BASEINFO, DBConstant._ID + "=" + id, selectionArgs);
                 break;
+            case TABLE_BLOCK:
+                ret = db.delete(DBConstant.TABLE_BLOCK, selection, selectionArgs);
+                break;
+            case TABLE_BLOCK_ID:
+                id = ContentUris.parseId(uri);
+                ret = db.delete(DBConstant.TABLE_BLOCK, DBConstant._ID + "=" + id, selectionArgs);
+                break;
             default:
                 throw new IllegalArgumentException("Unknown URI " + uri);
             }
@@ -174,6 +200,13 @@ public class CallAssistantProvider extends ContentProvider {
             case TABLE_BASEINFO_ID:
                 id = ContentUris.parseId(uri);
                 ret = db.update(DBConstant.TABLE_BASEINFO, values, DBConstant._ID + "=" + id, selectionArgs);
+                break;
+            case TABLE_BLOCK:
+                ret = db.update(DBConstant.TABLE_BLOCK, values, selection, selectionArgs);
+                break;
+            case TABLE_BLOCK_ID:
+                id = ContentUris.parseId(uri);
+                ret = db.update(DBConstant.TABLE_BLOCK, values, DBConstant._ID + "=" + id, selectionArgs);
                 break;
             default:
                 throw new IllegalArgumentException("Unknown URI " + uri);

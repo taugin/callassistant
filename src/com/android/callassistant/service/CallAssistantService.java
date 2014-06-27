@@ -80,6 +80,7 @@ public class CallAssistantService extends Service {
                 return START_STICKY;
             }
             onCallStateChanged(state);
+
             if (PreferenceManager.getDefaultSharedPreferences(getBaseContext()).getBoolean("key_flip_mute", true)){
                 FlipManager.getInstance(getBaseContext()).registerAccelerometerListener();
             }
@@ -198,6 +199,7 @@ public class CallAssistantService extends Service {
         }
         return false;
     }
+
     private void stopRecord() {
         ensureRecordManager();
         String fileName = mRecordManager.getFileName();

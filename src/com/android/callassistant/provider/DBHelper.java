@@ -42,6 +42,18 @@ public class DBHelper extends SQLiteOpenHelper {
           + ")";
     private final String DROP_RECORD_TABLE = "DROP TABLE " + DBConstant.TABLE_RECORD + " IF EXISTS";
 
+    private static final String CREATE_BLOCK_TABLE =
+            "CREATE TABLE IF NOT EXISTS " + DBConstant.TABLE_BLOCK
+          + "("
+          + DBConstant._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+          + DBConstant.BLOCK_NUMBER + " TEXT,"
+          + DBConstant.BLOCK_COUNT + " INTEGER DEFAULT 0,"
+          + DBConstant.BLOCK_TIME + " LONG DEFAULT 0,"
+          + DBConstant.BLOCK_TYPE + " INTEGER DEFAULT 0,"
+          + DBConstant.BLOCK_CONTENT + " TEXT"
+          + ")";
+    private final String DROP_BLOCK_TABLE = "DROP TABLE " + DBConstant.TABLE_RECORD + " IF EXISTS";
+
     private Context mContext;
     public DBHelper(Context context) {
         super(context, DBConstant.DB_NAME, null, DBConstant.DB_VERSION);
@@ -54,6 +66,7 @@ public class DBHelper extends SQLiteOpenHelper {
         try{
             db.execSQL(CREATE_BASEINFO_TABLE);
             db.execSQL(CREATE_RECORD_TABLE);
+            db.execSQL(CREATE_BLOCK_TABLE);
         }catch(SQLException e){
             Log.d(Log.TAG, "create table failed e = " + e.getLocalizedMessage());
         }
@@ -65,6 +78,7 @@ public class DBHelper extends SQLiteOpenHelper {
             try{
                 db.execSQL(DROP_RECORD_TABLE);
                 db.execSQL(DROP_BASEINFO_TABLE);
+                db.execSQL(DROP_BLOCK_TABLE);
             } catch(SQLException e){
                 e.printStackTrace();
             } finally{

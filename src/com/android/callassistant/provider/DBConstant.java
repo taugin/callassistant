@@ -54,6 +54,11 @@ public class DBConstant {
     public static final String BLOCK_TIME = "block_time";
     public static final String BLOCK_TYPE = "block_type";
     public static final String BLOCK_CONTENT = "block_content";
-    
-    
+    public static final int BLOCK_TYPE_CALL = 0;
+    public static final int BLOCK_TYPE_MMS = 1;
+
+    public static final String BLOCK_CONTENT_TYPE = "vnd.android.cursor.item/vnd.block.items";
+    public static final String BLOCK_CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.block.item";
+
+    public static final Uri BLOCK_URI = Uri.parse("content://" + AUTHORITIES + "/" + TABLE_BLOCK);
 }

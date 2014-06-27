@@ -44,6 +44,7 @@ public class ServiceUtil {
         values.put(DBConstant.BASEINFO_CALL_LOG_COUNT, 1);
         values.put(DBConstant.BASEINFO_UPDATE, time);
         Uri contentUri = context.getContentResolver().insert(DBConstant.BASEINFO_URI, values);
+        
         return (int) ContentUris.parseId(contentUri);
     }
 
