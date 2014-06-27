@@ -7,12 +7,6 @@
     <string name="hello_world">Hello world!</string>
     <string name="ok">确定</string>
     <string name="cancel">取消</string>
-    <string-array name="warnig_tone_show">
-        <item>空号</item>
-        <item>停机</item>
-        <item>关机</item>
-        <item>忙机</item>
-    </string-array>
 
     <string name="recording">录音中 &#8230;</string>
     <string name="automatic_record">自动电话录音</string>
@@ -35,4 +29,5 @@
     <string name="flip_mute">翻转静音</string>
     <string name="block_all_call">拦截所有来电</string>
     <string name="warning_tone">黑名单提示音</string>
+    <string name="record_content">录音内容</string>
 </resources>

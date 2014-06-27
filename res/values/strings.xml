@@ -7,18 +7,6 @@
     <string name="hello_world">Hello world!</string>
     <string name="ok">OK</string>
     <string name="cancel">Cancel</string>
-    <string-array name="warnig_tone_show">
-        <item>Empty Number</item>
-        <item>Stop Service</item>
-        <item>Shutdown</item>
-        <item>Busy Now</item>
-    </string-array>
-    <string-array name="warning_tone_value">
-        <item>empty</item>
-        <item>stop</item>
-        <item>shutdown</item>
-        <item>busy</item>
-    </string-array>
 
     <string name="recording">Recording &#8230;</string>
     <string name="automatic_record">Automatic Record</string>
@@ -41,4 +29,5 @@
     <string name="flip_mute">FlipMute</string>
     <string name="block_all_call">Block all calls</string>
     <string name="warning_tone">Block call ringtone</string>
+    <string name="record_content">Record content</string>
 </resources>

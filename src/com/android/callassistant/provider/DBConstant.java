@@ -47,4 +47,13 @@ public class DBConstant {
     public static final String BASEINFO_CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.baseinfo.item";
 
     public static final Uri BASEINFO_URI = Uri.parse("content://" + AUTHORITIES + "/" + TABLE_BASEINFO);
+    
+    public static final String TABLE_BLOCK = "block_table";
+    public static final String BLOCK_NUMBER = "block_number";
+    public static final String BLOCK_COUNT = "block_count";
+    public static final String BLOCK_TIME = "block_time";
+    public static final String BLOCK_TYPE = "block_type";
+    public static final String BLOCK_CONTENT = "block_content";
+    
+    
 }

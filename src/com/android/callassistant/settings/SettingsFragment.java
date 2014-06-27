@@ -21,18 +21,18 @@ public class SettingsFragment extends PreferenceFragment implements
     private final String DISABLE_SERVICE = "tel:%23%2367%23";
     
     private static final String KEY_WARNING_TONE = "key_warning_tone";
-    private static final String KEY_AUTOMATIC_RECORD = "key_automatic_record";
     private static final String KEY_FLIP_MUTE = "key_flip_mute";
     private static final String KEY_BLOCK_ALL = "key_block_all";
+    private static final String KEY_RECORD_CONTENT = "key_record_content";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.settings);
         findPreference(KEY_WARNING_TONE).setOnPreferenceChangeListener(this);
-        findPreference(KEY_AUTOMATIC_RECORD).setOnPreferenceChangeListener(this);
         findPreference(KEY_FLIP_MUTE).setOnPreferenceChangeListener(this);
         findPreference(KEY_BLOCK_ALL).setOnPreferenceChangeListener(this);
+        findPreference(KEY_RECORD_CONTENT).setOnPreferenceChangeListener(this);
     }
 
     @Override
@@ -40,6 +40,12 @@ public class SettingsFragment extends PreferenceFragment implements
         super.onResume();
         ListPreference preference = (ListPreference) findPreference(KEY_WARNING_TONE);
         int index = preference.findIndexOfValue(preference.getValue());
+        if (index != -1) {
+            preference.setSummary(preference.getEntries()[index]);
+        }
+        
+        preference = (ListPreference) findPreference(KEY_RECORD_CONTENT);
+        index = preference.findIndexOfValue(preference.getValue());
         if (index != -1) {
             preference.setSummary(preference.getEntries()[index]);
         }
@@ -59,11 +65,6 @@ public class SettingsFragment extends PreferenceFragment implements
             setCallForward(value);
             Log.getLog(getActivity()).recordOperation("Set ringtone tip to " + list.getEntries()[index]);
             return true;
-        } else if (preference.getKey().equals(KEY_AUTOMATIC_RECORD)) {
-            Boolean value = (Boolean) newValue;
-            String operation = value ? "Open automatic record" : "Close automatic record";
-            Log.getLog(getActivity()).recordOperation(operation);
-            return true;
         } else if (preference.getKey().equals(KEY_FLIP_MUTE)) {
             Boolean value = (Boolean) newValue;
             String operation = value ? "Open flip mute" : "Close flip mute";
@@ -73,6 +74,18 @@ public class SettingsFragment extends PreferenceFragment implements
             Boolean value = (Boolean) newValue;
             String operation = value ? "Open block all calls" : "Close block all calls";
             Log.getLog(getActivity()).recordOperation(operation);
+            return true;
+        } else if (preference.getKey().equals(KEY_RECORD_CONTENT)) {
+            String value = (String) newValue;
+            Log.d(Log.TAG, "value = " + value);
+            ListPreference list = (ListPreference) preference;
+            list.setValue(value);
+            int index = list.findIndexOfValue(value);
+            if (index != -1) {
+                preference.setSummary(list.getEntries()[index]);
+            }
+            setCallForward(value);
+            Log.getLog(getActivity()).recordOperation("Set record content to " + list.getEntries()[index]);
             return true;
         }
 

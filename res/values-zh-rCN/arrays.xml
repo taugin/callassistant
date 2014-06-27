@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="warnig_tone_show">
+        <item>空号</item>
+        <item>停机</item>
+        <item>关机</item>
+        <item>忙机</item>
+    </string-array>
+    <string-array name="record_content_entries">
+        <item>所有电话录音</item>
+        <item>来电录音</item>
+        <item>去电录音</item>
+        <item>不录音</item>
+    </string-array>
+
+</resources>

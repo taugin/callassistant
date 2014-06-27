@@ -171,17 +171,15 @@ public class CallAssistantService extends Service {
         }
     };
     private void startRecord() {
-        boolean record = PreferenceManager.getDefaultSharedPreferences(this).getBoolean("key_automatic_record", true);
         ensureRecordManager();
         TelephonyManager tm = (TelephonyManager) getSystemService(Service.TELEPHONY_SERVICE);
-        Log.d(Log.TAG, "startRecord record = " + record + " , state = " + stateToString(tm.getCallState()));
         if (!mRecordManager.recording()) {
             long time = System.currentTimeMillis();
             int baseInfoId = ServiceUtil.addOrThrowBaseInfo(this, mPhoneNumber, time);
             String fileName = RecordFileManager.getInstance(CallAssistantService.this).getProperName(mPhoneNumber, time);
-            int id = ServiceUtil.addNewRecord(this, baseInfoId, record ? fileName : null, time, mCallFlag, mPhoneNumber);
+            int id = ServiceUtil.addNewRecord(this, baseInfoId, needRecord() ? fileName : null, time, mCallFlag, mPhoneNumber);
             mRecordManager.setDBId(id);
-            if (record) {
+            if (needRecord()) {
                 mRecordManager.initRecorder(fileName);
                 mRecordManager.startRecorder();
                 showNotification();
@@ -189,12 +187,22 @@ public class CallAssistantService extends Service {
         }
     }
 
+    private boolean needRecord() {
+        String recordContent = PreferenceManager.getDefaultSharedPreferences(this).getString("key_record_content", "all");
+        if ("all".equals(recordContent)) {
+            return true;
+        } else if ("incoming".equals(recordContent) && mCallFlag == CallFlag.INCOMING) {
+            return true;
+        } else if ("outgoing".equals(recordContent) && mCallFlag == CallFlag.OUTGOING) {
+            return true;
+        }
+        return false;
+    }
     private void stopRecord() {
-        boolean record = PreferenceManager.getDefaultSharedPreferences(this).getBoolean("key_automatic_record", true);
         ensureRecordManager();
         String fileName = mRecordManager.getFileName();
         ServiceUtil.updateRecord(this, mRecordManager.getDBId(), fileName);
-        if (record) {
+        if (needRecord()) {
             if (mRecordManager.recording()) {
                 mRecordManager.stopRecorder();
                 Log.getLog(getBaseContext()).recordOperation("Saved record file " + fileName);
