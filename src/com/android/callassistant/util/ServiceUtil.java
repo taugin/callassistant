@@ -7,7 +7,7 @@ import android.database.Cursor;
 import android.net.Uri;
 
 import com.android.callassistant.provider.DBConstant;
-import com.android.callassistant.service.AppPhoneService;
+import com.android.callassistant.service.CallAssistantService;
 
 import java.io.File;
 
@@ -47,7 +47,7 @@ public class ServiceUtil {
         return (int) ContentUris.parseId(contentUri);
     }
 
-    public static int addNewRecord(Context context, int baseInfoId, String fileName, long timeStart, AppPhoneService.CallFlag callFlag, String phoneNumber) {
+    public static int addNewRecord(Context context, int baseInfoId, String fileName, long timeStart, CallAssistantService.CallFlag callFlag, String phoneNumber) {
         ContentValues values = new ContentValues();
         values.put(DBConstant.RECORD_BASEINFO_ID, baseInfoId);
         values.put(DBConstant.RECORD_NAME, "record_" + phoneNumber + ".amr");

@@ -24,7 +24,7 @@ import android.widget.TextView;
 import com.android.callassistant.R;
 import com.android.callassistant.info.BaseInfo;
 import com.android.callassistant.provider.DBConstant;
-import com.android.callassistant.settings.AppSettings;
+import com.android.callassistant.settings.CallAssistantSettings;
 import com.android.callassistant.util.RecordFileManager;
 
 import java.util.ArrayList;
@@ -108,7 +108,7 @@ public class RecordListFragment extends ListFragment implements OnCheckedChangeL
             }
             break;
         case R.id.action_settings: {
-            Intent intent = new Intent(getActivity(), AppSettings.class);
+            Intent intent = new Intent(getActivity(), CallAssistantSettings.class);
             getActivity().startActivity(intent);;
         }
             break;

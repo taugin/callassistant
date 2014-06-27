@@ -25,7 +25,7 @@ import com.android.callassistant.R;
 import com.android.callassistant.info.RecordInfo;
 import com.android.callassistant.manager.RecordPlayerManager;
 import com.android.callassistant.manager.RecordPlayerManager.OnCompletionListener;
-import com.android.callassistant.settings.AppSettings;
+import com.android.callassistant.settings.CallAssistantSettings;
 import com.android.callassistant.util.RecordFileManager;
 
 import java.text.DecimalFormat;
@@ -117,7 +117,7 @@ public class CopyOfRecordListFragment extends ListFragment implements OnCheckedC
             }
             break;
         case R.id.action_settings: {
-            Intent intent = new Intent(getActivity(), AppSettings.class);
+            Intent intent = new Intent(getActivity(), CallAssistantSettings.class);
             getActivity().startActivity(intent);;
         }
             break;

@@ -16,9 +16,9 @@ import com.android.callassistant.util.Log;
 
 import java.util.ArrayList;
 
-public class RecordProvider extends ContentProvider {
+public class CallAssistantProvider extends ContentProvider {
 
-    public final String TAG = "RecordProvider";
+    public final String TAG = "CallAssistantProvider";
 
     private DBHelper mDBHelper = null;
 
@@ -39,7 +39,7 @@ public class RecordProvider extends ContentProvider {
     }
     @Override
     public boolean onCreate() {
-        Log.d(TAG, "RecordProvider onCreate");
+        Log.d(TAG, "CallAssistantProvider onCreate");
         mDBHelper = new DBHelper(getContext());
         if (mDBHelper != null) {
             return true;

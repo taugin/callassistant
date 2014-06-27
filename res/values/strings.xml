@@ -5,7 +5,7 @@
     <string name="action_settings">Settings</string>
     <string name="action_delete">Delete</string>
     <string name="hello_world">Hello world!</string>
-    <string name="ok">Ok</string>
+    <string name="ok">OK</string>
     <string name="cancel">Cancel</string>
     <string-array name="warnig_tone_show">
         <item>Empty Number</item>
@@ -20,7 +20,7 @@
         <item>busy</item>
     </string-array>
 
-    <string name="recording">Recording...</string>
+    <string name="recording">Recording &#8230;</string>
     <string name="automatic_record">Automatic Record</string>
     <string name="on">On</string>
     <string name="off">Off</string>

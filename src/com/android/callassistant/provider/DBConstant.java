@@ -4,9 +4,9 @@ import android.net.Uri;
 
 public class DBConstant {
 
-    public static final String AUTHORITIES = "com.android.phonerecorder";
+    public static final String AUTHORITIES = "com.android.callassistant";
     public static final int DB_VERSION = 1;
-    public static final String DB_NAME = "phonerecorder.db";
+    public static final String DB_NAME = "callassistant.db";
     public static final String _ID = "_id";
     public static final String FOO = "foo";
 

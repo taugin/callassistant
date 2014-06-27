@@ -5,7 +5,7 @@ import android.os.Bundle;
 
 import com.android.callassistant.R;
 
-public class AppSettings extends Activity {
+public class CallAssistantSettings extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

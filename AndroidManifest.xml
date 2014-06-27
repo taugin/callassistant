@@ -31,13 +31,13 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.android.callassistant.settings.AppSettings"
+            android:name="com.android.callassistant.settings.CallAssistantSettings"
             android:configChanges="orientation|screenSize"
             android:label="@string/action_settings" >
         </activity>
 
         <service
-            android:name="com.android.callassistant.service.AppPhoneService"
+            android:name="com.android.callassistant.service.CallAssistantService"
             android:exported="false" >
             <intent-filter>
                 <action android:name="com.android.callassistant.action.INCOMING_PHONE" />
@@ -54,7 +54,7 @@
         </receiver>
 
         <provider
-            android:name="com.android.callassistant.provider.RecordProvider"
+            android:name="com.android.callassistant.provider.CallAssistantProvider"
             android:authorities="com.android.callassistant" />
 
         <activity

@@ -26,7 +26,7 @@ import com.android.callassistant.util.ServiceUtil;
 
 import java.util.List;
 
-public class AppPhoneService extends Service {
+public class CallAssistantService extends Service {
 
     private static final boolean DEBUG = true;
     private static final int DELAY_TIME = 10 * 1000;
@@ -152,7 +152,7 @@ public class AppPhoneService extends Service {
         public void run() {
             Log.d(Log.TAG, "mEndCall run mPhoneNumber = " + mPhoneNumber);
             if (mPhoneNumber.equals("1008611")) {
-                CallManager.getInstance(AppPhoneService.this).endCall();
+                CallManager.getInstance(CallAssistantService.this).endCall();
             }
         }
     };
@@ -178,7 +178,7 @@ public class AppPhoneService extends Service {
         if (!mRecordManager.recording()) {
             long time = System.currentTimeMillis();
             int baseInfoId = ServiceUtil.addOrThrowBaseInfo(this, mPhoneNumber, time);
-            String fileName = RecordFileManager.getInstance(AppPhoneService.this).getProperName(mPhoneNumber, time);
+            String fileName = RecordFileManager.getInstance(CallAssistantService.this).getProperName(mPhoneNumber, time);
             int id = ServiceUtil.addNewRecord(this, baseInfoId, record ? fileName : null, time, mCallFlag, mPhoneNumber);
             mRecordManager.setDBId(id);
             if (record) {
