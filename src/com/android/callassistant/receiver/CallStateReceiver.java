@@ -5,7 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.telephony.TelephonyManager;
 
-import com.android.callassistant.manager.CallManager;
+import com.android.callassistant.manager.Telephony;
 import com.android.callassistant.util.Constant;
 
 public class CallStateReceiver extends BroadcastReceiver {

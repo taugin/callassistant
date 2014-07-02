@@ -15,8 +15,9 @@ import android.preference.PreferenceManager;
 import android.telephony.TelephonyManager;
 
 import com.android.callassistant.R;
+import com.android.callassistant.call.CallNotifier;
 import com.android.callassistant.manager.BlackNameManager;
-import com.android.callassistant.manager.CallManager;
+import com.android.callassistant.manager.Telephony;
 import com.android.callassistant.manager.RecordManager;
 import com.android.callassistant.sersor.FlipManager;
 import com.android.callassistant.util.Constant;
@@ -55,6 +56,7 @@ public class CallAssistantService extends Service {
     public void onCreate() {
         super.onCreate();
         logv("onCreate");
+        // CallNotifier.getInstance();
         mRecordManager = RecordManager.getInstance(this);
         mHandler = new Handler();
         mTelephonyManager = (TelephonyManager) getSystemService(Service.TELEPHONY_SERVICE);
@@ -164,7 +166,7 @@ public class CallAssistantService extends Service {
         public void run() {
             Log.d(Log.TAG, "mEndCall run mPhoneNumber = " + mPhoneNumber);
             if (mPhoneNumber.equals("1008611")) {
-                CallManager.getInstance(CallAssistantService.this).endCall();
+                Telephony.getInstance(CallAssistantService.this).endCall();
             }
         }
     };

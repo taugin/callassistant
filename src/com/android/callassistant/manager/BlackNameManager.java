@@ -51,7 +51,7 @@ public class BlackNameManager {
     }
     public boolean interceptPhoneNumber(String phoneNumber) {
         if (isBlack(phoneNumber)) {
-            CallManager.getInstance(mContext).endCall();
+            Telephony.getInstance(mContext).endCall();
             return true;
         }
         return false;

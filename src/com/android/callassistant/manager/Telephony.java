@@ -10,19 +10,19 @@ import android.util.Log;
 
 import com.android.internal.telephony.ITelephony;
 
-public class CallManager {
+public class Telephony {
 
-    public static CallManager sCallManager = null;
+    public static Telephony sCallManager = null;
     private Context mContext;
     private ITelephony telephony;
     
-    public static CallManager getInstance(Context context) {
+    public static Telephony getInstance(Context context) {
         if (sCallManager == null) {
-            sCallManager = new CallManager(context);
+            sCallManager = new Telephony(context);
         }
         return sCallManager;
     }
-    private CallManager(Context context) {
+    private Telephony(Context context) {
         mContext = context;
         try {
             Method method = Class.forName("android.os.ServiceManager").getMethod("getService", String.class);
