@@ -60,6 +60,7 @@ public class ServiceUtil {
     }
     
     public static void moveTmpInfoToDB(Context context) {
+        Log.getLog(context).recordOperation("moveTmpInfoToDB");
         String phoneNumber = TmpStorageManager.getPhoneNumber(context);
         int callFlag = TmpStorageManager.getCallFlag(context);
         long ringTime = TmpStorageManager.getRingTime(context);

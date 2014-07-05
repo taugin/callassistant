@@ -91,7 +91,7 @@ public class CallLogListView extends LinearLayout implements OnCheckedChangeList
             call_date.setText(sdf.format(new Date(updateTime)));
 
             TextView call_duration = (TextView) view.findViewById(R.id.call_duration);
-            call_duration.setText(getTimeExperence(info.recordEnd - info.recordStart));
+            call_duration.setText(getTimeExperence(info.recordStart == 0 ? 0 : info.recordEnd - info.recordStart));
 
             ImageView media_control = (ImageView) view.findViewById(R.id.media_control);
             media_control.setTag(info);

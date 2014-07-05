@@ -77,8 +77,9 @@ public class TmpStorageManager {
     }
     
     public static void clear(Context context) {
+        Log.getLog(context).recordOperation("clear");
         SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_NAME, Context.MODE_PRIVATE);
-        sharedPreferences.edit().clear();
+        sharedPreferences.edit().clear().apply();
     }
     
     public static String getRecordName(Context context) {

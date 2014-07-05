@@ -24,6 +24,7 @@ import com.android.callassistant.provider.DBConstant;
 import com.android.callassistant.sersor.FlipManager;
 import com.android.callassistant.util.Constant;
 import com.android.callassistant.util.Log;
+import com.android.callassistant.util.RadioLogMatcher;
 import com.android.callassistant.util.RecordFileManager;
 import com.android.callassistant.util.ServiceUtil;
 
@@ -131,6 +132,7 @@ public class CallAssistantService extends Service {
             }
 
             Log.getLog(getBaseContext()).recordOperation(operation);
+            TmpStorageManager.toString(this);
             if (lastState == TelephonyManager.CALL_STATE_OFFHOOK || lastState == TelephonyManager.CALL_STATE_RINGING) {
                 ServiceUtil.moveTmpInfoToDB(this);
                 TmpStorageManager.clear(this);
@@ -175,6 +177,7 @@ public class CallAssistantService extends Service {
             mHandler.postDelayed(mMonitorIncallScreen, DELAY_TIME);
         }
     };
+
     private void startRecord() {
         ensureRecordManager();
         if (!mRecordManager.recording()) {
