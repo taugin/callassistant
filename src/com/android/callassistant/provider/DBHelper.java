@@ -22,7 +22,7 @@ public class DBHelper extends SQLiteOpenHelper {
           + DBConstant.CONTACT_ALLOW_RECORD + " INTEGER DEFAULT 1,"
           + DBConstant.CONTACT_STATE + " TEXT,"
           + DBConstant.CONTACT_UPDATE + " LONG DEFAULT 0,"
-          + DBConstant.CONTACT_FROM_SYSTEM + " INTEGER DEFAULT 0,"
+          + DBConstant.CONTACT_MODIFY_NAME + " INTEGER DEFAULT 0,"
           + DBConstant.FOO + " text"
           + ")";
     private final String DROP_BASEINFO_TABLE = "DROP TABLE " + DBConstant.TABLE_CONTACTS + " IF EXISTS";
@@ -31,7 +31,7 @@ public class DBHelper extends SQLiteOpenHelper {
             "CREATE TABLE IF NOT EXISTS " + DBConstant.TABLE_RECORD
           + "("
           + DBConstant._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-          + DBConstant.RECORD_BASEINFO_ID + " INTEGER REFERENCES " + DBConstant.TABLE_CONTACTS + "(" + DBConstant._ID + "),"
+          + DBConstant.RECORD_CONTACT_ID + " INTEGER REFERENCES " + DBConstant.TABLE_CONTACTS + "(" + DBConstant._ID + "),"
           + DBConstant.RECORD_NAME + " TEXT,"
           + DBConstant.RECORD_FILE + " TEXT,"
           + DBConstant.RECORD_NUMBER + " TEXT,"

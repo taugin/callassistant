@@ -100,7 +100,7 @@ public class CustomerDetailFragment extends Fragment implements OnClickListener,
             if (!TextUtils.isEmpty(newName)) {
                 ContentValues values = new ContentValues();
                 values.put(DBConstant.CONTACT_NAME, newName);
-                Uri uri = ContentUris.withAppendedId(DBConstant.BASEINFO_URI, mContactId);
+                Uri uri = ContentUris.withAppendedId(DBConstant.CONTACT_URI, mContactId);
                 int ret = getActivity().getContentResolver().update(uri, values, null, null);
                 String message = null;
                 if (ret > 0) {

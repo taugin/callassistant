@@ -11,7 +11,7 @@ public class DBConstant {
     public static final String FOO = "foo";
 
     public static final String TABLE_RECORD = "record_table";
-    public static final String RECORD_BASEINFO_ID = "record_baseinfo_id";
+    public static final String RECORD_CONTACT_ID = "record_contact_id";
     public static final String RECORD_NAME = "record_name";
     public static final String RECORD_FILE = "record_file";
     public static final String RECORD_NUMBER = "record_number";
@@ -34,27 +34,27 @@ public class DBConstant {
 
 
     public static final String TABLE_CONTACTS = "table_contacts";
-    public static final String CONTACT_NAME = "CONTACT_NAME";
-    public static final String CONTACT_SEX = "CONTACT_SEX";
-    public static final String CONTACT_AGE = "CONTACT_AGE";
-    public static final String CONTACT_ADDRESS = "CONTACT_ADDRESS";
-    public static final String CONTACT_NUMBER = "CONTACT_NUMBER";
-    public static final String CONTACT_CALL_LOG_COUNT = "CONTACT_CALL_LOG_COUNT";
-    public static final String CONTACT_ALLOW_RECORD = "CONTACT_ALLOW_RECORD";
-    public static final String CONTACT_STATE = "CONTACT_STATE";
-    public static final String CONTACT_UPDATE = "CONTACT_UPDATE";
-    public static final String CONTACT_FROM_SYSTEM = "contact_from_system";
+    public static final String CONTACT_NAME = "contact_name";
+    public static final String CONTACT_SEX = "contact_sex";
+    public static final String CONTACT_AGE = "contact_age";
+    public static final String CONTACT_ADDRESS = "contact_address";
+    public static final String CONTACT_NUMBER = "contact_number";
+    public static final String CONTACT_CALL_LOG_COUNT = "contact_call_log_count";
+    public static final String CONTACT_ALLOW_RECORD = "contact_allow_record";
+    public static final String CONTACT_STATE = "contact_state";
+    public static final String CONTACT_UPDATE = "contact_update";
+    public static final String CONTACT_MODIFY_NAME = "contact_allow_modify";
     
-    public static final int FROM_SYSTEM_FALSE = 0;
-    public static final int FROM_SYSTEM_TRUE = 1;
+    public static final int MODIFY_NAME_ALLOW = 0;
+    public static final int MODIFY_NAME_FORBID = 1;
 
     public static final int ALLOW_RECORD = 1;
     public static final int FORBID_RECORD = 0;
 
-    public static final String BASEINFO_CONTENT_TYPE = "vnd.android.cursor.item/vnd.baseinfo.items";
-    public static final String BASEINFO_CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.baseinfo.item";
+    public static final String CONTACT_CONTENT_TYPE = "vnd.android.cursor.item/vnd.contact.items";
+    public static final String CONTACT_CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.contact.item";
 
-    public static final Uri BASEINFO_URI = Uri.parse("content://" + AUTHORITIES + "/" + TABLE_CONTACTS);
+    public static final Uri CONTACT_URI = Uri.parse("content://" + AUTHORITIES + "/" + TABLE_CONTACTS);
     
     public static final String TABLE_BLOCK = "block_table";
     public static final String BLOCK_NUMBER = "block_number";

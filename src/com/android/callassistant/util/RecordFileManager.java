@@ -109,8 +109,8 @@ public class RecordFileManager {
         String area = builder.toString();
         String whereBaseInfo = DBConstant._ID + " IN " + area;
         Log.d(Log.TAG, "deleteBaseInfoFromDB where = " + whereBaseInfo);
-        mContext.getContentResolver().delete(DBConstant.BASEINFO_URI, whereBaseInfo, null);
-        String whereRecord = DBConstant.RECORD_BASEINFO_ID + " IN " + area;
+        mContext.getContentResolver().delete(DBConstant.CONTACT_URI, whereBaseInfo, null);
+        String whereRecord = DBConstant.RECORD_CONTACT_ID + " IN " + area;
         Log.d(Log.TAG, "deleteBaseInfoFromDB where = " + whereRecord);
         ArrayList<RecordInfo> list2 = queryRecordFiles(whereRecord);
         mContext.getContentResolver().delete(DBConstant.RECORD_URI, whereRecord, null);
@@ -130,7 +130,7 @@ public class RecordFileManager {
         Cursor c = null;
         ContactInfo info = null;
         try {
-            Uri uri = ContentUris.withAppendedId(DBConstant.BASEINFO_URI, id);
+            Uri uri = ContentUris.withAppendedId(DBConstant.CONTACT_URI, id);
             c = mContext.getContentResolver().query(uri, null, null, null, null);
             if (c != null) {
                 if (c.moveToFirst()) {
@@ -139,7 +139,7 @@ public class RecordFileManager {
                     info.contactName = c.getString(c.getColumnIndex(DBConstant.CONTACT_NAME));
                     info.contactNumber = c.getString(c.getColumnIndex(DBConstant.CONTACT_NUMBER));
                     info.contactLogCount = c.getInt(c.getColumnIndex(DBConstant.CONTACT_CALL_LOG_COUNT));
-                    info.contactFromSystem = c.getInt(c.getColumnIndex(DBConstant.CONTACT_FROM_SYSTEM)) == DBConstant.FROM_SYSTEM_TRUE;
+                    info.contactFromSystem = c.getInt(c.getColumnIndex(DBConstant.CONTACT_MODIFY_NAME)) == DBConstant.MODIFY_NAME_FORBID;
                 } 
             }
         } catch (Exception e) {
@@ -158,7 +158,7 @@ public class RecordFileManager {
         list.clear();
         Cursor c = null;
         try {
-            c = mContext.getContentResolver().query(DBConstant.BASEINFO_URI, null, null, null, DBConstant.CONTACT_UPDATE + " DESC");
+            c = mContext.getContentResolver().query(DBConstant.CONTACT_URI, null, null, null, DBConstant.CONTACT_UPDATE + " DESC");
             if (c != null) {
                 if (c.moveToFirst()) {
                     ContactInfo info = null;
@@ -196,7 +196,7 @@ public class RecordFileManager {
         Cursor c = null;
         String selection = null;
         if (id != -1) {
-            selection = DBConstant.RECORD_BASEINFO_ID + "=" + id;
+            selection = DBConstant.RECORD_CONTACT_ID + "=" + id;
         }
         Log.d(Log.TAG, "getRecordsFromDB selection = " + selection);
         try {

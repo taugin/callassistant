@@ -61,9 +61,9 @@ public class CallAssistantProvider extends ContentProvider {
         case TABLE_RECORD_ID:
             return DBConstant.RECORD_CONTENT_ITEM_TYPE;
         case TABLE_BASEINFO:
-            return DBConstant.BASEINFO_CONTENT_TYPE;
+            return DBConstant.CONTACT_CONTENT_TYPE;
         case TABLE_BASEINFO_ID:
-            return DBConstant.BASEINFO_CONTENT_ITEM_TYPE;
+            return DBConstant.CONTACT_CONTENT_ITEM_TYPE;
         case TABLE_BLOCK:
             return DBConstant.BLOCK_CONTENT_TYPE;
         case TABLE_BLOCK_ID:

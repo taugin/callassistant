@@ -20,7 +20,7 @@ public class ServiceUtil {
         int count = 0;
         String selection = DBConstant.CONTACT_NUMBER + " LIKE '%" + phoneNumber + "'";
         try {
-            c = context.getContentResolver().query(DBConstant.BASEINFO_URI, new String[]{DBConstant._ID, DBConstant.CONTACT_CALL_LOG_COUNT}, selection, null, null);
+            c = context.getContentResolver().query(DBConstant.CONTACT_URI, new String[]{DBConstant._ID, DBConstant.CONTACT_CALL_LOG_COUNT}, selection, null, null);
             if (c != null && c.moveToFirst() && c.getCount() > 0) {
                 _id = c.getInt(c.getColumnIndex(DBConstant._ID));
                 count = c.getInt(c.getColumnIndex(DBConstant.CONTACT_CALL_LOG_COUNT));
@@ -41,9 +41,9 @@ public class ServiceUtil {
             values.put(DBConstant.CONTACT_UPDATE, time);
             if (!TextUtils.isEmpty(name)) {
                 values.put(DBConstant.CONTACT_NAME, name);
-                values.put(DBConstant.CONTACT_FROM_SYSTEM, DBConstant.FROM_SYSTEM_TRUE);
+                values.put(DBConstant.CONTACT_MODIFY_NAME, DBConstant.MODIFY_NAME_FORBID);
             }
-            context.getContentResolver().update(ContentUris.withAppendedId(DBConstant.BASEINFO_URI, _id), values, null, null);
+            context.getContentResolver().update(ContentUris.withAppendedId(DBConstant.CONTACT_URI, _id), values, null, null);
             return _id;
         }
         ContentValues values = new ContentValues();
@@ -52,9 +52,9 @@ public class ServiceUtil {
         values.put(DBConstant.CONTACT_UPDATE, time);
         if (!TextUtils.isEmpty(name)) {
             values.put(DBConstant.CONTACT_NAME, name);
-            values.put(DBConstant.CONTACT_FROM_SYSTEM, DBConstant.FROM_SYSTEM_TRUE);
+            values.put(DBConstant.CONTACT_MODIFY_NAME, DBConstant.MODIFY_NAME_FORBID);
         }
-        Uri contentUri = context.getContentResolver().insert(DBConstant.BASEINFO_URI, values);
+        Uri contentUri = context.getContentResolver().insert(DBConstant.CONTACT_URI, values);
         
         return (int) ContentUris.parseId(contentUri);
     }
@@ -86,7 +86,7 @@ public class ServiceUtil {
         }
 
         ContentValues value = new ContentValues();
-        value.put(DBConstant.RECORD_BASEINFO_ID, _id);
+        value.put(DBConstant.RECORD_CONTACT_ID, _id);
         value.put(DBConstant.RECORD_NUMBER, phoneNumber);
         value.put(DBConstant.RECORD_NAME, recordName);
         value.put(DBConstant.RECORD_FILE, recordFile);

@@ -149,6 +149,7 @@ public class CallLogListView extends LinearLayout implements OnCheckedChangeList
     }
     public void onPause() {
         mRecordPlayer.stopPlay();
+        resetControlState();
     }
     public void onDestroy() {
         mRecordPlayer.release();
