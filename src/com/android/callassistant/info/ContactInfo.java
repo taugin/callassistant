@@ -8,9 +8,10 @@ public class ContactInfo {
     public String contactAddress;
     public String contactNumber;
     public int contactLogCount;
+    public long contactUpdate;
     public int contactAllowRecord;
     public int contactState;
-    public boolean contactFromSystem;
+    public boolean contactModifyName;
     public boolean checked;
     public boolean blocked;
 }

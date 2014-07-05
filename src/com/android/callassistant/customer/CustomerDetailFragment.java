@@ -74,7 +74,7 @@ public class CustomerDetailFragment extends Fragment implements OnClickListener,
         if (!TextUtils.isEmpty(mContact.contactName)) {
             len = mContact.contactName.length();
         }
-        mCustomerNameView.setEnabled(!mContact.contactFromSystem);
+        mCustomerNameView.setEnabled(!mContact.contactModifyName);
         mCustomerNameView.setSelection(len);
         mCallLogListView.setCallLogList(mRecordList);
     }

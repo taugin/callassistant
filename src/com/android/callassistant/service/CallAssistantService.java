@@ -133,6 +133,7 @@ public class CallAssistantService extends Service {
             Log.getLog(getBaseContext()).recordOperation(operation);
             if (lastState == TelephonyManager.CALL_STATE_OFFHOOK || lastState == TelephonyManager.CALL_STATE_RINGING) {
                 ServiceUtil.moveTmpInfoToDB(this);
+                TmpStorageManager.clear(this);
             }
             TmpStorageManager.toString(this);
             break;

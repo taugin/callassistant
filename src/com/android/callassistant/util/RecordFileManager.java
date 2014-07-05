@@ -139,7 +139,7 @@ public class RecordFileManager {
                     info.contactName = c.getString(c.getColumnIndex(DBConstant.CONTACT_NAME));
                     info.contactNumber = c.getString(c.getColumnIndex(DBConstant.CONTACT_NUMBER));
                     info.contactLogCount = c.getInt(c.getColumnIndex(DBConstant.CONTACT_CALL_LOG_COUNT));
-                    info.contactFromSystem = c.getInt(c.getColumnIndex(DBConstant.CONTACT_MODIFY_NAME)) == DBConstant.MODIFY_NAME_FORBID;
+                    info.contactModifyName = c.getInt(c.getColumnIndex(DBConstant.CONTACT_MODIFY_NAME)) == DBConstant.MODIFY_NAME_FORBID;
                 } 
             }
         } catch (Exception e) {
@@ -151,7 +151,7 @@ public class RecordFileManager {
         }
         return info;
     }
-    public ArrayList<ContactInfo> getBaseInfoFromDB(ArrayList<ContactInfo> list) {
+    public ArrayList<ContactInfo> getContactFromDB(ArrayList<ContactInfo> list) {
         if (list == null) {
             return null;
         }
@@ -168,6 +168,7 @@ public class RecordFileManager {
                         info.contactName = c.getString(c.getColumnIndex(DBConstant.CONTACT_NAME));
                         info.contactNumber = c.getString(c.getColumnIndex(DBConstant.CONTACT_NUMBER));
                         info.contactLogCount = c.getInt(c.getColumnIndex(DBConstant.CONTACT_CALL_LOG_COUNT));
+                        info.contactUpdate = c.getLong(c.getColumnIndex(DBConstant.CONTACT_UPDATE));
                         info.blocked = BlackNameManager.getInstance(mContext).isBlackInDB(info.contactNumber);
                         Log.d(Log.TAG, "getBaseInfoFromDB info.blocked = " + info.blocked);
                         list.add(info);

@@ -1,5 +1,9 @@
 package com.android.callassistant.customer;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+
 import android.app.AlertDialog;
 import android.app.ListFragment;
 import android.content.ContentValues;
@@ -22,7 +26,6 @@ import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
@@ -34,8 +37,6 @@ import com.android.callassistant.provider.DBConstant;
 import com.android.callassistant.settings.CallAssistantSettings;
 import com.android.callassistant.util.Log;
 import com.android.callassistant.util.RecordFileManager;
-
-import java.util.ArrayList;
 
 public class RecordListFragment extends ListFragment implements OnCheckedChangeListener, OnClickListener {
 
@@ -91,7 +92,7 @@ public class RecordListFragment extends ListFragment implements OnCheckedChangeL
     }
 
     private void updateUI() {
-        mRecordList = RecordFileManager.getInstance(getActivity()).getBaseInfoFromDB(mRecordList);
+        mRecordList = RecordFileManager.getInstance(getActivity()).getContactFromDB(mRecordList);
         mListAdapter.notifyDataSetChanged();
     }
 
@@ -149,7 +150,8 @@ public class RecordListFragment extends ListFragment implements OnCheckedChangeL
         LinearLayout dialNumber;
         LinearLayout itemContainer;
         TextView displayName;
-        TextView callLogCount;
+        TextView callState;
+        TextView callLogDate;
         CheckBox checkBox;
         View functionMenu;
     }
@@ -174,7 +176,8 @@ public class RecordListFragment extends ListFragment implements OnCheckedChangeL
                 viewHolder.itemContainer.setOnClickListener(RecordListFragment.this);
                 viewHolder.itemContainer.setTag(position);
                 viewHolder.displayName = (TextView) convertView.findViewById(R.id.display_name);
-                viewHolder.callLogCount = (TextView) convertView.findViewById(R.id.call_log_count);
+                viewHolder.callState = (TextView) convertView.findViewById(R.id.call_state);
+                viewHolder.callLogDate = (TextView) convertView.findViewById(R.id.call_log_date);
                 viewHolder.functionMenu = convertView.findViewById(R.id.function_menu);
                 viewHolder.functionMenu.setTag(position);
                 viewHolder.functionMenu.setOnClickListener(RecordListFragment.this);
@@ -192,8 +195,10 @@ public class RecordListFragment extends ListFragment implements OnCheckedChangeL
                     displayName += "-" + info.contactName;
                 }
                 viewHolder.displayName.setText(displayName);
-                String callLog = String.format("%d%s", info.contactLogCount, RecordListFragment.this.getResources().getString(R.string.call_log_count));
-                viewHolder.callLogCount.setText(callLog);
+                // String callLog = String.format("%d%s", info.contactLogCount, RecordListFragment.this.getResources().getString(R.string.call_log_count));
+                viewHolder.callState.setText(null);
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                viewHolder.callLogDate.setText(sdf.format(new Date(info.contactUpdate)));
                 viewHolder.checkBox.setChecked(info.checked);
             }
             if (mViewState == VIEW_STATE_NORMAL) {
