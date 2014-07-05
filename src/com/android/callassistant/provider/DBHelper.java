@@ -48,9 +48,10 @@ public class DBHelper extends SQLiteOpenHelper {
             "CREATE TABLE IF NOT EXISTS " + DBConstant.TABLE_BLOCK
           + "("
           + DBConstant._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-          + DBConstant.BLOCK_NUMBER + " TEXT,"
+          + DBConstant.BLOCK_NAME + " TEXT,"
+          + DBConstant.BLOCK_NUMBER + " TEXT UNIQUE,"
           + DBConstant.BLOCK_COUNT + " INTEGER DEFAULT 0,"
-          + DBConstant.BLOCK_TIME + " LONG DEFAULT 0,"
+          + DBConstant.BLOCK_TIME + " TEXT,"
           + DBConstant.BLOCK_TYPE + " INTEGER DEFAULT 0,"
           + DBConstant.BLOCK_CONTENT + " TEXT"
           + ")";

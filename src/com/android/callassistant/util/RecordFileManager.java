@@ -1,20 +1,20 @@
 package com.android.callassistant.util;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
+
 import android.content.ContentUris;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Environment;
-import android.text.TextUtils;
 
+import com.android.callassistant.info.BlackInfo;
 import com.android.callassistant.info.ContactInfo;
 import com.android.callassistant.info.RecordInfo;
 import com.android.callassistant.manager.BlackNameManager;
 import com.android.callassistant.provider.DBConstant;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
 
 public class RecordFileManager {
 
@@ -92,7 +92,7 @@ public class RecordFileManager {
         return Environment.getExternalStorageDirectory() + "/" + Constant.FILE_RECORD_FOLDER;
     }
 
-    public void deleteBaseInfoFromDB(ArrayList<ContactInfo> list) {
+    public void deleteContactFromDB(ArrayList<ContactInfo> list) {
         if (list == null || list.size() == 0) {
             return ;
         }
@@ -257,6 +257,70 @@ public class RecordFileManager {
         }
         return list;
     }
+    
+    public ArrayList<BlackInfo> getBlackListFromDB(ArrayList<BlackInfo> list) {
+        if (list == null) {
+            return null;
+        }
+        list.clear();
+        Cursor c = null;
+        try {
+            c = mContext.getContentResolver().query(DBConstant.BLOCK_URI, null, null, null, null);
+            if (c != null) {
+                if (c.moveToFirst()) {
+                    BlackInfo info = null;
+                    do {
+                        info = new BlackInfo();
+                        info._id = c.getInt(c.getColumnIndex(DBConstant._ID));
+                        info.blackName = c.getString(c.getColumnIndex(DBConstant.BLOCK_NAME));
+                        info.blackNumber = c.getString(c.getColumnIndex(DBConstant.BLOCK_NUMBER));
+                        info.blockCount = c.getInt(c.getColumnIndex(DBConstant.BLOCK_COUNT));
+                        info.blockTime = c.getString(c.getColumnIndex(DBConstant.BLOCK_TIME));
+                        info.blockType = c.getInt(c.getColumnIndex(DBConstant.BLOCK_TYPE));
+                        info.blockContent = c.getString(c.getColumnIndex(DBConstant.BLOCK_CONTENT));
+                        list.add(info);
+                    } while(c.moveToNext());
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (c != null) {
+                c.close();
+            }
+        }
+        //Collections.sort(list);
+        return list;
+    }
+
+    public void deleteBlackInfoFromDB(ArrayList<BlackInfo> list) {
+        if (list == null || list.size() == 0) {
+            return ;
+        }
+        StringBuilder builder = new StringBuilder();
+        builder.append("(");
+        for (BlackInfo info : list) {
+            if (info.checked) {
+                builder.append(info._id);
+                builder.append(",");
+            }
+        }
+        builder.append(")");
+        builder.deleteCharAt(builder.length() - 2);
+        String area = builder.toString();
+        String where = DBConstant._ID + " IN " + area;
+        Log.d(Log.TAG, "deleteBlackInfoFromDB where = " + where);
+        mContext.getContentResolver().delete(DBConstant.BLOCK_URI, where, null);
+
+        for (int index = list.size() - 1; index >=0; index--) {
+            BlackInfo info = list.get(index);
+            if (info.checked) {
+                Log.getLog(mContext).recordOperation("Remove record " + info.blackNumber);
+                list.remove(index);
+            }
+        }
+    }
+
     private boolean recordExists(String recordFile) {
         if (recordFile == null) {
             return false;

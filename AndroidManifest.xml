@@ -69,6 +69,11 @@
                 <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
             </intent-filter>
         </activity>
+        <activity
+            android:name="com.android.callassistant.util.SelectBlackList"
+            android:configChanges="orientation|screenSize"
+            android:windowSoftInputMode="stateHidden"
+            />
     </application>
 
 </manifest>

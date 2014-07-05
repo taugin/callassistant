@@ -50,10 +50,11 @@ public class BlackNameManager {
         return count > 0;
     }
     public boolean interceptPhoneNumber(String phoneNumber) {
+        /*
         if (isBlack(phoneNumber)) {
             Telephony.getInstance(mContext).endCall();
             return true;
-        }
+        }*/
         return false;
     }
     

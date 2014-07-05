@@ -31,4 +31,6 @@
     <string name="warning_tone">Block call ringtone</string>
     <string name="record_content">Record content</string>
     <string name="black_name">BlackName</string>
-</resources>
+    <string name="add_black_name">AddBlackName</string>
+    <string name="block_times_args">Block %1$d times</string>
+</resources> 

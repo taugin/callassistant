@@ -57,6 +57,7 @@ public class DBConstant {
     public static final Uri CONTACT_URI = Uri.parse("content://" + AUTHORITIES + "/" + TABLE_CONTACTS);
     
     public static final String TABLE_BLOCK = "block_table";
+    public static final String BLOCK_NAME = "block_name";
     public static final String BLOCK_NUMBER = "block_number";
     public static final String BLOCK_COUNT = "block_count";
     public static final String BLOCK_TIME = "block_time";

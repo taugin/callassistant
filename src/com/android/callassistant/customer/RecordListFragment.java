@@ -99,7 +99,7 @@ public class RecordListFragment extends ListFragment implements OnCheckedChangeL
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.main, menu);
+        inflater.inflate(R.menu.record_menu, menu);
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -135,7 +135,7 @@ public class RecordListFragment extends ListFragment implements OnCheckedChangeL
             builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    RecordFileManager.getInstance(getActivity()).deleteBaseInfoFromDB(mRecordList);
+                    RecordFileManager.getInstance(getActivity()).deleteContactFromDB(mRecordList);
                     mViewState = VIEW_STATE_NORMAL;
                     mListAdapter.notifyDataSetChanged();
                 }
@@ -172,10 +172,8 @@ public class RecordListFragment extends ListFragment implements OnCheckedChangeL
                 convertView = LayoutInflater.from(mContext).inflate(R.layout.contact_item_layout, null);
                 viewHolder.dialNumber = (LinearLayout) convertView.findViewById(R.id.dial_number);
                 viewHolder.dialNumber.setOnClickListener(RecordListFragment.this);
-                viewHolder.dialNumber.setTag(position);
                 viewHolder.itemContainer = (LinearLayout) convertView.findViewById(R.id.item_container);
                 viewHolder.itemContainer.setOnClickListener(RecordListFragment.this);
-                viewHolder.itemContainer.setTag(position);
                 viewHolder.displayName = (TextView) convertView.findViewById(R.id.display_name);
                 viewHolder.callState = (TextView) convertView.findViewById(R.id.call_state);
                 viewHolder.callLogDate = (TextView) convertView.findViewById(R.id.call_log_date);
@@ -183,12 +181,16 @@ public class RecordListFragment extends ListFragment implements OnCheckedChangeL
                 viewHolder.functionMenu.setTag(position);
                 viewHolder.functionMenu.setOnClickListener(RecordListFragment.this);
                 viewHolder.checkBox = (CheckBox) convertView.findViewById(R.id.check_box);
-                viewHolder.checkBox.setOnCheckedChangeListener(RecordListFragment.this);
-                viewHolder.checkBox.setTag(position);
+                viewHolder.checkBox.setOnClickListener(RecordListFragment.this);
                 convertView.setTag(viewHolder);
             } else {
                 viewHolder = (ViewHolder) convertView.getTag();
             }
+
+            viewHolder.itemContainer.setTag(position);
+            viewHolder.dialNumber.setTag(position);
+            viewHolder.checkBox.setTag(position);
+
             ContactInfo info = getItem(position);
             if (info != null) {
                 String displayName = info.contactNumber;
@@ -276,6 +278,10 @@ public class RecordListFragment extends ListFragment implements OnCheckedChangeL
                     info.blocked = false;
                 }
             }
+        } else if (v.getId() == R.id.check_box) {
+            int position = (Integer) v.getTag();
+            ContactInfo info = mListAdapter.getItem(position);
+            info.checked = !info.checked;
         }
     }
 

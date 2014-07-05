@@ -8,11 +8,15 @@ import android.support.v13.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 
+import com.android.callassistant.black.BlackListFragment;
 import com.android.callassistant.customer.RecordListFragment;
 import com.android.callassistant.util.Log;
 
 public class AppMainActivity extends Activity implements OnPageChangeListener {
-    static final int NUM_ITEMS = 3;
+    private static final int NUM_ITEMS = 3;
+    private static final int RECORD_FRAGMENT = 0;
+    private static final int BLACK_FRAGMENT = 1;
+    private static final int OTHER_FRAGMENT = 2;
 
     private MyAdapter mAdapter;
 
@@ -43,7 +47,16 @@ public class AppMainActivity extends Activity implements OnPageChangeListener {
         @Override
         public Fragment getItem(int position) {
             Log.d(Log.TAG, "getItem position = " + position);
-            return new RecordListFragment();
+            if (position == RECORD_FRAGMENT) {
+                return new RecordListFragment();
+            }
+            if (position == BLACK_FRAGMENT) {
+                return new BlackListFragment();
+            }
+            if (position == OTHER_FRAGMENT) {
+                return new RecordListFragment();
+            }
+            return null;
         }
     }
 
@@ -60,5 +73,14 @@ public class AppMainActivity extends Activity implements OnPageChangeListener {
     @Override
     public void onPageSelected(int position) {
         Log.d(Log.TAG, "onPageSelected position = " + position);
+        if (position == RECORD_FRAGMENT) {
+            this.setTitle(R.string.app_name);
+        }
+        if (position == BLACK_FRAGMENT) {
+            this.setTitle(R.string.black_name);
+        }
+        if (position == OTHER_FRAGMENT) {
+            this.setTitle(R.string.app_name);
+        }
     }
 }

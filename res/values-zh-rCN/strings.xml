@@ -31,4 +31,6 @@
     <string name="warning_tone">黑名单提示音</string>
     <string name="record_content">录音内容</string>
     <string name="black_name">黑名单</string>
+    <string name="add_black_name">添加黑名单</string>
+    <string name="block_times_args">拦截 %1$d 次</string>
 </resources>
