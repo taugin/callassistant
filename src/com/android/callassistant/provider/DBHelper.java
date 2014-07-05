@@ -10,27 +10,28 @@ import com.android.callassistant.util.Log;
 public class DBHelper extends SQLiteOpenHelper {
 
     private static final String CREATE_BASEINFO_TABLE =
-            "CREATE TABLE IF NOT EXISTS " + DBConstant.TABLE_BASEINFO
+            "CREATE TABLE IF NOT EXISTS " + DBConstant.TABLE_CONTACTS
           + "("
           + DBConstant._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-          + DBConstant.BASEINFO_NAME + " TEXT,"
-          + DBConstant.BASEINFO_SEX + " INTEGER,"
-          + DBConstant.BASEINFO_AGE + " INTEGER,"
-          + DBConstant.BASEINFO_ADDRESS + " TEXT,"
-          + DBConstant.BASEINFO_NUMBER + " TEXT,"
-          + DBConstant.BASEINFO_CALL_LOG_COUNT + " INTEGER DEFAULT 0,"
-          + DBConstant.BASEINFO_ALLOW_RECORD + " INTEGER DEFAULT 1,"
-          + DBConstant.BASEINFO_STATE + " TEXT,"
-          + DBConstant.BASEINFO_UPDATE + " LONG DEFAULT 0,"
+          + DBConstant.CONTACT_NAME + " TEXT,"
+          + DBConstant.CONTACT_SEX + " INTEGER,"
+          + DBConstant.CONTACT_AGE + " INTEGER,"
+          + DBConstant.CONTACT_ADDRESS + " TEXT,"
+          + DBConstant.CONTACT_NUMBER + " TEXT,"
+          + DBConstant.CONTACT_CALL_LOG_COUNT + " INTEGER DEFAULT 0,"
+          + DBConstant.CONTACT_ALLOW_RECORD + " INTEGER DEFAULT 1,"
+          + DBConstant.CONTACT_STATE + " TEXT,"
+          + DBConstant.CONTACT_UPDATE + " LONG DEFAULT 0,"
+          + DBConstant.CONTACT_FROM_SYSTEM + " INTEGER DEFAULT 0,"
           + DBConstant.FOO + " text"
           + ")";
-    private final String DROP_BASEINFO_TABLE = "DROP TABLE " + DBConstant.TABLE_BASEINFO + " IF EXISTS";
+    private final String DROP_BASEINFO_TABLE = "DROP TABLE " + DBConstant.TABLE_CONTACTS + " IF EXISTS";
 
     private static final String CREATE_RECORD_TABLE =
             "CREATE TABLE IF NOT EXISTS " + DBConstant.TABLE_RECORD
           + "("
           + DBConstant._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-          + DBConstant.RECORD_BASEINFO_ID + " INTEGER REFERENCES " + DBConstant.TABLE_BASEINFO + "(" + DBConstant._ID + "),"
+          + DBConstant.RECORD_BASEINFO_ID + " INTEGER REFERENCES " + DBConstant.TABLE_CONTACTS + "(" + DBConstant._ID + "),"
           + DBConstant.RECORD_NAME + " TEXT,"
           + DBConstant.RECORD_FILE + " TEXT,"
           + DBConstant.RECORD_NUMBER + " TEXT,"

@@ -18,7 +18,7 @@ public class CustomerDetailActivity extends Activity {
         Intent intent = getIntent();
         if (intent != null) {
             int id = intent.getIntExtra(DBConstant._ID, -1);
-            fragment.setBaseInfoId(id);
+            fragment.setContactId(id);
         }
         Log.d(Log.TAG, "CustomerDetailActivity onCreate");
     }

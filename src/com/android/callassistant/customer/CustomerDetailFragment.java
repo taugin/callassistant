@@ -20,7 +20,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.callassistant.R;
-import com.android.callassistant.info.BaseInfo;
+import com.android.callassistant.info.ContactInfo;
 import com.android.callassistant.info.RecordInfo;
 import com.android.callassistant.provider.DBConstant;
 import com.android.callassistant.util.Log;
@@ -30,8 +30,8 @@ import java.util.ArrayList;
 
 public class CustomerDetailFragment extends Fragment implements OnClickListener, TextWatcher {
 
-    private int mBaseId;
-    private BaseInfo mBaseInfo;
+    private int mContactId;
+    private ContactInfo mContact;
     private ArrayList<RecordInfo> mRecordList;
     private TextView mPhoneNumberView;
     private EditText mCustomerNameView;
@@ -52,28 +52,29 @@ public class CustomerDetailFragment extends Fragment implements OnClickListener,
         return view;
     }
 
-    public void setBaseInfoId(int id) {
-        mBaseId = id;
+    public void setContactId(int id) {
+        mContactId = id;
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        Log.d(Log.TAG, "CustomerDetailFragment onActivityCreated mBaseId = " + mBaseId);
+        Log.d(Log.TAG, "CustomerDetailFragment onActivityCreated mBaseId = " + mContactId);
         mRecordList = new ArrayList<RecordInfo>();
         updateUI();
         getActivity().getContentResolver().registerContentObserver(DBConstant.RECORD_URI, true, mRecordObserver);
     }
 
     private void updateUI() {
-        mRecordList = RecordFileManager.getInstance(getActivity()).getRecordsFromDB(mRecordList, mBaseId);
-        mBaseInfo = RecordFileManager.getInstance(getActivity()).getSingleBaseInfo(mBaseId);
-        mPhoneNumberView.setText(mBaseInfo.phoneNumber);
-        mCustomerNameView.setText(mBaseInfo.baseInfoName);
+        mRecordList = RecordFileManager.getInstance(getActivity()).getRecordsFromDB(mRecordList, mContactId);
+        mContact = RecordFileManager.getInstance(getActivity()).getSingleContact(mContactId);
+        mPhoneNumberView.setText(mContact.contactNumber);
+        mCustomerNameView.setText(mContact.contactName);
         int len = 0;
-        if (!TextUtils.isEmpty(mBaseInfo.baseInfoName)) {
-            len = mBaseInfo.baseInfoName.length();
+        if (!TextUtils.isEmpty(mContact.contactName)) {
+            len = mContact.contactName.length();
         }
+        mCustomerNameView.setEnabled(!mContact.contactFromSystem);
         mCustomerNameView.setSelection(len);
         mCallLogListView.setCallLogList(mRecordList);
     }
@@ -98,8 +99,8 @@ public class CustomerDetailFragment extends Fragment implements OnClickListener,
             Log.d(Log.TAG, "newName = " + newName);
             if (!TextUtils.isEmpty(newName)) {
                 ContentValues values = new ContentValues();
-                values.put(DBConstant.BASEINFO_NAME, newName);
-                Uri uri = ContentUris.withAppendedId(DBConstant.BASEINFO_URI, mBaseId);
+                values.put(DBConstant.CONTACT_NAME, newName);
+                Uri uri = ContentUris.withAppendedId(DBConstant.BASEINFO_URI, mContactId);
                 int ret = getActivity().getContentResolver().update(uri, values, null, null);
                 String message = null;
                 if (ret > 0) {
@@ -112,7 +113,7 @@ public class CustomerDetailFragment extends Fragment implements OnClickListener,
             }
         } else if (v.getId() == R.id.dial_number) {
             Intent intent = new Intent(Intent.ACTION_CALL);
-            intent.setData(Uri.parse("tel:" + mBaseInfo.phoneNumber));
+            intent.setData(Uri.parse("tel:" + mContact.contactNumber));
             getActivity().startActivity(intent);
         }
     }
@@ -130,7 +131,7 @@ public class CustomerDetailFragment extends Fragment implements OnClickListener,
     @Override
     public void afterTextChanged(Editable s) {
         String newName = mCustomerNameView.getText().toString();
-        if (newName != null && newName.equals(mBaseInfo.baseInfoName == null ? "" : mBaseInfo.baseInfoName)) {
+        if (newName != null && newName.equals(mContact.contactName == null ? "" : mContact.contactName)) {
             mEditSave.setEnabled(false);
         } else {
             mEditSave.setEnabled(true);

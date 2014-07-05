@@ -28,7 +28,7 @@ import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import com.android.callassistant.R;
-import com.android.callassistant.info.BaseInfo;
+import com.android.callassistant.info.ContactInfo;
 import com.android.callassistant.manager.BlackNameManager;
 import com.android.callassistant.provider.DBConstant;
 import com.android.callassistant.settings.CallAssistantSettings;
@@ -42,7 +42,7 @@ public class RecordListFragment extends ListFragment implements OnCheckedChangeL
     private static final int VIEW_STATE_NORMAL = 0;
     private static final int VIEW_STATE_DELETE = 1;
     private RecordListAdapter mListAdapter;
-    private ArrayList<BaseInfo> mRecordList;
+    private ArrayList<ContactInfo> mRecordList;
     private int mViewState;
     private AlertDialog mAlertDialog;
     private PopupWindow mPopupWindow;
@@ -59,7 +59,7 @@ public class RecordListFragment extends ListFragment implements OnCheckedChangeL
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mRecordList = new ArrayList<BaseInfo>();
+        mRecordList = new ArrayList<ContactInfo>();
         mListAdapter = new RecordListAdapter(getActivity(), mRecordList);
         getListView().setAdapter(mListAdapter);
         setListShown(true);
@@ -153,10 +153,10 @@ public class RecordListFragment extends ListFragment implements OnCheckedChangeL
         CheckBox checkBox;
         View functionMenu;
     }
-    private class RecordListAdapter extends ArrayAdapter<BaseInfo>{
+    private class RecordListAdapter extends ArrayAdapter<ContactInfo>{
 
         private Context mContext;
-        public RecordListAdapter(Context context, ArrayList<BaseInfo> listInfos) {
+        public RecordListAdapter(Context context, ArrayList<ContactInfo> listInfos) {
             super(context, 0, listInfos);
             mContext = context;
         }
@@ -166,7 +166,7 @@ public class RecordListFragment extends ListFragment implements OnCheckedChangeL
             ViewHolder viewHolder = null;
             if (convertView == null) {
                 viewHolder = new ViewHolder();
-                convertView = LayoutInflater.from(mContext).inflate(R.layout.baseinfo_item_layout, null);
+                convertView = LayoutInflater.from(mContext).inflate(R.layout.contact_item_layout, null);
                 viewHolder.dialNumber = (LinearLayout) convertView.findViewById(R.id.dial_number);
                 viewHolder.dialNumber.setOnClickListener(RecordListFragment.this);
                 viewHolder.dialNumber.setTag(position);
@@ -185,14 +185,14 @@ public class RecordListFragment extends ListFragment implements OnCheckedChangeL
             } else {
                 viewHolder = (ViewHolder) convertView.getTag();
             }
-            BaseInfo info = getItem(position);
+            ContactInfo info = getItem(position);
             if (info != null) {
-                String displayName = info.phoneNumber;
-                if (!TextUtils.isEmpty(info.baseInfoName)) {
-                    displayName += "(" + info.baseInfoName + ")";
+                String displayName = info.contactNumber;
+                if (!TextUtils.isEmpty(info.contactName)) {
+                    displayName += "-" + info.contactName;
                 }
                 viewHolder.displayName.setText(displayName);
-                String callLog = String.format("%d%s", info.callLogCount, RecordListFragment.this.getResources().getString(R.string.call_log_count));
+                String callLog = String.format("%d%s", info.contactLogCount, RecordListFragment.this.getResources().getString(R.string.call_log_count));
                 viewHolder.callLogCount.setText(callLog);
                 viewHolder.checkBox.setChecked(info.checked);
             }
@@ -212,7 +212,7 @@ public class RecordListFragment extends ListFragment implements OnCheckedChangeL
             boolean isChecked) {
         if (buttonView.getId() == R.id.check_box) {
             int position = (Integer) buttonView.getTag();
-            BaseInfo info = mListAdapter.getItem(position);
+            ContactInfo info = mListAdapter.getItem(position);
             info.checked = isChecked;
         }
     }
@@ -221,15 +221,15 @@ public class RecordListFragment extends ListFragment implements OnCheckedChangeL
     public void onClick(View v) {
         if (v.getId() == R.id.item_container) {
             int position = (Integer) v.getTag();
-            BaseInfo info = mListAdapter.getItem(position);
+            ContactInfo info = mListAdapter.getItem(position);
             Intent intent = new Intent(getActivity(), CustomerDetailActivity.class);
             intent.putExtra(DBConstant._ID, info._id);
             startActivity(intent);
         } if (v.getId() == R.id.dial_number) {
             int position = (Integer) v.getTag();
-            BaseInfo info = mListAdapter.getItem(position);
+            ContactInfo info = mListAdapter.getItem(position);
             Intent intent = new Intent(Intent.ACTION_CALL);
-            intent.setData(Uri.parse("tel:" + info.phoneNumber));
+            intent.setData(Uri.parse("tel:" + info.contactNumber));
             getActivity().startActivity(intent);
         } else if (v.getId() == R.id.function_menu) {
             if (mPopupWindow == null) {
@@ -242,7 +242,7 @@ public class RecordListFragment extends ListFragment implements OnCheckedChangeL
                 mPopupWindow.setFocusable(true);
             }
             int position = (Integer) v.getTag();
-            BaseInfo info = mListAdapter.getItem(position);
+            ContactInfo info = mListAdapter.getItem(position);
             mCheckBox.setTag(position);
             mCheckBox.setOnClickListener(this);
             Log.d(Log.TAG, "function_menu info.blocked = " + info.blocked + " , position = " + position);
@@ -257,16 +257,16 @@ public class RecordListFragment extends ListFragment implements OnCheckedChangeL
                 mPopupWindow.dismiss();
             }
 
-            BaseInfo info = mListAdapter.getItem(position);
+            ContactInfo info = mListAdapter.getItem(position);
             Log.d(Log.TAG, "info blocked = " + info.blocked);
             if (!info.blocked) {
                 ContentValues values = new ContentValues();
-                values.put(DBConstant.BLOCK_NUMBER, info.phoneNumber);
+                values.put(DBConstant.BLOCK_NUMBER, info.contactNumber);
                 if (getActivity().getContentResolver().insert(DBConstant.BLOCK_URI, values) != null) {
                     info.blocked = true;
                 }
             } else {
-                if (BlackNameManager.getInstance(getActivity()).deleteBlackName(info.phoneNumber)) {
+                if (BlackNameManager.getInstance(getActivity()).deleteBlackName(info.contactNumber)) {
                     info.blocked = false;
                 }
             }
@@ -275,7 +275,7 @@ public class RecordListFragment extends ListFragment implements OnCheckedChangeL
 
     private int getCheckedCount() {
         int count = 0;
-        for (BaseInfo info : mRecordList) {
+        for (ContactInfo info : mRecordList) {
             if (info.checked) {
                 count ++;
             }

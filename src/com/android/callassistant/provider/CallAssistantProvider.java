@@ -36,8 +36,8 @@ public class CallAssistantProvider extends ContentProvider {
         sUriMatcher.addURI(DBConstant.AUTHORITIES, DBConstant.TABLE_RECORD, TABLE_RECORD);
         sUriMatcher.addURI(DBConstant.AUTHORITIES, DBConstant.TABLE_RECORD + "/#", TABLE_RECORD_ID);
 
-        sUriMatcher.addURI(DBConstant.AUTHORITIES, DBConstant.TABLE_BASEINFO, TABLE_BASEINFO);
-        sUriMatcher.addURI(DBConstant.AUTHORITIES, DBConstant.TABLE_BASEINFO + "/#", TABLE_BASEINFO_ID);
+        sUriMatcher.addURI(DBConstant.AUTHORITIES, DBConstant.TABLE_CONTACTS, TABLE_BASEINFO);
+        sUriMatcher.addURI(DBConstant.AUTHORITIES, DBConstant.TABLE_CONTACTS + "/#", TABLE_BASEINFO_ID);
 
         sUriMatcher.addURI(DBConstant.AUTHORITIES, DBConstant.TABLE_BLOCK, TABLE_BLOCK);
         sUriMatcher.addURI(DBConstant.AUTHORITIES, DBConstant.TABLE_BLOCK + "/#", TABLE_BLOCK_ID);
@@ -89,11 +89,11 @@ public class CallAssistantProvider extends ContentProvider {
                 c = db.query(DBConstant.TABLE_RECORD, projection, DBConstant._ID + "=" + id, selectionArgs, null, null, sortOrder);
                 break;
             case TABLE_BASEINFO:
-                c = db.query(DBConstant.TABLE_BASEINFO, projection, selection, selectionArgs, null, null, sortOrder);
+                c = db.query(DBConstant.TABLE_CONTACTS, projection, selection, selectionArgs, null, null, sortOrder);
                 break;
             case TABLE_BASEINFO_ID:
                 id = ContentUris.parseId(uri);
-                c = db.query(DBConstant.TABLE_BASEINFO, projection, DBConstant._ID + "=" + id, selectionArgs, null, null, sortOrder);
+                c = db.query(DBConstant.TABLE_CONTACTS, projection, DBConstant._ID + "=" + id, selectionArgs, null, null, sortOrder);
                 break;
             case TABLE_BLOCK:
                 c = db.query(DBConstant.TABLE_BLOCK, projection, selection, selectionArgs, null, null, sortOrder);
@@ -123,7 +123,7 @@ public class CallAssistantProvider extends ContentProvider {
                 id = db.insert(DBConstant.TABLE_RECORD, DBConstant.FOO, values);
             break;
             case TABLE_BASEINFO:
-                id = db.insert(DBConstant.TABLE_BASEINFO, DBConstant.FOO, values);
+                id = db.insert(DBConstant.TABLE_CONTACTS, DBConstant.FOO, values);
             break;
             case TABLE_BLOCK:
                 id = db.insert(DBConstant.TABLE_BLOCK, DBConstant.FOO, values);
@@ -156,11 +156,11 @@ public class CallAssistantProvider extends ContentProvider {
                 ret = db.delete(DBConstant.TABLE_RECORD, DBConstant._ID + "=" + id, selectionArgs);
                 break;
             case TABLE_BASEINFO:
-                ret = db.delete(DBConstant.TABLE_BASEINFO, selection, selectionArgs);
+                ret = db.delete(DBConstant.TABLE_CONTACTS, selection, selectionArgs);
                 break;
             case TABLE_BASEINFO_ID:
                 id = ContentUris.parseId(uri);
-                ret = db.delete(DBConstant.TABLE_BASEINFO, DBConstant._ID + "=" + id, selectionArgs);
+                ret = db.delete(DBConstant.TABLE_CONTACTS, DBConstant._ID + "=" + id, selectionArgs);
                 break;
             case TABLE_BLOCK:
                 ret = db.delete(DBConstant.TABLE_BLOCK, selection, selectionArgs);
@@ -195,11 +195,11 @@ public class CallAssistantProvider extends ContentProvider {
                 ret = db.update(DBConstant.TABLE_RECORD, values, DBConstant._ID + "=" + id, selectionArgs);
                 break;
             case TABLE_BASEINFO:
-                ret = db.update(DBConstant.TABLE_BASEINFO, values, selection, selectionArgs);
+                ret = db.update(DBConstant.TABLE_CONTACTS, values, selection, selectionArgs);
                 break;
             case TABLE_BASEINFO_ID:
                 id = ContentUris.parseId(uri);
-                ret = db.update(DBConstant.TABLE_BASEINFO, values, DBConstant._ID + "=" + id, selectionArgs);
+                ret = db.update(DBConstant.TABLE_CONTACTS, values, DBConstant._ID + "=" + id, selectionArgs);
                 break;
             case TABLE_BLOCK:
                 ret = db.update(DBConstant.TABLE_BLOCK, values, selection, selectionArgs);

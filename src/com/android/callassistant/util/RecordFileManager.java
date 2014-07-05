@@ -7,7 +7,7 @@ import android.net.Uri;
 import android.os.Environment;
 import android.text.TextUtils;
 
-import com.android.callassistant.info.BaseInfo;
+import com.android.callassistant.info.ContactInfo;
 import com.android.callassistant.info.RecordInfo;
 import com.android.callassistant.manager.BlackNameManager;
 import com.android.callassistant.provider.DBConstant;
@@ -92,13 +92,13 @@ public class RecordFileManager {
         return Environment.getExternalStorageDirectory() + "/" + Constant.FILE_RECORD_FOLDER;
     }
 
-    public void deleteBaseInfoFromDB(ArrayList<BaseInfo> list) {
+    public void deleteBaseInfoFromDB(ArrayList<ContactInfo> list) {
         if (list == null || list.size() == 0) {
             return ;
         }
         StringBuilder builder = new StringBuilder();
         builder.append("(");
-        for (BaseInfo info : list) {
+        for (ContactInfo info : list) {
             if (info.checked) {
                 builder.append(info._id);
                 builder.append(",");
@@ -118,27 +118,28 @@ public class RecordFileManager {
             deleteRecordFile(info.recordFile);
         }
         for (int index = list.size() - 1; index >=0; index--) {
-            BaseInfo info = list.get(index);
+            ContactInfo info = list.get(index);
             if (info.checked) {
-                Log.getLog(mContext).recordOperation("Remove record " + info.phoneNumber);
+                Log.getLog(mContext).recordOperation("Remove record " + info.contactNumber);
                 list.remove(index);
             }
         }
     }
 
-    public BaseInfo getSingleBaseInfo(int id) {
+    public ContactInfo getSingleContact(int id) {
         Cursor c = null;
-        BaseInfo info = null;
+        ContactInfo info = null;
         try {
             Uri uri = ContentUris.withAppendedId(DBConstant.BASEINFO_URI, id);
             c = mContext.getContentResolver().query(uri, null, null, null, null);
             if (c != null) {
                 if (c.moveToFirst()) {
-                    info = new BaseInfo();
+                    info = new ContactInfo();
                     info._id = c.getInt(c.getColumnIndex(DBConstant._ID));
-                    info.baseInfoName = c.getString(c.getColumnIndex(DBConstant.BASEINFO_NAME));
-                    info.phoneNumber = c.getString(c.getColumnIndex(DBConstant.BASEINFO_NUMBER));
-                    info.callLogCount = c.getInt(c.getColumnIndex(DBConstant.BASEINFO_CALL_LOG_COUNT));
+                    info.contactName = c.getString(c.getColumnIndex(DBConstant.CONTACT_NAME));
+                    info.contactNumber = c.getString(c.getColumnIndex(DBConstant.CONTACT_NUMBER));
+                    info.contactLogCount = c.getInt(c.getColumnIndex(DBConstant.CONTACT_CALL_LOG_COUNT));
+                    info.contactFromSystem = c.getInt(c.getColumnIndex(DBConstant.CONTACT_FROM_SYSTEM)) == DBConstant.FROM_SYSTEM_TRUE;
                 } 
             }
         } catch (Exception e) {
@@ -150,24 +151,24 @@ public class RecordFileManager {
         }
         return info;
     }
-    public ArrayList<BaseInfo> getBaseInfoFromDB(ArrayList<BaseInfo> list) {
+    public ArrayList<ContactInfo> getBaseInfoFromDB(ArrayList<ContactInfo> list) {
         if (list == null) {
             return null;
         }
         list.clear();
         Cursor c = null;
         try {
-            c = mContext.getContentResolver().query(DBConstant.BASEINFO_URI, null, null, null, DBConstant.BASEINFO_UPDATE + " DESC");
+            c = mContext.getContentResolver().query(DBConstant.BASEINFO_URI, null, null, null, DBConstant.CONTACT_UPDATE + " DESC");
             if (c != null) {
                 if (c.moveToFirst()) {
-                    BaseInfo info = null;
+                    ContactInfo info = null;
                     do {
-                        info = new BaseInfo();
+                        info = new ContactInfo();
                         info._id = c.getInt(c.getColumnIndex(DBConstant._ID));
-                        info.baseInfoName = c.getString(c.getColumnIndex(DBConstant.BASEINFO_NAME));
-                        info.phoneNumber = c.getString(c.getColumnIndex(DBConstant.BASEINFO_NUMBER));
-                        info.callLogCount = c.getInt(c.getColumnIndex(DBConstant.BASEINFO_CALL_LOG_COUNT));
-                        info.blocked = BlackNameManager.getInstance(mContext).isBlackInDB(info.phoneNumber);
+                        info.contactName = c.getString(c.getColumnIndex(DBConstant.CONTACT_NAME));
+                        info.contactNumber = c.getString(c.getColumnIndex(DBConstant.CONTACT_NUMBER));
+                        info.contactLogCount = c.getInt(c.getColumnIndex(DBConstant.CONTACT_CALL_LOG_COUNT));
+                        info.blocked = BlackNameManager.getInstance(mContext).isBlackInDB(info.contactNumber);
                         Log.d(Log.TAG, "getBaseInfoFromDB info.blocked = " + info.blocked);
                         list.add(info);
                     } while(c.moveToNext());

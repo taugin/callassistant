@@ -33,16 +33,20 @@ public class DBConstant {
     public static final Uri RECORD_URI = Uri.parse("content://" + AUTHORITIES + "/" + TABLE_RECORD);
 
 
-    public static final String TABLE_BASEINFO = "baseinfo_table";
-    public static final String BASEINFO_NAME = "baseinfo_name";
-    public static final String BASEINFO_SEX = "baseinfo_sex";
-    public static final String BASEINFO_AGE = "baseinfo_age";
-    public static final String BASEINFO_ADDRESS = "baseinfo_address";
-    public static final String BASEINFO_NUMBER = "baseinfo_number";
-    public static final String BASEINFO_CALL_LOG_COUNT = "baseinfo_call_log_count";
-    public static final String BASEINFO_ALLOW_RECORD = "baseinfo_allow_record";
-    public static final String BASEINFO_STATE = "baseinfo_state";
-    public static final String BASEINFO_UPDATE = "baseinfo_update";
+    public static final String TABLE_CONTACTS = "table_contacts";
+    public static final String CONTACT_NAME = "CONTACT_NAME";
+    public static final String CONTACT_SEX = "CONTACT_SEX";
+    public static final String CONTACT_AGE = "CONTACT_AGE";
+    public static final String CONTACT_ADDRESS = "CONTACT_ADDRESS";
+    public static final String CONTACT_NUMBER = "CONTACT_NUMBER";
+    public static final String CONTACT_CALL_LOG_COUNT = "CONTACT_CALL_LOG_COUNT";
+    public static final String CONTACT_ALLOW_RECORD = "CONTACT_ALLOW_RECORD";
+    public static final String CONTACT_STATE = "CONTACT_STATE";
+    public static final String CONTACT_UPDATE = "CONTACT_UPDATE";
+    public static final String CONTACT_FROM_SYSTEM = "contact_from_system";
+    
+    public static final int FROM_SYSTEM_FALSE = 0;
+    public static final int FROM_SYSTEM_TRUE = 1;
 
     public static final int ALLOW_RECORD = 1;
     public static final int FORBID_RECORD = 0;
@@ -50,7 +54,7 @@ public class DBConstant {
     public static final String BASEINFO_CONTENT_TYPE = "vnd.android.cursor.item/vnd.baseinfo.items";
     public static final String BASEINFO_CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.baseinfo.item";
 
-    public static final Uri BASEINFO_URI = Uri.parse("content://" + AUTHORITIES + "/" + TABLE_BASEINFO);
+    public static final Uri BASEINFO_URI = Uri.parse("content://" + AUTHORITIES + "/" + TABLE_CONTACTS);
     
     public static final String TABLE_BLOCK = "block_table";
     public static final String BLOCK_NUMBER = "block_number";
