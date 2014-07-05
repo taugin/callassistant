@@ -73,13 +73,21 @@
         android:layout_weight="0"
         android:clickable="true" >
 
-        <CheckBox
-            android:id="@+id/check_box"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
+        <com.android.callassistant.view.CustomLinearLayout
+            android:id="@+id/check_box_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clickable="true"
             android:gravity="center"
-            android:visibility="invisible" />
+            android:background="@drawable/item_background">
+
+            <CheckBox
+                android:id="@+id/check_box"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:visibility="invisible" />
+        </com.android.callassistant.view.CustomLinearLayout>
 
         <LinearLayout
             android:id="@+id/function_menu"

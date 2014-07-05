@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.preference.PreferenceManager;
+import android.text.TextUtils;
 
 import com.android.callassistant.provider.DBConstant;
 
@@ -50,20 +51,29 @@ public class BlackNameManager {
         return count > 0;
     }
     public boolean interceptPhoneNumber(String phoneNumber) {
-        /*
         if (isBlack(phoneNumber)) {
             Telephony.getInstance(mContext).endCall();
+            updateBlock(phoneNumber);
             return true;
-        }*/
+        }
         return false;
     }
     
     public void updateBlock(String phoneNumber) {
         String where = DBConstant.BLOCK_NUMBER + " LIKE '%" + phoneNumber + "'";
         int count = getBlockCount(phoneNumber);
+        long time = System.currentTimeMillis();
+        String dates = getBlockDates(phoneNumber);
+        if (TextUtils.isEmpty(dates)) {
+            dates = "";
+            dates += String.valueOf(time);
+        } else {
+            dates += ",";
+            dates += String.valueOf(time);
+        }
         ContentValues values = new ContentValues();
         values.put(DBConstant.BLOCK_COUNT, count + 1);
-        values.put(DBConstant.BLOCK_TIME, System.currentTimeMillis());
+        values.put(DBConstant.BLOCK_TIME, dates);
         values.put(DBConstant.BLOCK_TYPE, DBConstant.BLOCK_TYPE_CALL);
         mContext.getContentResolver().update(DBConstant.BLOCK_URI, values, where, null);
     }
@@ -88,5 +98,24 @@ public class BlackNameManager {
     public boolean deleteBlackName(String phoneNumber) {
         String where = DBConstant.BLOCK_NUMBER + " LIKE '%" + phoneNumber + "'";
         return mContext.getContentResolver().delete(DBConstant.BLOCK_URI, where, null) > 0;
+    }
+    
+    public String getBlockDates(String phoneNumber) {
+        String where = DBConstant.BLOCK_NUMBER + " LIKE '%" + phoneNumber + "'";
+        Cursor c = null;
+        String dates = null;
+        try {
+            c = mContext.getContentResolver().query(DBConstant.BLOCK_URI, null, where, null, null);
+            if (c != null && c.moveToFirst()) {
+                dates = c.getString(c.getColumnIndex(DBConstant.BLOCK_TIME));
+            }
+        } catch (Exception e) {
+            
+        } finally {
+            if (c != null) {
+                c.close();
+            }
+        }
+        return dates;
     }
 }

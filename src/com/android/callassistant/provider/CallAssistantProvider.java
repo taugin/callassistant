@@ -127,6 +127,7 @@ public class CallAssistantProvider extends ContentProvider {
             break;
             case TABLE_BLOCK:
                 id = db.insert(DBConstant.TABLE_BLOCK, DBConstant.FOO, values);
+                notifyChange(uri);
             break;
             default:
                 throw new IllegalArgumentException("Unknown URI " + uri);
@@ -164,10 +165,12 @@ public class CallAssistantProvider extends ContentProvider {
                 break;
             case TABLE_BLOCK:
                 ret = db.delete(DBConstant.TABLE_BLOCK, selection, selectionArgs);
+                notifyChange(uri);
                 break;
             case TABLE_BLOCK_ID:
                 id = ContentUris.parseId(uri);
                 ret = db.delete(DBConstant.TABLE_BLOCK, DBConstant._ID + "=" + id, selectionArgs);
+                notifyChange(uri);
                 break;
             default:
                 throw new IllegalArgumentException("Unknown URI " + uri);

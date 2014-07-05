@@ -36,7 +36,6 @@ import com.android.callassistant.manager.BlackNameManager;
 import com.android.callassistant.provider.DBConstant;
 import com.android.callassistant.settings.CallAssistantSettings;
 import com.android.callassistant.util.Log;
-import com.android.callassistant.util.RadioLogMatcher;
 import com.android.callassistant.util.RecordFileManager;
 
 public class RecordListFragment extends ListFragment implements OnCheckedChangeListener, OnClickListener {
@@ -154,6 +153,7 @@ public class RecordListFragment extends ListFragment implements OnCheckedChangeL
         TextView callState;
         TextView callLogDate;
         CheckBox checkBox;
+        LinearLayout checkBoxContainer;
         View functionMenu;
     }
     private class RecordListAdapter extends ArrayAdapter<ContactInfo>{
@@ -181,7 +181,8 @@ public class RecordListFragment extends ListFragment implements OnCheckedChangeL
                 viewHolder.functionMenu.setTag(position);
                 viewHolder.functionMenu.setOnClickListener(RecordListFragment.this);
                 viewHolder.checkBox = (CheckBox) convertView.findViewById(R.id.check_box);
-                viewHolder.checkBox.setOnClickListener(RecordListFragment.this);
+                viewHolder.checkBoxContainer = (LinearLayout) convertView.findViewById(R.id.check_box_container);
+                viewHolder.checkBoxContainer.setOnClickListener(RecordListFragment.this);
                 convertView.setTag(viewHolder);
             } else {
                 viewHolder = (ViewHolder) convertView.getTag();
@@ -189,7 +190,7 @@ public class RecordListFragment extends ListFragment implements OnCheckedChangeL
 
             viewHolder.itemContainer.setTag(position);
             viewHolder.dialNumber.setTag(position);
-            viewHolder.checkBox.setTag(position);
+            viewHolder.checkBoxContainer.setTag(position);
 
             ContactInfo info = getItem(position);
             if (info != null) {
@@ -269,6 +270,7 @@ public class RecordListFragment extends ListFragment implements OnCheckedChangeL
             Log.d(Log.TAG, "info blocked = " + info.blocked);
             if (!info.blocked) {
                 ContentValues values = new ContentValues();
+                values.put(DBConstant.BLOCK_NAME, info.contactName);
                 values.put(DBConstant.BLOCK_NUMBER, info.contactNumber);
                 if (getActivity().getContentResolver().insert(DBConstant.BLOCK_URI, values) != null) {
                     info.blocked = true;
@@ -278,7 +280,7 @@ public class RecordListFragment extends ListFragment implements OnCheckedChangeL
                     info.blocked = false;
                 }
             }
-        } else if (v.getId() == R.id.check_box) {
+        } else if (v.getId() == R.id.check_box_container) {
             int position = (Integer) v.getTag();
             ContactInfo info = mListAdapter.getItem(position);
             info.checked = !info.checked;
