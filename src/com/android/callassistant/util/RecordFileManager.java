@@ -233,13 +233,12 @@ public class RecordFileManager {
 
     private ArrayList<RecordInfo> queryRecordFiles(String selection) {
         Cursor c = null;
-        ArrayList<RecordInfo> list = null;
+        ArrayList<RecordInfo> list = new ArrayList<RecordInfo>();
         try {
             c = mContext.getContentResolver().query(DBConstant.RECORD_URI, null, selection, null, null);
             if (c != null) {
                 if (c.moveToFirst()) {
                     RecordInfo info = null;
-                    list = new ArrayList<RecordInfo>();
                     do {
                         info = new RecordInfo();
                         info.recordFile = c.getString(c.getColumnIndex(DBConstant.RECORD_FILE));

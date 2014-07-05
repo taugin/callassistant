@@ -19,12 +19,15 @@ import com.android.callassistant.call.CallNotifier;
 import com.android.callassistant.manager.BlackNameManager;
 import com.android.callassistant.manager.Telephony;
 import com.android.callassistant.manager.RecordManager;
+import com.android.callassistant.manager.TmpStorageManager;
+import com.android.callassistant.provider.DBConstant;
 import com.android.callassistant.sersor.FlipManager;
 import com.android.callassistant.util.Constant;
 import com.android.callassistant.util.Log;
 import com.android.callassistant.util.RecordFileManager;
 import com.android.callassistant.util.ServiceUtil;
 
+import java.io.File;
 import java.util.List;
 
 public class CallAssistantService extends Service {
@@ -32,21 +35,13 @@ public class CallAssistantService extends Service {
     private static final boolean DEBUG = true;
     private static final int DELAY_TIME = 10 * 1000;
     private RecordManager mRecordManager;
-    private CallFlag mCallFlag = CallFlag.UNDEFIED;
-    private String mPhoneNumber = null;
+    //private CallFlag callFlag = CallFlag.UNDEFIED;
+    //private String phoneNumber = null;
     private Handler mHandler;
-    private CallLogObserver mCallLogObserver;
-    private TelephonyManager mTelephonyManager;
-    private int mLastCallState = TelephonyManager.CALL_STATE_IDLE;
-    private boolean mNumberBlocked = false;
-
-    public enum CallFlag {
-        INCOMING,
-        OUTGOING,
-        MISSCALL,
-        BLOCKCALL,
-        UNDEFIED
-    }
+    //private CallLogObserver mCallLogObserver;
+    //private TelephonyManager mTelephonyManager;
+    //private int lastState = TelephonyManager.CALL_STATE_IDLE;
+    //private boolean mNumberBlocked = false;
     @Override
     public IBinder onBind(Intent arg0) {
         return null;
@@ -59,7 +54,7 @@ public class CallAssistantService extends Service {
         // CallNotifier.getInstance();
         mRecordManager = RecordManager.getInstance(this);
         mHandler = new Handler();
-        mTelephonyManager = (TelephonyManager) getSystemService(Service.TELEPHONY_SERVICE);
+        //mTelephonyManager = (TelephonyManager) getSystemService(Service.TELEPHONY_SERVICE);
         //mTelephonyManager.listen(mPhoneStateListener, PhoneStateListener.LISTEN_CALL_STATE);
     }
 
@@ -77,33 +72,29 @@ public class CallAssistantService extends Service {
             return START_STICKY;
         }
         if (Constant.ACTION_INCOMING_PHONE.equals(intent.getAction())) {
-            mCallFlag = CallFlag.INCOMING;
-            mPhoneNumber = intent.getStringExtra(Constant.EXTRA_PHONE_NUMBER);
+            //callFlag = CallFlag.INCOMING;
+            String phoneNumber = intent.getStringExtra(Constant.EXTRA_PHONE_NUMBER);
             int state = intent.getIntExtra(Constant.EXTRA_PHONE_STATE, TelephonyManager.CALL_STATE_IDLE);
-            addNewRecord();
-            if (BlackNameManager.getInstance(getBaseContext()).interceptPhoneNumber(mPhoneNumber)) {
-                BlackNameManager.getInstance(getBaseContext()).updateBlock(mPhoneNumber);
-                Log.getLog(getBaseContext()).recordOperation("Block a call : " + mPhoneNumber);
-                mNumberBlocked = true;
+            TmpStorageManager.inCallRing(this, phoneNumber, DBConstant.FLAG_INCOMING, System.currentTimeMillis());
+            if (BlackNameManager.getInstance(getBaseContext()).interceptPhoneNumber(phoneNumber)) {
+                TmpStorageManager.inCallBlock(this);
+                Log.getLog(getBaseContext()).recordOperation("Block a call : " + phoneNumber);
                 return START_STICKY;
             }
             onCallStateChanged(state);
             if (PreferenceManager.getDefaultSharedPreferences(getBaseContext()).getBoolean("key_flip_mute", true)){
                 FlipManager.getInstance(getBaseContext()).registerAccelerometerListener();
             }
-            logv("onStartCommand Incoming PhoneNumber" + " : " + mPhoneNumber);
-            Log.getLog(getBaseContext()).recordOperation("Incoming call : " + mPhoneNumber);
+            logv("onStartCommand Incoming PhoneNumber" + " : " + phoneNumber);
+            Log.getLog(getBaseContext()).recordOperation("Incoming call : " + phoneNumber);
         } else if (Constant.ACTION_OUTGOING_PHONE.equals(intent.getAction())) {
-            mCallFlag = CallFlag.OUTGOING;
-            mPhoneNumber = intent.getStringExtra(Constant.EXTRA_PHONE_NUMBER);
+            String phoneNumber = intent.getStringExtra(Constant.EXTRA_PHONE_NUMBER);
             //mHandler.postDelayed(mMonitorIncallScreen, DELAY_TIME);
             //mHandler.postDelayed(mEndCall, DELAY_TIME);
-            logv("onStartCommand Outgoing PhoneNumber" + " : " + mPhoneNumber);
-            if (mCallFlag == CallFlag.OUTGOING) {
-                addNewRecord();
-                startRecord();
-            }
-            Log.getLog(getBaseContext()).recordOperation("Outgoing call : " + mPhoneNumber);
+            TmpStorageManager.outCallOffHook(this, phoneNumber, DBConstant.FLAG_OUTGOING, System.currentTimeMillis());
+            logv("onStartCommand Outgoing PhoneNumber" + " : " + phoneNumber);
+            startRecord();
+            Log.getLog(getBaseContext()).recordOperation("Outgoing call : " + phoneNumber);
         } else if (Constant.ACTION_PHONE_STATE.equals(intent.getAction())) {
             int state = intent.getIntExtra(Constant.EXTRA_PHONE_STATE, TelephonyManager.CALL_STATE_IDLE);
             Log.d(Log.TAG, "onStartCommand state = " + stateToString(state));
@@ -113,63 +104,62 @@ public class CallAssistantService extends Service {
     }
 
     private void onCallStateChanged(int state) {
+        int lastState = TmpStorageManager.getCallState(this);
+        String phoneNumber = TmpStorageManager.getPhoneNumber(this);
+        int callFlag = TmpStorageManager.getCallFlag(this);
+        boolean callBlock = TmpStorageManager.callBlock(this);
         switch(state) {
         case TelephonyManager.CALL_STATE_IDLE:
-            logv("onCallStateChanged mLastCallState = " + stateToString(mLastCallState) + " , state = [CALL_STATE_IDLE]" + " , CallFlag = " + mCallFlag.name());
-            if (mNumberBlocked) {
-                ServiceUtil.updateBlockState(getApplication(), mRecordManager.getDBId(), CallFlag.BLOCKCALL);
-                mNumberBlocked = false;
+            logv("onCallStateChanged lastState = " + stateToString(lastState) + " , state = [CALL_STATE_IDLE]" + " , CallFlag = " + callFlag);
+            if (callBlock) {
                 return ;
             }
-            if (mLastCallState == TelephonyManager.CALL_STATE_OFFHOOK) {
+            TmpStorageManager.callIdle(this, System.currentTimeMillis());
+            if (lastState == TelephonyManager.CALL_STATE_OFFHOOK) {
                 stopRecord();
             }
-            if (mCallFlag == CallFlag.INCOMING) {
+            if (callFlag == DBConstant.FLAG_INCOMING) {
                 if (PreferenceManager.getDefaultSharedPreferences(getBaseContext()).getBoolean("key_flip_mute", true)){
                     FlipManager.getInstance(getBaseContext()).unregisterAccelerometerListener();
                 }
             }
             String operation = null;
-            if (mCallFlag == CallFlag.INCOMING) {
-                operation = "Incoming phoneNumber : " + mPhoneNumber + " idle";
-             } else if (mCallFlag == CallFlag.OUTGOING) {
-                 operation = "Outgoing phoneNumber : " + mPhoneNumber + " idle";
+            if (callFlag == DBConstant.FLAG_INCOMING) {
+                operation = "Incoming phoneNumber : " + phoneNumber + " idle";
+             } else if (callFlag == DBConstant.FLAG_OUTGOING) {
+                 operation = "Outgoing phoneNumber : " + phoneNumber + " idle";
             }
 
             Log.getLog(getBaseContext()).recordOperation(operation);
-            mCallFlag = CallFlag.UNDEFIED;
+            if (lastState == TelephonyManager.CALL_STATE_OFFHOOK || lastState == TelephonyManager.CALL_STATE_RINGING) {
+                ServiceUtil.moveTmpInfoToDB(this);
+            }
+            TmpStorageManager.toString(this);
             break;
         case TelephonyManager.CALL_STATE_OFFHOOK:
-            logv("onCallStateChanged mLastCallState = " + stateToString(mLastCallState) + " , state = [CALL_STATE_OFFHOOK]" + " , CallFlag = " + mCallFlag.name());
-            if (mCallFlag == CallFlag.INCOMING) {
+            logv("onCallStateChanged lastState = " + stateToString(lastState) + " , state = [CALL_STATE_OFFHOOK]" + " , CallFlag = " + callFlag);
+            if (callFlag == DBConstant.FLAG_INCOMING) {
+                TmpStorageManager.inCallOffHook(this, System.currentTimeMillis());
                 startRecord();
             }
 
             operation = null;
-            if (mCallFlag == CallFlag.INCOMING) {
-                operation = "Incoming phoneNumber : " + mPhoneNumber + " offhook";
-             } else if (mCallFlag == CallFlag.OUTGOING) {
-                 operation = "Outgoing phoneNumber : " + mPhoneNumber + " offhook";
+            if (callFlag == DBConstant.FLAG_INCOMING) {
+                operation = "Incoming phoneNumber : " + phoneNumber + " offhook";
+             } else if (callFlag == DBConstant.FLAG_OUTGOING) {
+                 operation = "Outgoing phoneNumber : " + phoneNumber + " offhook";
             }
             Log.getLog(getBaseContext()).recordOperation(operation);
             break;
         case TelephonyManager.CALL_STATE_RINGING:
-            logv("onCallStateChanged mLastCallState = " + stateToString(mLastCallState) + " , state = [CALL_STATE_RINGING]" + " , CallFlag = " + mCallFlag.name());
+            logv("onCallStateChanged lastState = " + stateToString(lastState) + " , state = [CALL_STATE_RINGING]" + " , CallFlag = " + callFlag);
             break;
         default:
             break;
         }
-        mLastCallState = state;
+        TmpStorageManager.callState(this, state);
     }
 
-    private Runnable mEndCall = new Runnable() {
-        public void run() {
-            Log.d(Log.TAG, "mEndCall run mPhoneNumber = " + mPhoneNumber);
-            if (mPhoneNumber.equals("1008611")) {
-                Telephony.getInstance(CallAssistantService.this).endCall();
-            }
-        }
-    };
     private Runnable mMonitorIncallScreen = new Runnable() {
         @Override
         public void run() {
@@ -187,9 +177,11 @@ public class CallAssistantService extends Service {
     private void startRecord() {
         ensureRecordManager();
         if (!mRecordManager.recording()) {
-            long time = System.currentTimeMillis();
-            String fileName = RecordFileManager.getInstance(CallAssistantService.this).getProperName(mPhoneNumber, time);
-            ServiceUtil.updateRecordOffHook(this, mRecordManager.getDBId(), needRecord() ? fileName : null, time, mPhoneNumber, mCallFlag);
+            long time = TmpStorageManager.getStartTime(this);
+
+            String phoneNumber = TmpStorageManager.getPhoneNumber(this);
+            String fileName = RecordFileManager.getInstance(CallAssistantService.this).getProperName(phoneNumber, time);
+            TmpStorageManager.recordName(this, "recorder_" + time + "_" + phoneNumber + ".amr", fileName);
             if (needRecord()) {
                 mRecordManager.initRecorder(fileName);
                 mRecordManager.startRecorder();
@@ -200,11 +192,12 @@ public class CallAssistantService extends Service {
 
     private boolean needRecord() {
         String recordContent = PreferenceManager.getDefaultSharedPreferences(this).getString("key_record_content", "all");
+        int callFlag = TmpStorageManager.getCallFlag(this);
         if ("all".equals(recordContent)) {
             return true;
-        } else if ("incoming".equals(recordContent) && mCallFlag == CallFlag.INCOMING) {
+        } else if ("incoming".equals(recordContent) && callFlag == DBConstant.FLAG_INCOMING) {
             return true;
-        } else if ("outgoing".equals(recordContent) && mCallFlag == CallFlag.OUTGOING) {
+        } else if ("outgoing".equals(recordContent) && callFlag == DBConstant.FLAG_OUTGOING) {
             return true;
         }
         return false;
@@ -212,24 +205,24 @@ public class CallAssistantService extends Service {
 
     private void stopRecord() {
         ensureRecordManager();
-        String fileName = mRecordManager.getFileName();
-        ServiceUtil.updateRecord(this, mRecordManager.getDBId(), fileName);
+        String fileName = TmpStorageManager.getRecordFile(this);
         if (needRecord()) {
             if (mRecordManager.recording()) {
                 mRecordManager.stopRecorder();
                 Log.getLog(getBaseContext()).recordOperation("Saved record file " + fileName);
                 cancel();
+                long size = 0;
+                if (fileName != null) {
+                    File file = new File(fileName);
+                    if (file.exists()) {
+                        size = file.length();
+                    }
+                }
+                TmpStorageManager.recordSize(this, size);
             }
         }
     }
 
-    private void addNewRecord() {
-        long time = System.currentTimeMillis();
-        int baseInfoId = ServiceUtil.addOrThrowBaseInfo(this, mPhoneNumber, time);
-        int id = ServiceUtil.addNewRecord(this, baseInfoId, time, mCallFlag, mPhoneNumber);
-        Log.d(Log.TAG, "addNewRecord a new call log record id = " + id);
-        mRecordManager.setDBId(id);
-    }
     private void ensureRecordManager() {
         if (mRecordManager == null) {
             mRecordManager = RecordManager.getInstance(this);

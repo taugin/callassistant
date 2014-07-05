@@ -13,10 +13,6 @@ import android.util.Log;
 public class RecordManager {
     private MediaRecorder mMediaRecorder;
     private boolean mRecording;
-    private boolean mIncomingFlag;
-    private String mFileName = null;
-    private int mCurDBId;
-    
     private Context mContext;
     private static RecordManager sRecordManager;
     public static RecordManager getInstance(Context context) {
@@ -30,7 +26,6 @@ public class RecordManager {
         mMediaRecorder = new MediaRecorder();
     }
     public synchronized void initRecorder(String fileName) {
-        mFileName = fileName;
         mRecording = false;
         mMediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
         mMediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.RAW_AMR);
@@ -67,18 +62,6 @@ public class RecordManager {
 //            mMediaRecorder.release();
             mRecording = false;
         }
-    }
-
-    public void setDBId(int id) {
-        mCurDBId = id;
-    }
-
-    public int getDBId() {
-        return mCurDBId;
-    }
-
-    public String getFileName() {
-        return mFileName;
     }
 
     public boolean recording() {

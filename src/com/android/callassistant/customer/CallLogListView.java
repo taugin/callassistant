@@ -82,7 +82,13 @@ public class CallLogListView extends LinearLayout implements OnCheckedChangeList
 
             TextView call_date = (TextView) view.findViewById(R.id.call_date);
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            call_date.setText(sdf.format(new Date(info.recordRing)));
+            long updateTime = 0;
+            if (info.callFlag >= DBConstant.FLAG_OUTGOING) {
+                updateTime = info.recordStart;
+            } else {
+                updateTime = info.recordRing;
+            }
+            call_date.setText(sdf.format(new Date(updateTime)));
 
             TextView call_duration = (TextView) view.findViewById(R.id.call_duration);
             call_duration.setText(getTimeExperence(info.recordEnd - info.recordStart));
