@@ -20,7 +20,7 @@
     <string name="customer_number">Phone :</string>
     <string name="customer_name">Name :</string>
     <string name="customer_state">State :</string>
-    <string name="call_log">Calllog :</string>
+    <string name="call_log">Calllog</string>
     <string name="call_log_count">call logs</string>
     <string name="save_success">Saved Successfully</string>
     <string name="save_failure">Saved failure</string>
@@ -33,4 +33,6 @@
     <string name="black_name">BlackName</string>
     <string name="add_black_name">AddBlackName</string>
     <string name="block_times_args">Block %1$d times</string>
+    <string name="empty_call_log">CallLog empty</string>
+    <string name="empty_black_name">Black empty</string>
 </resources> 

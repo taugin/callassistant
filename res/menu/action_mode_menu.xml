@@ -1,0 +1,13 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item
+        android:id="@+id/action_ok"
+        android:orderInCategory="101"
+        android:showAsAction="always"
+        android:title="@android:string/ok"/>
+    <item
+        android:id="@+id/action_selectall"
+        android:orderInCategory="101"
+        android:showAsAction="always"
+        android:title="@android:string/selectAll"/>
+</menu>

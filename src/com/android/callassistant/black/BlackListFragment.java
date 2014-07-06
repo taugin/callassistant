@@ -16,16 +16,20 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
+import android.view.ActionMode;
+import android.view.ActionMode.Callback;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 
@@ -36,7 +40,7 @@ import com.android.callassistant.util.Log;
 import com.android.callassistant.util.RecordFileManager;
 import com.android.callassistant.util.SelectBlackList;
 
-public class BlackListFragment extends ListFragment implements OnClickListener {
+public class BlackListFragment extends ListFragment implements OnClickListener, OnLongClickListener, Callback {
 
     private static final int VIEW_STATE_NORMAL = 0;
     private static final int VIEW_STATE_DELETE = 1;
@@ -44,6 +48,8 @@ public class BlackListFragment extends ListFragment implements OnClickListener {
     private ArrayList<BlackInfo> mBlackList;
     private int mViewState;
     private AlertDialog mAlertDialog;
+    private MenuItem mMenuItem;
+    private ActionMode mActionMode;
     private PopupWindow mPopupWindow;
     private CheckBox mCheckBox;
 
@@ -62,6 +68,7 @@ public class BlackListFragment extends ListFragment implements OnClickListener {
         mListAdapter = new BlackListAdapter(getActivity(), mBlackList);
         getListView().setAdapter(mListAdapter);
         setListShown(true);
+        setEmptyText(getResources().getText(R.string.empty_black_name));
         getActivity().getContentResolver().registerContentObserver(DBConstant.BLOCK_URI, true, mBlockObserver);
     }
 
@@ -109,19 +116,6 @@ public class BlackListFragment extends ListFragment implements OnClickListener {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()) {
-        case R.id.action_delete:
-            if (mViewState == VIEW_STATE_NORMAL) {
-                mViewState = VIEW_STATE_DELETE;
-                mListAdapter.notifyDataSetChanged();
-            } else if (mViewState == VIEW_STATE_DELETE) {
-                if (getCheckedCount() > 0) {
-                    showConfirmDialog();
-                } else {
-                    mViewState = VIEW_STATE_NORMAL;
-                    mListAdapter.notifyDataSetChanged();
-                }
-            }
-            break;
         case R.id.action_add: {
             Intent intent = new Intent(getActivity(), SelectBlackList.class);
             getActivity().startActivity(intent);;
@@ -141,6 +135,9 @@ public class BlackListFragment extends ListFragment implements OnClickListener {
                     RecordFileManager.getInstance(getActivity()).deleteBlackInfoFromDB(mBlackList);
                     mViewState = VIEW_STATE_NORMAL;
                     mListAdapter.notifyDataSetChanged();
+                    if (mActionMode != null) {
+                        mActionMode.finish();
+                    }
                 }
             });
             builder.setNegativeButton(R.string.cancel, null);
@@ -175,6 +172,7 @@ public class BlackListFragment extends ListFragment implements OnClickListener {
                 convertView = LayoutInflater.from(mContext).inflate(R.layout.black_item_layout, null);
                 viewHolder.itemContainer = (LinearLayout) convertView.findViewById(R.id.item_container);
                 viewHolder.itemContainer.setOnClickListener(BlackListFragment.this);
+                viewHolder.itemContainer.setOnLongClickListener(BlackListFragment.this);
                 viewHolder.displayName = (TextView) convertView.findViewById(R.id.display_name);
                 viewHolder.blockCount = (TextView) convertView.findViewById(R.id.block_count);
                 viewHolder.blockDate = (TextView) convertView.findViewById(R.id.block_date);
@@ -240,16 +238,29 @@ public class BlackListFragment extends ListFragment implements OnClickListener {
             int position = (Integer) v.getTag();
             BlackInfo info = mListAdapter.getItem(position);
             info.checked = !info.checked;
+            if (mMenuItem == null) {
+                return ;
+            }
+            int count = mListAdapter.getCount();
+            if (count == getCheckedCount()) {
+                mMenuItem.setTitle(android.R.string.cancel);
+            } else {
+                mMenuItem.setTitle(android.R.string.selectAll);
+            }
         } else if (v.getId() == R.id.delete_black) {
+            v.setEnabled(false);
             synchronized(mListAdapter) {
                 int position = (Integer) v.getTag();
-                BlackInfo info = mListAdapter.getItem(position);
-                Uri uri = ContentUris.withAppendedId(DBConstant.BLOCK_URI, info._id);
-                int ret = getActivity().getContentResolver().delete(uri, null, null);
-                if (ret > 0) {
-                    mListAdapter.remove(info);
+                    if (position < mListAdapter.getCount()) {
+                    BlackInfo info = mListAdapter.getItem(position);
+                    Uri uri = ContentUris.withAppendedId(DBConstant.BLOCK_URI, info._id);
+                    int ret = getActivity().getContentResolver().delete(uri, null, null);
+                    if (ret > 0) {
+                        mListAdapter.remove(info);
+                    }
                 }
             }
+            v.setEnabled(true);
         }
     }
 
@@ -289,4 +300,78 @@ public class BlackListFragment extends ListFragment implements OnClickListener {
             }
         }
     };
+
+
+    @Override
+    public boolean onLongClick(View v) {
+        getActivity().startActionMode(this);
+        int position = (Integer) v.getTag();
+        Log.d(Log.TAG, "onLongClick position = " + position);
+        return true;
+    }
+
+    private void selectAll(boolean select) {
+        int count = mListAdapter.getCount();
+        for (int position = 0; position < count; position++) {
+            mListAdapter.getItem(position).checked = select;
+        }
+        mListAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+        Log.d(Log.TAG, "onCreateActionMode");
+        mActionMode = mode;
+        mode.setTitle(R.string.action_delete);
+        mode.getMenuInflater().inflate(R.menu.action_mode_menu, menu);
+        mMenuItem = menu.findItem(R.id.action_selectall);
+        return true;
+    }
+
+    @Override
+    public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+        Log.d(Log.TAG, "onPrepareActionMode");
+        mViewState = VIEW_STATE_DELETE;
+        mListAdapter.notifyDataSetChanged();
+        return true;
+    }
+
+    @Override
+    public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+        Log.d(Log.TAG, "onActionItemClicked");
+        switch(item.getItemId()) {
+        case R.id.action_selectall:
+            int count = mListAdapter.getCount();
+            if (count == getCheckedCount()) {
+                selectAll(false);
+                item.setTitle(android.R.string.selectAll);
+            } else {
+                selectAll(true);
+                item.setTitle(android.R.string.cancel);
+            }
+            break;
+        case R.id.action_ok:
+            if (mViewState == VIEW_STATE_NORMAL) {
+                mViewState = VIEW_STATE_DELETE;
+                mListAdapter.notifyDataSetChanged();
+            } else if (mViewState == VIEW_STATE_DELETE) {
+                if (getCheckedCount() > 0) {
+                    showConfirmDialog();
+                } else {
+                    mViewState = VIEW_STATE_NORMAL;
+                    mListAdapter.notifyDataSetChanged();
+                }
+            }
+            break;
+        }
+        return true;
+    }
+
+    @Override
+    public void onDestroyActionMode(ActionMode mode) {
+        Log.d(Log.TAG, "onDestroyActionMode");
+        mViewState = VIEW_STATE_NORMAL;
+        mListAdapter.notifyDataSetChanged();
+        mActionMode = null;
+    }
 }

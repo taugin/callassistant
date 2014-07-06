@@ -52,9 +52,9 @@ public class BlackNameManager {
     }
     public boolean interceptPhoneNumber(String phoneNumber) {
         if (isBlack(phoneNumber)) {
-            Telephony.getInstance(mContext).endCall();
+            //Telephony.getInstance(mContext).endCall();
             updateBlock(phoneNumber);
-            return true;
+            //return true;
         }
         return false;
     }
