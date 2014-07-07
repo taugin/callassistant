@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.support.v13.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
+import android.view.MenuItem;
 
 import com.android.callassistant.black.BlackListFragment;
 import com.android.callassistant.customer.RecordListFragment;
@@ -31,6 +32,10 @@ public class AppMainActivity extends Activity implements OnPageChangeListener, T
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fragment_pager);
 
+        getActionBar().setDisplayHomeAsUpEnabled(true);
+        getActionBar().setDisplayShowHomeEnabled(true);
+        getActionBar().setHomeButtonEnabled(true);
+
         mAdapter = new MyAdapter(getFragmentManager());
 
         mPager = (ViewPager)findViewById(R.id.view_pager);
@@ -48,6 +53,18 @@ public class AppMainActivity extends Activity implements OnPageChangeListener, T
         getActionBar().addTab(tab3);
         */
     }
+
+    
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId()) {
+        case android.R.id.home:
+            finish();
+            break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
 
     public static class MyAdapter extends FragmentPagerAdapter {
         public MyAdapter(FragmentManager fragmentManager) {

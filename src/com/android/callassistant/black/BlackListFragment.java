@@ -38,7 +38,6 @@ import com.android.callassistant.info.BlackInfo;
 import com.android.callassistant.provider.DBConstant;
 import com.android.callassistant.util.Log;
 import com.android.callassistant.util.RecordFileManager;
-import com.android.callassistant.util.SelectBlackList;
 
 public class BlackListFragment extends ListFragment implements OnClickListener, OnLongClickListener, Callback {
 
