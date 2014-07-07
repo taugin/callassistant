@@ -197,8 +197,8 @@ public class RecordListFragment extends ListFragment implements OnCheckedChangeL
                     displayName += "-" + info.contactName;
                 }
                 viewHolder.displayName.setText(displayName);
-                // String callLog = String.format("%d%s", info.contactLogCount, RecordListFragment.this.getResources().getString(R.string.call_log_count));
-                viewHolder.callState.setText(null);
+                String callLog = String.format("%d%s", info.contactLogCount, RecordListFragment.this.getResources().getString(R.string.call_log_count));
+                viewHolder.callState.setText(callLog);
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                 viewHolder.callLogDate.setText(sdf.format(new Date(info.contactUpdate)));
                 viewHolder.checkBox.setChecked(info.checked);
