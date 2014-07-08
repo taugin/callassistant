@@ -1,7 +1,5 @@
 package com.android.callassistant.view;
 
-import com.android.callassistant.R;
-
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
@@ -27,7 +25,7 @@ public class CustomLinearLayout extends LinearLayout {
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
-        mCheckBox = (CheckBox) findViewById(R.id.check_box);
+        mCheckBox = (CheckBox) findViewWithTag("CustomLinearLayoutTag");
     }
     public void setPressed(boolean pressed) {
         super.setPressed(pressed);

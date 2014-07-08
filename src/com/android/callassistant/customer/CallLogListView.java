@@ -114,9 +114,12 @@ public class CallLogListView extends LinearLayout implements OnCheckedChangeList
         if (hour > 0) {
             min = min % 60;
         }
-        String sHour = hour > 0 ? hour + "h" : "";
-        String sMin = min > 0 ? min + "m" : "";
-        String sSec = sec + "s";
+        String hTag = getResources().getText(R.string.hour_tag).toString();
+        String mTag = getResources().getText(R.string.min_tag).toString();
+        String sTag = getResources().getText(R.string.sec_tag).toString();
+        String sHour = hour > 0 ? hour + hTag : "";
+        String sMin = min > 0 ? min + mTag : "";
+        String sSec = sec + sTag;
         return String.valueOf(sHour + sMin + sSec);
     }
     @Override

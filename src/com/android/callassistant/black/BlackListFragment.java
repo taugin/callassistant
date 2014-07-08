@@ -36,10 +36,11 @@ import android.widget.TextView;
 import com.android.callassistant.R;
 import com.android.callassistant.info.BlackInfo;
 import com.android.callassistant.provider.DBConstant;
+import com.android.callassistant.util.ActionModeChange;
 import com.android.callassistant.util.Log;
 import com.android.callassistant.util.RecordFileManager;
 
-public class BlackListFragment extends ListFragment implements OnClickListener, OnLongClickListener, Callback {
+public class BlackListFragment extends ListFragment implements OnClickListener, OnLongClickListener, Callback, ActionModeChange{
 
     private static final int VIEW_STATE_NORMAL = 0;
     private static final int VIEW_STATE_DELETE = 1;
@@ -139,7 +140,16 @@ public class BlackListFragment extends ListFragment implements OnClickListener, 
                     }
                 }
             });
-            builder.setNegativeButton(R.string.cancel, null);
+            builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    mViewState = VIEW_STATE_NORMAL;
+                    mListAdapter.notifyDataSetChanged();
+                    if (mActionMode != null) {
+                        mActionMode.finish();
+                    }
+                }
+            });
             mAlertDialog = builder.create();
             mAlertDialog.setCanceledOnTouchOutside(false);
         }
@@ -350,16 +360,10 @@ public class BlackListFragment extends ListFragment implements OnClickListener, 
             }
             break;
         case R.id.action_ok:
-            if (mViewState == VIEW_STATE_NORMAL) {
-                mViewState = VIEW_STATE_DELETE;
-                mListAdapter.notifyDataSetChanged();
-            } else if (mViewState == VIEW_STATE_DELETE) {
-                if (getCheckedCount() > 0) {
-                    showConfirmDialog();
-                } else {
-                    mViewState = VIEW_STATE_NORMAL;
-                    mListAdapter.notifyDataSetChanged();
-                }
+            if (getCheckedCount() > 0) {
+                showConfirmDialog();
+            } else {
+                mode.finish();
             }
             break;
         }
@@ -369,8 +373,15 @@ public class BlackListFragment extends ListFragment implements OnClickListener, 
     @Override
     public void onDestroyActionMode(ActionMode mode) {
         Log.d(Log.TAG, "onDestroyActionMode");
+        selectAll(false);
         mViewState = VIEW_STATE_NORMAL;
         mListAdapter.notifyDataSetChanged();
         mActionMode = null;
+    }
+    public void finishActionModeIfNeed() {
+        if (mActionMode != null) {
+            mActionMode.finish();
+            mActionMode = null;
+        }
     }
 }

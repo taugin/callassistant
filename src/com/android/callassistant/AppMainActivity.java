@@ -15,6 +15,7 @@ import android.view.MenuItem;
 
 import com.android.callassistant.black.BlackListFragment;
 import com.android.callassistant.customer.RecordListFragment;
+import com.android.callassistant.util.ActionModeChange;
 import com.android.callassistant.util.Log;
 
 public class AppMainActivity extends Activity implements OnPageChangeListener, TabListener {
@@ -23,6 +24,9 @@ public class AppMainActivity extends Activity implements OnPageChangeListener, T
     private static final int BLACK_FRAGMENT = 1;
     private static final int OTHER_FRAGMENT = 2;
 
+    private RecordListFragment mRecordListFragment;
+    private BlackListFragment mBlackListFragment;
+    private RecordListFragment mOtherListFragment;
     private MyAdapter mAdapter;
 
     private ViewPager mPager;
@@ -36,6 +40,9 @@ public class AppMainActivity extends Activity implements OnPageChangeListener, T
         getActionBar().setDisplayShowHomeEnabled(true);
         getActionBar().setHomeButtonEnabled(true);
 
+        mRecordListFragment = new RecordListFragment();
+        mBlackListFragment = new BlackListFragment();
+        mOtherListFragment = new RecordListFragment();
         mAdapter = new MyAdapter(getFragmentManager());
 
         mPager = (ViewPager)findViewById(R.id.view_pager);
@@ -66,7 +73,7 @@ public class AppMainActivity extends Activity implements OnPageChangeListener, T
     }
 
 
-    public static class MyAdapter extends FragmentPagerAdapter {
+    public class MyAdapter extends FragmentPagerAdapter {
         public MyAdapter(FragmentManager fragmentManager) {
             super(fragmentManager);
         }
@@ -78,15 +85,15 @@ public class AppMainActivity extends Activity implements OnPageChangeListener, T
 
         @Override
         public Fragment getItem(int position) {
-            Log.d(Log.TAG, "getItem position = " + position);
+            //Log.d(Log.TAG, "getItem position = " + position);
             if (position == RECORD_FRAGMENT) {
-                return new RecordListFragment();
+                return mRecordListFragment;
             }
             if (position == BLACK_FRAGMENT) {
-                return new BlackListFragment();
+                return mBlackListFragment;
             }
             if (position == OTHER_FRAGMENT) {
-                return new RecordListFragment();
+                return mOtherListFragment;
             }
             return null;
         }
@@ -94,12 +101,17 @@ public class AppMainActivity extends Activity implements OnPageChangeListener, T
 
     @Override
     public void onPageScrollStateChanged(int state) {
-        Log.d(Log.TAG, "onPageScrollStateChanged state = " + state);
+        int position = mPager.getCurrentItem();
+        Log.d(Log.TAG, "onPageScrollStateChanged state = " + state + " , position = " + position);
+        ActionModeChange mode = (ActionModeChange) mAdapter.getItem(position);
+        if (state == 1) {
+            mode.finishActionModeIfNeed();
+        }
     }
 
     @Override
     public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-        // Log.d(Log.TAG, "onPageScrolled position = " + position);
+        //Log.d(Log.TAG, "onPageScrolled position = " + position);
     }
 
     @Override

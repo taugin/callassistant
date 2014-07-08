@@ -35,4 +35,7 @@
     <string name="block_times_args">Block %1$d times</string>
     <string name="empty_call_log">CallLog empty</string>
     <string name="empty_black_name">Black empty</string>
+    <string name="hour_tag">h</string>
+    <string name="min_tag">m</string>
+    <string name="sec_tag">s</string>
 </resources> 

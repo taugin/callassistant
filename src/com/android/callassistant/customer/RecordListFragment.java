@@ -39,10 +39,11 @@ import com.android.callassistant.info.ContactInfo;
 import com.android.callassistant.manager.BlackNameManager;
 import com.android.callassistant.provider.DBConstant;
 import com.android.callassistant.settings.CallAssistantSettings;
+import com.android.callassistant.util.ActionModeChange;
 import com.android.callassistant.util.Log;
 import com.android.callassistant.util.RecordFileManager;
 
-public class RecordListFragment extends ListFragment implements OnCheckedChangeListener, OnClickListener, OnLongClickListener, Callback {
+public class RecordListFragment extends ListFragment implements OnCheckedChangeListener, OnClickListener, OnLongClickListener, Callback, ActionModeChange {
 
     private static final int VIEW_STATE_NORMAL = 0;
     private static final int VIEW_STATE_DELETE = 1;
@@ -136,7 +137,16 @@ public class RecordListFragment extends ListFragment implements OnCheckedChangeL
                     }
                 }
             });
-            builder.setNegativeButton(R.string.cancel, null);
+            builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    mViewState = VIEW_STATE_NORMAL;
+                    mListAdapter.notifyDataSetChanged();
+                    if (mActionMode != null) {
+                        mActionMode.finish();
+                    }
+                }
+            });
             mAlertDialog = builder.create();
             mAlertDialog.setCanceledOnTouchOutside(false);
         }
@@ -354,16 +364,10 @@ public class RecordListFragment extends ListFragment implements OnCheckedChangeL
             }
             break;
         case R.id.action_ok:
-            if (mViewState == VIEW_STATE_NORMAL) {
-                mViewState = VIEW_STATE_DELETE;
-                mListAdapter.notifyDataSetChanged();
-            } else if (mViewState == VIEW_STATE_DELETE) {
-                if (getCheckedCount() > 0) {
-                    showConfirmDialog();
-                } else {
-                    mViewState = VIEW_STATE_NORMAL;
-                    mListAdapter.notifyDataSetChanged();
-                }
+            if (getCheckedCount() > 0) {
+                showConfirmDialog();
+            } else {
+                mode.finish();
             }
             break;
         }
@@ -373,8 +377,17 @@ public class RecordListFragment extends ListFragment implements OnCheckedChangeL
     @Override
     public void onDestroyActionMode(ActionMode mode) {
         Log.d(Log.TAG, "onDestroyActionMode");
+        selectAll(false);
         mViewState = VIEW_STATE_NORMAL;
         mListAdapter.notifyDataSetChanged();
         mActionMode = null;
+    }
+    
+    public void finishActionModeIfNeed() {
+        Log.d("taugin", "mActionMode = " + mActionMode);
+        if (mActionMode != null) {
+            mActionMode.finish();
+            mActionMode = null;
+        }
     }
 }

@@ -35,4 +35,7 @@
     <string name="block_times_args">拦截 %1$d 次</string>
     <string name="empty_call_log">通话记录为空</string>
     <string name="empty_black_name">黑名单为空</string>
+    <string name="hour_tag">时</string>
+    <string name="min_tag">分</string>
+    <string name="sec_tag">秒</string>
 </resources>
