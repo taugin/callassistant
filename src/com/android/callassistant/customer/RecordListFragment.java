@@ -37,11 +37,11 @@ import android.widget.TextView;
 import com.android.callassistant.R;
 import com.android.callassistant.info.ContactInfo;
 import com.android.callassistant.manager.BlackNameManager;
+import com.android.callassistant.manager.RecordFileManager;
 import com.android.callassistant.provider.DBConstant;
 import com.android.callassistant.settings.CallAssistantSettings;
 import com.android.callassistant.util.ActionModeChange;
 import com.android.callassistant.util.Log;
-import com.android.callassistant.util.RecordFileManager;
 
 public class RecordListFragment extends ListFragment implements OnCheckedChangeListener, OnClickListener, OnLongClickListener, Callback, ActionModeChange {
 

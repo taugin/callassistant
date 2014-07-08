@@ -153,6 +153,11 @@ public class SelectBlackList extends ListActivity implements OnItemClickListener
                         do {
                             ContactHolder holder = new ContactHolder();
                             holder.phoneNumber = c.getString(c.getColumnIndex(Phone.NUMBER));
+                            holder.displayName = c.getString(c.getColumnIndex(Phone.DISPLAY_NAME));
+                            if (holder.phoneNumber != null && holder.phoneNumber.equals(holder.displayName)) {
+                                holder.displayName = null;
+                            }
+                            Log.d(Log.TAG, "phoneNumber = " + holder.phoneNumber);
                             if (TextUtils.isEmpty(holder.phoneNumber))
                                 continue; 
                             if (holder.phoneNumber.startsWith("+86")) {
@@ -160,7 +165,6 @@ public class SelectBlackList extends ListActivity implements OnItemClickListener
                             }
                             holder.phoneNumber = holder.phoneNumber.replaceAll("-", "");
                             holder.phoneNumber = holder.phoneNumber.replaceAll("\\s+", "");
-                            holder.displayName = c.getString(c.getColumnIndex(Phone.DISPLAY_NAME));
                             mHandler.post(new ItemAdder(holder));
                         } while (c.moveToNext());
                     }
@@ -179,6 +183,9 @@ public class SelectBlackList extends ListActivity implements OnItemClickListener
         public String displayName;
         public String phoneNumber;
         public String toString() {
+            if (TextUtils.isEmpty(displayName)) {
+                return phoneNumber;
+            }
             return phoneNumber + "-" + displayName;
         }
     }

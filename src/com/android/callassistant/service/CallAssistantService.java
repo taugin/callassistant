@@ -17,6 +17,7 @@ import android.telephony.TelephonyManager;
 import com.android.callassistant.R;
 import com.android.callassistant.call.CallNotifier;
 import com.android.callassistant.manager.BlackNameManager;
+import com.android.callassistant.manager.RecordFileManager;
 import com.android.callassistant.manager.Telephony;
 import com.android.callassistant.manager.RecordManager;
 import com.android.callassistant.manager.TmpStorageManager;
@@ -25,7 +26,6 @@ import com.android.callassistant.sersor.FlipManager;
 import com.android.callassistant.util.Constant;
 import com.android.callassistant.util.Log;
 import com.android.callassistant.util.RadioLogMatcher;
-import com.android.callassistant.util.RecordFileManager;
 import com.android.callassistant.util.ServiceUtil;
 
 import java.io.File;
@@ -92,6 +92,10 @@ public class CallAssistantService extends Service {
             String phoneNumber = intent.getStringExtra(Constant.EXTRA_PHONE_NUMBER);
             //mHandler.postDelayed(mMonitorIncallScreen, DELAY_TIME);
             //mHandler.postDelayed(mEndCall, DELAY_TIME);
+            if (BlackNameManager.getInstance(getBaseContext()).isMMINunber(phoneNumber)) {
+                Log.getLog(getBaseContext()).recordOperation("a MMI Number : " + phoneNumber);
+                return START_STICKY;
+            }
             TmpStorageManager.outCallOffHook(this, phoneNumber, DBConstant.FLAG_OUTGOING, System.currentTimeMillis());
             logv("onStartCommand Outgoing PhoneNumber" + " : " + phoneNumber);
             startRecord();
@@ -111,8 +115,9 @@ public class CallAssistantService extends Service {
         boolean callBlock = TmpStorageManager.callBlock(this);
         switch(state) {
         case TelephonyManager.CALL_STATE_IDLE:
-            logv("onCallStateChanged lastState = " + stateToString(lastState) + " , state = [CALL_STATE_IDLE]" + " , CallFlag = " + callFlag);
+            logv("onCallStateChanged lastState = " + stateToString(lastState) + " , state = [CALL_STATE_IDLE]" + " , CallFlag = " + callFlag + " , callBlock = " + callBlock);
             if (callBlock) {
+                TmpStorageManager.clear(this);
                 return ;
             }
             TmpStorageManager.callIdle(this, System.currentTimeMillis());

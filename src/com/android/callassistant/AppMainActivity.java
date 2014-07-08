@@ -1,6 +1,5 @@
 package com.android.callassistant;
 
-import android.app.ActionBar;
 import android.app.ActionBar.Tab;
 import android.app.ActionBar.TabListener;
 import android.app.Activity;
@@ -17,13 +16,16 @@ import com.android.callassistant.black.BlackListFragment;
 import com.android.callassistant.customer.RecordListFragment;
 import com.android.callassistant.util.ActionModeChange;
 import com.android.callassistant.util.Log;
+import com.android.callassistant.view.TabContainer;
+import com.android.callassistant.view.TabContainer.OnTabChangeListener;
 
-public class AppMainActivity extends Activity implements OnPageChangeListener, TabListener {
+public class AppMainActivity extends Activity implements OnPageChangeListener, TabListener, OnTabChangeListener {
     private static final int NUM_ITEMS = 3;
     private static final int RECORD_FRAGMENT = 0;
     private static final int BLACK_FRAGMENT = 1;
     private static final int OTHER_FRAGMENT = 2;
 
+    private TabContainer mTabContainer;
     private RecordListFragment mRecordListFragment;
     private BlackListFragment mBlackListFragment;
     private RecordListFragment mOtherListFragment;
@@ -45,6 +47,8 @@ public class AppMainActivity extends Activity implements OnPageChangeListener, T
         mOtherListFragment = new RecordListFragment();
         mAdapter = new MyAdapter(getFragmentManager());
 
+        mTabContainer = (TabContainer) findViewById(R.id.function_tab);
+        mTabContainer.setOnTabChangeListener(this);
         mPager = (ViewPager)findViewById(R.id.view_pager);
         mPager.setAdapter(mAdapter);
         mPager.setOnPageChangeListener(this);
@@ -126,6 +130,7 @@ public class AppMainActivity extends Activity implements OnPageChangeListener, T
         if (position == OTHER_FRAGMENT) {
             this.setTitle(R.string.call_log);
         }
+        mTabContainer.setCurrentTab(position);
         /*
         Tab tab = getActionBar().getTabAt(position);
         getActionBar().selectTab(tab);
@@ -144,6 +149,18 @@ public class AppMainActivity extends Activity implements OnPageChangeListener, T
 
     @Override
     public void onTabReselected(Tab tab, FragmentTransaction ft) {
+        
+    }
+
+
+    @Override
+    public void onTabChange(int position) {
+        mPager.setCurrentItem(position, false);
+    }
+
+
+    @Override
+    public void onClick() {
         
     }
 }

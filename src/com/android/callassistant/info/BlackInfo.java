@@ -5,7 +5,8 @@ public class BlackInfo {
     public String blackName;
     public String blackNumber;
     public int blockCount;
-    public String blockTime;
+    public long blockTime;
+    public String blockHisTimes;
     public int blockType;
     public String blockContent;
     public boolean checked;

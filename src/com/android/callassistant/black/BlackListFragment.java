@@ -7,6 +7,7 @@ import java.util.Date;
 import android.app.AlertDialog;
 import android.app.ListFragment;
 import android.content.ContentUris;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -26,19 +27,20 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import com.android.callassistant.R;
 import com.android.callassistant.info.BlackInfo;
+import com.android.callassistant.manager.RecordFileManager;
 import com.android.callassistant.provider.DBConstant;
 import com.android.callassistant.util.ActionModeChange;
 import com.android.callassistant.util.Log;
-import com.android.callassistant.util.RecordFileManager;
 
 public class BlackListFragment extends ListFragment implements OnClickListener, OnLongClickListener, Callback, ActionModeChange{
 
@@ -48,8 +50,11 @@ public class BlackListFragment extends ListFragment implements OnClickListener, 
     private ArrayList<BlackInfo> mBlackList;
     private int mViewState;
     private AlertDialog mAlertDialog;
+    private AlertDialog mSelectionDialog;
+    private AlertDialog mAddBlackDialog;
     private MenuItem mMenuItem;
     private ActionMode mActionMode;
+    private EditText mPhoneNumber;
     private PopupWindow mPopupWindow;
     private CheckBox mCheckBox;
 
@@ -117,12 +122,31 @@ public class BlackListFragment extends ListFragment implements OnClickListener, 
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()) {
         case R.id.action_add: {
-            Intent intent = new Intent(getActivity(), SelectBlackList.class);
-            getActivity().startActivity(intent);;
+            showSelectionDialog();
         }
             break;
         }
         return true;
+    }
+    private void showSelectionDialog() {
+        if (mSelectionDialog == null) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            builder.setItems(R.array.black_add_selection, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    Log.d(Log.TAG, "which = " + which);
+                    if (which == 1) {
+                        Intent intent = new Intent(getActivity(), SelectBlackList.class);
+                        getActivity().startActivity(intent);
+                    } else if (which == 0) {
+                        showAddBlackDialog();
+                    }
+                }
+            });
+            mSelectionDialog = builder.create();
+            mSelectionDialog.setCanceledOnTouchOutside(false);
+        }
+        mSelectionDialog.show();
     }
     private void showConfirmDialog() {
         if (mAlertDialog == null) {
@@ -156,6 +180,32 @@ public class BlackListFragment extends ListFragment implements OnClickListener, 
         mAlertDialog.show();
     }
 
+    private void showAddBlackDialog() {
+        if (mAddBlackDialog == null) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            mPhoneNumber = new EditText(getActivity());
+            mPhoneNumber.setInputType(EditorInfo.TYPE_CLASS_NUMBER);
+            builder.setView(mPhoneNumber);
+            builder.setTitle(R.string.input_number);
+            builder.setCancelable(true);
+            builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    ContentValues values = new ContentValues();
+                    values.put(DBConstant.BLOCK_NUMBER, mPhoneNumber.getText().toString());
+                    getActivity().getContentResolver().insert(DBConstant.BLOCK_URI, values);
+                }
+            });
+            builder.setNegativeButton(R.string.cancel, null);
+            mAddBlackDialog = builder.create();
+            mAddBlackDialog.setCanceledOnTouchOutside(true);
+        }
+        if (mPhoneNumber != null) {
+            mPhoneNumber.setText("");
+        }
+        mAddBlackDialog.show();
+    }
+    
     class ViewHolder {
         LinearLayout itemContainer;
         TextView displayName;
@@ -207,8 +257,9 @@ public class BlackListFragment extends ListFragment implements OnClickListener, 
                 viewHolder.displayName.setText(displayName);
                 viewHolder.blockCount.setText(getResources().getString(R.string.block_times_args, info.blockCount));
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                if (info.blockTime != null) {
-                    String dates[] = info.blockTime.split(",");
+                /**
+                if (info.blockHisTimes != null) {
+                    String dates[] = info.blockHisTimes.split(",");
                     if (dates != null) {
                         String lastDate = dates[dates.length - 1];
                         long lastTime = 0;
@@ -218,7 +269,16 @@ public class BlackListFragment extends ListFragment implements OnClickListener, 
                             lastTime = System.currentTimeMillis();
                         }
                         viewHolder.blockDate.setText(sdf.format(new Date(lastTime)));
+                    } else {
+                        viewHolder.blockDate.setText("");
                     }
+                } else {
+                    viewHolder.blockDate.setText("");
+                }*/
+                if (info.blockTime != 0) {
+                    viewHolder.blockDate.setText(sdf.format(new Date(info.blockTime)));
+                } else {
+                    viewHolder.blockDate.setText("");
                 }
                 viewHolder.checkBox.setChecked(info.checked);
             }

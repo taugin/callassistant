@@ -1,4 +1,60 @@
-<android.support.v4.view.ViewPager xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/view_pager"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"/>
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/view_pager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"/>
+
+    <View style="@style/horizontal_line"
+        android:layout_marginBottom="1dp"/>
+    <com.android.callassistant.view.TabContainer
+        android:id="@+id/function_tab"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_weight="0"
+        android:layout_marginBottom="1dp"
+        android:background="@android:color/white"
+        android:orientation="horizontal" >
+
+        <LinearLayout
+            android:id="@+id/tab_button_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" >
+
+            <view class="com.android.callassistant.view.TabContainer$TabButton"
+                android:id="@+id/tab_subscribed"
+                style="@style/tab_button"
+                android:text="@string/call_log" />
+
+            <view class="com.android.callassistant.view.TabContainer$TabButton"
+                android:id="@+id/tab_bundle"
+                style="@style/tab_button"
+                android:text="@string/black_name" />
+
+            <view class="com.android.callassistant.view.TabContainer$TabButton"
+                android:id="@+id/tab_custom"
+                style="@style/tab_button"
+                android:text="@string/call_log" />
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/tab_slide_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:weightSum="3.0"
+            >
+            <Button
+                android:id="@+id/tab_slide_button"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1.0"
+                android:text="@string/call_log"
+                android:background="@drawable/pressed_state_shape_rect"
+                />
+        </LinearLayout>
+    </com.android.callassistant.view.TabContainer>
+</LinearLayout>

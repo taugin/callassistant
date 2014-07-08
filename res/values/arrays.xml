@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <string-array name="warnig_tone_show">
         <item>Empty Number</item>
         <item>Stop Service</item>
@@ -12,7 +13,6 @@
         <item>shutdown</item>
         <item>busy</item>
     </string-array>
-    
     <string-array name="record_content_entries">
         <item>Record All</item>
         <item>Record Incoming Call</item>
@@ -20,9 +20,14 @@
         <item>Record Nothing</item>
     </string-array>
     <string-array name="record_content_value">
-	    <item>all</item>
-	    <item>incoming</item>
-	    <item>outgoing</item>
-	    <item>nothing</item>
+        <item>all</item>
+        <item>incoming</item>
+        <item>outgoing</item>
+        <item>nothing</item>
     </string-array>
+    <string-array name="black_add_selection">
+        <item>Add Manually</item>
+        <item>From Contact</item>
+    </string-array>
+
 </resources>

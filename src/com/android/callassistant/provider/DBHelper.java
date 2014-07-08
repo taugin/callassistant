@@ -51,7 +51,8 @@ public class DBHelper extends SQLiteOpenHelper {
           + DBConstant.BLOCK_NAME + " TEXT,"
           + DBConstant.BLOCK_NUMBER + " TEXT UNIQUE,"
           + DBConstant.BLOCK_COUNT + " INTEGER DEFAULT 0,"
-          + DBConstant.BLOCK_TIME + " TEXT,"
+          + DBConstant.BLOCK_TIME + " LONG DEFAULT 0,"
+          + DBConstant.BLOCK_HIS_TIMES + " TEXT,"
           + DBConstant.BLOCK_TYPE + " INTEGER DEFAULT 0,"
           + DBConstant.BLOCK_CONTENT + " TEXT"
           + ")";

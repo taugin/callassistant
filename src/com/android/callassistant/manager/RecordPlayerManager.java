@@ -3,7 +3,6 @@ package com.android.callassistant.manager;
 import java.io.IOException;
 
 import com.android.callassistant.info.RecordInfo;
-import com.android.callassistant.util.RecordFileManager;
 
 import android.content.Context;
 import android.media.MediaPlayer;

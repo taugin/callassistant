@@ -61,6 +61,7 @@ public class DBConstant {
     public static final String BLOCK_NUMBER = "block_number";
     public static final String BLOCK_COUNT = "block_count";
     public static final String BLOCK_TIME = "block_time";
+    public static final String BLOCK_HIS_TIMES = "block_his_times";
     public static final String BLOCK_TYPE = "block_type";
     public static final String BLOCK_CONTENT = "block_content";
     public static final int BLOCK_TYPE_CALL = 0;

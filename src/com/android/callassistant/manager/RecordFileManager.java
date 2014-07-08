@@ -1,4 +1,4 @@
-package com.android.callassistant.util;
+package com.android.callassistant.manager;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -13,8 +13,9 @@ import android.os.Environment;
 import com.android.callassistant.info.BlackInfo;
 import com.android.callassistant.info.ContactInfo;
 import com.android.callassistant.info.RecordInfo;
-import com.android.callassistant.manager.BlackNameManager;
 import com.android.callassistant.provider.DBConstant;
+import com.android.callassistant.util.Constant;
+import com.android.callassistant.util.Log;
 
 public class RecordFileManager {
 
@@ -264,8 +265,9 @@ public class RecordFileManager {
         }
         list.clear();
         Cursor c = null;
+        String sortBy = DBConstant.BLOCK_TIME + " DESC";
         try {
-            c = mContext.getContentResolver().query(DBConstant.BLOCK_URI, null, null, null, null);
+            c = mContext.getContentResolver().query(DBConstant.BLOCK_URI, null, null, null, sortBy);
             if (c != null) {
                 if (c.moveToFirst()) {
                     BlackInfo info = null;
@@ -275,7 +277,8 @@ public class RecordFileManager {
                         info.blackName = c.getString(c.getColumnIndex(DBConstant.BLOCK_NAME));
                         info.blackNumber = c.getString(c.getColumnIndex(DBConstant.BLOCK_NUMBER));
                         info.blockCount = c.getInt(c.getColumnIndex(DBConstant.BLOCK_COUNT));
-                        info.blockTime = c.getString(c.getColumnIndex(DBConstant.BLOCK_TIME));
+                        info.blockTime = c.getLong(c.getColumnIndex(DBConstant.BLOCK_TIME));
+                        info.blockHisTimes = c.getString(c.getColumnIndex(DBConstant.BLOCK_HIS_TIMES));
                         info.blockType = c.getInt(c.getColumnIndex(DBConstant.BLOCK_TYPE));
                         info.blockContent = c.getString(c.getColumnIndex(DBConstant.BLOCK_CONTENT));
                         list.add(info);
