@@ -1,6 +1,13 @@
 package com.android.callassistant.customer;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,16 +26,12 @@ import com.android.callassistant.manager.RecordPlayerManager.OnCompletionListene
 import com.android.callassistant.provider.DBConstant;
 import com.android.callassistant.util.Log;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-
 public class CallLogListView extends LinearLayout implements OnCheckedChangeListener, OnClickListener, OnCompletionListener {
 
     private CheckBox mCheckBox;
     private LinearLayout mCallLogContainer;
-    private ArrayList<ImageView> mImageList;
-    private RecordPlayerManager mRecordPlayer;
+    //private ArrayList<ImageView> mImageList;
+    //private RecordPlayerManager mRecordPlayer;
     public CallLogListView(Context context) {
         super(context, null);
     }
@@ -43,14 +46,14 @@ public class CallLogListView extends LinearLayout implements OnCheckedChangeList
         super.onFinishInflate();
         Log.d(Log.TAG, "onFinishInflate");
         View view = LayoutInflater.from(getContext()).inflate(R.layout.calllog_control, this);
-        mImageList = new ArrayList<ImageView>();
+        //mImageList = new ArrayList<ImageView>();
         mCallLogContainer = (LinearLayout) view.findViewById(R.id.calllog_container);
         mCheckBox = (CheckBox) view.findViewById(R.id.call_log_show_control);
         mCheckBox.setOnCheckedChangeListener(this);
         mCheckBox.setChecked(true);
         mCallLogContainer.setVisibility(mCheckBox.isChecked() ? View.VISIBLE : View.GONE);
-        mRecordPlayer = RecordPlayerManager.getInstance(getContext());
-        mRecordPlayer.setOnCompletionListener(this);
+        //mRecordPlayer = RecordPlayerManager.getInstance(getContext());
+        //mRecordPlayer.setOnCompletionListener(this);
     }
     @Override
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -60,7 +63,7 @@ public class CallLogListView extends LinearLayout implements OnCheckedChangeList
 
     public void setCallLogList(ArrayList<RecordInfo> list) {
         mCallLogContainer.removeAllViews();
-        mImageList.clear();
+        //mImageList.clear();
         int index = 0;
         RecordInfo info = null;
         Log.d(Log.TAG, "setCallLogList size = " + list.size());
@@ -93,7 +96,7 @@ public class CallLogListView extends LinearLayout implements OnCheckedChangeList
             TextView call_duration = (TextView) view.findViewById(R.id.call_duration);
             call_duration.setText(getTimeExperence(info.recordStart == 0 ? 0 : info.recordEnd - info.recordStart));
 
-            ImageView media_control = (ImageView) view.findViewById(R.id.media_control);
+            LinearLayout media_control = (LinearLayout) view.findViewById(R.id.media_control);
             media_control.setTag(info);
             media_control.setOnClickListener(this);
             if (info.recordFile == null) {
@@ -101,7 +104,7 @@ public class CallLogListView extends LinearLayout implements OnCheckedChangeList
             } else {
                 media_control.setVisibility(View.VISIBLE);
             }
-            mImageList.add(media_control);
+            //mImageList.add(media_control);
             mCallLogContainer.addView(view);
             index ++;
         }
@@ -126,6 +129,7 @@ public class CallLogListView extends LinearLayout implements OnCheckedChangeList
     public void onClick(View v) {
         if (v.getId() == R.id.media_control) {
             RecordInfo info = (RecordInfo) v.getTag();
+            /*
             if (mRecordPlayer.isPlaying()) {
                 mRecordPlayer.stopPlay();
                 if (mRecordPlayer.getCurRecord() != info) {
@@ -137,9 +141,12 @@ public class CallLogListView extends LinearLayout implements OnCheckedChangeList
                 mRecordPlayer.startPlay();
             }
             resetControlState();
+            */
+            playAudio(info.recordFile);
             Log.d(Log.TAG, "fileName = " + info.recordFile);
         }
     }
+    /*
     private void resetControlState() {
         for (ImageView v : mImageList) {
             RecordInfo info = (RecordInfo) v.getTag();
@@ -149,16 +156,23 @@ public class CallLogListView extends LinearLayout implements OnCheckedChangeList
                 v.setImageResource(R.drawable.ic_stop);
             }
         }
-    }
+    }*/
     public void onPause() {
-        mRecordPlayer.stopPlay();
-        resetControlState();
+        //mRecordPlayer.stopPlay();
+        //resetControlState();
     }
     public void onDestroy() {
-        mRecordPlayer.release();
+        //mRecordPlayer.release();
     }
     @Override
     public void onCompletion() {
-        resetControlState();
+        //resetControlState();
+    }
+    
+    private void playAudio(String audioPath){
+        Intent intent = new Intent();  
+        intent.setAction(Intent.ACTION_VIEW);
+        intent.setDataAndType(Uri.parse("file://" + audioPath), "audio/amr");
+        getContext().startActivity(intent);
     }
 }

@@ -68,6 +68,9 @@ public class CustomerDetailFragment extends Fragment implements OnClickListener,
     private void updateUI() {
         mRecordList = RecordFileManager.getInstance(getActivity()).getRecordsFromDB(mRecordList, mContactId);
         mContact = RecordFileManager.getInstance(getActivity()).getSingleContact(mContactId);
+        if (mContact == null) {
+            return ;
+        }
         mPhoneNumberView.setText(mContact.contactNumber);
         mCustomerNameView.setText(mContact.contactName);
         int len = 0;
@@ -130,6 +133,9 @@ public class CustomerDetailFragment extends Fragment implements OnClickListener,
 
     @Override
     public void afterTextChanged(Editable s) {
+        if (mContact == null) {
+            return ;
+        }
         String newName = mCustomerNameView.getText().toString();
         if (newName != null && newName.equals(mContact.contactName == null ? "" : mContact.contactName)) {
             mEditSave.setEnabled(false);
