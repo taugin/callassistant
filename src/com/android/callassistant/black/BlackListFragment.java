@@ -296,6 +296,9 @@ public class BlackListFragment extends ListFragment implements OnClickListener, 
     @Override
     public void onClick(View v) {
         if (v.getId() == R.id.item_container) {
+            if (mActionMode != null) {
+                return ;
+            }
             int position = (Integer) v.getTag();
             BlackInfo info = mListAdapter.getItem(position);
             //Intent intent = new Intent(getActivity(), CustomerDetailActivity.class);
@@ -373,6 +376,9 @@ public class BlackListFragment extends ListFragment implements OnClickListener, 
 
     @Override
     public boolean onLongClick(View v) {
+        if (mActionMode != null) {
+            return true;
+        }
         getActivity().startActionMode(this);
         int position = (Integer) v.getTag();
         Log.d(Log.TAG, "onLongClick position = " + position);

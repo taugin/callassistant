@@ -5,8 +5,8 @@
 
     <LinearLayout
         android:id="@+id/dial_number"
-        android:layout_width="56dp"
-        android:layout_height="56dp"
+        android:layout_width="@dimen/listview_item_height"
+        android:layout_height="@dimen/listview_item_height"
         android:layout_weight="0"
         android:background="@drawable/item_background"
         android:clickable="true"
@@ -31,16 +31,35 @@
         android:orientation="vertical"
         android:paddingLeft="5dp" >
 
-        <TextView
-            android:id="@+id/display_name"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:ellipsize="marquee"
+            android:orientation="vertical"
             android:gravity="center_vertical"
-            android:singleLine="true"
-            android:text="@string/app_name"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
+            android:layout_weight="1">
+
+            <TextView
+                android:id="@+id/display_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="marquee"
+                android:gravity="center_vertical"
+                android:singleLine="true"
+                android:text="@string/app_name"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            <TextView
+                android:id="@+id/display_number"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="marquee"
+                android:gravity="center_vertical"
+                android:singleLine="true"
+                android:text="@string/app_name"
+                android:textSize="@dimen/display_name_text_size"
+                android:visibility="gone"
+                android:textAppearance="?android:attr/textAppearanceSmall" />
+        </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -60,6 +79,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
+                android:layout_marginRight="5dp"
                 android:gravity="right|center_vertical"
                 android:text="@string/app_name" />
         </LinearLayout>
@@ -68,8 +88,8 @@
     <View style="@style/vertical_line" />
 
     <RelativeLayout
-        android:layout_width="56dp"
-        android:layout_height="56dp"
+        android:layout_width="@dimen/listview_item_height"
+        android:layout_height="@dimen/listview_item_height"
         android:layout_weight="0"
         android:clickable="true" >
 
@@ -77,16 +97,16 @@
             android:id="@+id/check_box_container"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:background="@drawable/item_background"
             android:clickable="true"
-            android:gravity="center"
-            android:background="@drawable/item_background">
+            android:gravity="center" >
 
             <CheckBox
                 android:id="@+id/check_box"
-                android:tag="CustomLinearLayoutTag"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
+                android:tag="CustomLinearLayoutTag"
                 android:visibility="invisible" />
         </com.android.callassistant.view.CustomLinearLayout>
 

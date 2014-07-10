@@ -157,6 +157,7 @@ public class RecordListFragment extends ListFragment implements OnCheckedChangeL
         LinearLayout dialNumber;
         LinearLayout itemContainer;
         TextView displayName;
+        TextView displayNumber;
         TextView callState;
         TextView callLogDate;
         CheckBox checkBox;
@@ -183,6 +184,7 @@ public class RecordListFragment extends ListFragment implements OnCheckedChangeL
                 viewHolder.itemContainer.setOnClickListener(RecordListFragment.this);
                 viewHolder.itemContainer.setOnLongClickListener(RecordListFragment.this);
                 viewHolder.displayName = (TextView) convertView.findViewById(R.id.display_name);
+                viewHolder.displayNumber = (TextView) convertView.findViewById(R.id.display_number);
                 viewHolder.callState = (TextView) convertView.findViewById(R.id.call_state);
                 viewHolder.callLogDate = (TextView) convertView.findViewById(R.id.call_log_date);
                 viewHolder.functionMenu = convertView.findViewById(R.id.function_menu);
@@ -202,11 +204,12 @@ public class RecordListFragment extends ListFragment implements OnCheckedChangeL
 
             ContactInfo info = getItem(position);
             if (info != null) {
-                String displayName = info.contactNumber;
                 if (!TextUtils.isEmpty(info.contactName)) {
-                    displayName += "-" + info.contactName;
+                    viewHolder.displayName.setText(info.contactName);
+                    viewHolder.displayNumber.setText(info.contactNumber);
+                } else {
+                    viewHolder.displayName.setText(info.contactNumber);
                 }
-                viewHolder.displayName.setText(displayName);
                 String callLog = String.format("%d%s", info.contactLogCount, RecordListFragment.this.getResources().getString(R.string.call_log_count));
                 viewHolder.callState.setText(callLog);
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -237,6 +240,9 @@ public class RecordListFragment extends ListFragment implements OnCheckedChangeL
     @Override
     public void onClick(View v) {
         if (v.getId() == R.id.item_container) {
+            if (mActionMode != null) {
+                return ;
+            }
             int position = (Integer) v.getTag();
             ContactInfo info = mListAdapter.getItem(position);
             Intent intent = new Intent(getActivity(), CustomerDetailActivity.class);
@@ -317,6 +323,9 @@ public class RecordListFragment extends ListFragment implements OnCheckedChangeL
 
     @Override
     public boolean onLongClick(View v) {
+        if (mActionMode != null) {
+            return true;
+        }
         getActivity().startActionMode(this);
         int position = (Integer) v.getTag();
         Log.d(Log.TAG, "onLongClick position = " + position);

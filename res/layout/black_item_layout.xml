@@ -51,8 +51,8 @@
     <View style="@style/vertical_line" />
 
     <RelativeLayout
-        android:layout_width="56dp"
-        android:layout_height="56dp"
+        android:layout_width="@dimen/listview_item_height"
+        android:layout_height="@dimen/listview_item_height"
         android:layout_weight="0"
         android:clickable="true" >
 

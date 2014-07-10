@@ -161,6 +161,8 @@ public class AppMainActivity extends Activity implements OnPageChangeListener, T
 
     @Override
     public void onClick() {
-        
+        int position = mPager.getCurrentItem();
+        ActionModeChange mode = (ActionModeChange) mAdapter.getItem(position);
+        mode.finishActionModeIfNeed();
     }
 }
