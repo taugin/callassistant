@@ -5,4 +5,8 @@
         android:showAsAction="always"
         android:icon="@drawable/ic_settings"
         android:title="@string/action_settings"/>
+    <item android:id="@+id/search_view"
+        android:showAsAction="always"
+        android:actionViewClass="android.widget.SearchView"
+        />
 </menu>

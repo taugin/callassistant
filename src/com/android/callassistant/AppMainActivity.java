@@ -14,7 +14,7 @@ import android.view.MenuItem;
 
 import com.android.callassistant.black.BlackListFragment;
 import com.android.callassistant.customer.RecordListFragment;
-import com.android.callassistant.util.ActionModeChange;
+import com.android.callassistant.util.FragmentListener;
 import com.android.callassistant.util.Log;
 import com.android.callassistant.view.TabContainer;
 import com.android.callassistant.view.TabContainer.OnTabChangeListener;
@@ -107,7 +107,7 @@ public class AppMainActivity extends Activity implements OnPageChangeListener, T
     public void onPageScrollStateChanged(int state) {
         int position = mPager.getCurrentItem();
         Log.d(Log.TAG, "onPageScrollStateChanged state = " + state + " , position = " + position);
-        ActionModeChange mode = (ActionModeChange) mAdapter.getItem(position);
+        FragmentListener mode = (FragmentListener) mAdapter.getItem(position);
         if (state == 1) {
             mode.finishActionModeIfNeed();
         }
@@ -162,7 +162,19 @@ public class AppMainActivity extends Activity implements OnPageChangeListener, T
     @Override
     public void onClick() {
         int position = mPager.getCurrentItem();
-        ActionModeChange mode = (ActionModeChange) mAdapter.getItem(position);
+        FragmentListener mode = (FragmentListener) mAdapter.getItem(position);
         mode.finishActionModeIfNeed();
     }
+
+
+    @Override
+    public void onBackPressed() {
+        int position = mPager.getCurrentItem();
+        FragmentListener fragment = (FragmentListener) mAdapter.getItem(position);
+        if (fragment.onBackPressed()) {
+            return ;
+        }
+        super.onBackPressed();
+    }
+    
 }

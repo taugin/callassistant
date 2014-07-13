@@ -39,10 +39,10 @@ import com.android.callassistant.R;
 import com.android.callassistant.info.BlackInfo;
 import com.android.callassistant.manager.RecordFileManager;
 import com.android.callassistant.provider.DBConstant;
-import com.android.callassistant.util.ActionModeChange;
+import com.android.callassistant.util.FragmentListener;
 import com.android.callassistant.util.Log;
 
-public class BlackListFragment extends ListFragment implements OnClickListener, OnLongClickListener, Callback, ActionModeChange{
+public class BlackListFragment extends ListFragment implements OnClickListener, OnLongClickListener, Callback, FragmentListener{
 
     private static final int VIEW_STATE_NORMAL = 0;
     private static final int VIEW_STATE_DELETE = 1;

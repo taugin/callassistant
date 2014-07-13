@@ -1,5 +1,7 @@
 package com.android.callassistant.info;
 
+import android.text.TextUtils;
+
 public class ContactInfo {
     public int _id;
     public String contactName;
@@ -14,4 +16,8 @@ public class ContactInfo {
     public boolean contactModifyName;
     public boolean checked;
     public boolean blocked;
+    
+    public String toString() {
+        return contactNumber;
+    }
 }

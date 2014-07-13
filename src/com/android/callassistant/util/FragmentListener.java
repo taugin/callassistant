@@ -1,5 +1,6 @@
 package com.android.callassistant.util;
 
-public interface ActionModeChange {
+public interface FragmentListener {
     public void finishActionModeIfNeed();
+    public boolean onBackPressed();
 }

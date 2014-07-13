@@ -10,10 +10,14 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.SpannableString;
+import android.text.Spanned;
 import android.text.TextUtils;
+import android.text.style.ForegroundColorSpan;
 import android.view.ActionMode;
 import android.view.ActionMode.Callback;
 import android.view.LayoutInflater;
@@ -25,13 +29,15 @@ import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
+import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.PopupWindow;
+import android.widget.SearchView;
+import android.widget.SearchView.OnQueryTextListener;
 import android.widget.TextView;
 
 import com.android.callassistant.R;
@@ -40,10 +46,11 @@ import com.android.callassistant.manager.BlackNameManager;
 import com.android.callassistant.manager.RecordFileManager;
 import com.android.callassistant.provider.DBConstant;
 import com.android.callassistant.settings.CallAssistantSettings;
-import com.android.callassistant.util.ActionModeChange;
+import com.android.callassistant.util.FragmentListener;
 import com.android.callassistant.util.Log;
 
-public class RecordListFragment extends ListFragment implements OnCheckedChangeListener, OnClickListener, OnLongClickListener, Callback, ActionModeChange {
+public class RecordListFragment extends ListFragment implements OnCheckedChangeListener, OnClickListener,
+                                    OnLongClickListener, Callback, FragmentListener, OnQueryTextListener {
 
     private static final int VIEW_STATE_NORMAL = 0;
     private static final int VIEW_STATE_DELETE = 1;
@@ -55,6 +62,7 @@ public class RecordListFragment extends ListFragment implements OnCheckedChangeL
     private PopupWindow mPopupWindow;
     private CheckBox mCheckBox;
     private MenuItem mMenuItem;
+    private SearchView mSearchView;
 
     
     @Override
@@ -70,6 +78,7 @@ public class RecordListFragment extends ListFragment implements OnCheckedChangeL
         mRecordList = new ArrayList<ContactInfo>();
         mListAdapter = new RecordListAdapter(getActivity(), mRecordList);
         getListView().setAdapter(mListAdapter);
+        getListView().setTextFilterEnabled(true);
         setListShown(true);
         setEmptyText(getResources().getText(R.string.empty_call_log));
     }
@@ -86,6 +95,11 @@ public class RecordListFragment extends ListFragment implements OnCheckedChangeL
     }
 
     public boolean onBackPressed() {
+        if (!mSearchView.isIconified()) {
+            mSearchView.setQuery("", false);
+            mSearchView.setIconified(true);
+            return true;
+        }
         if (mViewState == VIEW_STATE_DELETE) {
             mViewState = VIEW_STATE_NORMAL;
             mListAdapter.notifyDataSetChanged();
@@ -107,6 +121,10 @@ public class RecordListFragment extends ListFragment implements OnCheckedChangeL
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.record_menu, menu);
+        mSearchView = (SearchView) menu.findItem(R.id.search_view).getActionView();
+        mSearchView.setOnQueryTextListener(this);
+        mSearchView.setSubmitButtonEnabled(false);
+        mSearchView.setInputType(EditorInfo.TYPE_CLASS_PHONE);
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -164,7 +182,7 @@ public class RecordListFragment extends ListFragment implements OnCheckedChangeL
         LinearLayout checkBoxContainer;
         View functionMenu;
     }
-    private class RecordListAdapter extends ArrayAdapter<ContactInfo>{
+    private class RecordListAdapter extends ArrayAdapter<ContactInfo> {
 
         private Context mContext;
         public RecordListAdapter(Context context, ArrayList<ContactInfo> listInfos) {
@@ -188,7 +206,6 @@ public class RecordListFragment extends ListFragment implements OnCheckedChangeL
                 viewHolder.callState = (TextView) convertView.findViewById(R.id.call_state);
                 viewHolder.callLogDate = (TextView) convertView.findViewById(R.id.call_log_date);
                 viewHolder.functionMenu = convertView.findViewById(R.id.function_menu);
-                viewHolder.functionMenu.setTag(position);
                 viewHolder.functionMenu.setOnClickListener(RecordListFragment.this);
                 viewHolder.checkBox = (CheckBox) convertView.findViewById(R.id.check_box);
                 viewHolder.checkBoxContainer = (LinearLayout) convertView.findViewById(R.id.check_box_container);
@@ -201,14 +218,29 @@ public class RecordListFragment extends ListFragment implements OnCheckedChangeL
             viewHolder.itemContainer.setTag(position);
             viewHolder.dialNumber.setTag(position);
             viewHolder.checkBoxContainer.setTag(position);
+            viewHolder.functionMenu.setTag(position);
 
             ContactInfo info = getItem(position);
+
+            CharSequence chars = getListView().getTextFilter();
+            String filter = null;
+            int len = 0;
+            if (chars != null) {
+                filter = chars.toString();
+            }
+            SpannableString span = new SpannableString(info.contactNumber);
+            if (filter != null) {
+                len = filter.length();
+            }
+            span.setSpan(new ForegroundColorSpan(Color.RED), 0, len, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
             if (info != null) {
                 if (!TextUtils.isEmpty(info.contactName)) {
                     viewHolder.displayName.setText(info.contactName);
-                    viewHolder.displayNumber.setText(info.contactNumber);
+                    viewHolder.displayNumber.setText(span);
                 } else {
-                    viewHolder.displayName.setText(info.contactNumber);
+                    viewHolder.displayNumber.setText("");
+                    viewHolder.displayName.setText(span);
                 }
                 String callLog = String.format("%d%s", info.contactLogCount, RecordListFragment.this.getResources().getString(R.string.call_log_count));
                 viewHolder.callState.setText(callLog);
@@ -398,5 +430,21 @@ public class RecordListFragment extends ListFragment implements OnCheckedChangeL
             mActionMode.finish();
             mActionMode = null;
         }
+    }
+
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+        return false;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String newText) {
+        Log.d("taugin", "newText = " + newText);
+        if (TextUtils.isEmpty(newText)) {
+            getListView().clearTextFilter();
+        } else {
+            getListView().setFilterText(newText);
+        }
+        return false;
     }
 }
