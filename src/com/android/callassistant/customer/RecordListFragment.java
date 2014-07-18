@@ -430,6 +430,10 @@ public class RecordListFragment extends ListFragment implements OnCheckedChangeL
             mActionMode.finish();
             mActionMode = null;
         }
+        if (!mSearchView.isIconified()) {
+            mSearchView.setQuery("", false);
+            mSearchView.setIconified(true);
+        }
     }
 
     @Override

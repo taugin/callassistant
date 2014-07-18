@@ -20,15 +20,14 @@ import com.android.callassistant.view.TabContainer;
 import com.android.callassistant.view.TabContainer.OnTabChangeListener;
 
 public class AppMainActivity extends Activity implements OnPageChangeListener, TabListener, OnTabChangeListener {
-    private static final int NUM_ITEMS = 3;
+    private static final int NUM_ITEMS = 2;
     private static final int RECORD_FRAGMENT = 0;
     private static final int BLACK_FRAGMENT = 1;
     private static final int OTHER_FRAGMENT = 2;
 
-    private TabContainer mTabContainer;
+    //private TabContainer mTabContainer;
     private RecordListFragment mRecordListFragment;
     private BlackListFragment mBlackListFragment;
-    private RecordListFragment mOtherListFragment;
     private MyAdapter mAdapter;
 
     private ViewPager mPager;
@@ -44,11 +43,11 @@ public class AppMainActivity extends Activity implements OnPageChangeListener, T
 
         mRecordListFragment = new RecordListFragment();
         mBlackListFragment = new BlackListFragment();
-        mOtherListFragment = new RecordListFragment();
         mAdapter = new MyAdapter(getFragmentManager());
 
-        mTabContainer = (TabContainer) findViewById(R.id.function_tab);
-        mTabContainer.setOnTabChangeListener(this);
+        //mTabContainer = (TabContainer) findViewById(R.id.function_tab);
+        //mTabContainer.setOnTabChangeListener(this);
+        
         mPager = (ViewPager)findViewById(R.id.view_pager);
         mPager.setAdapter(mAdapter);
         mPager.setOnPageChangeListener(this);
@@ -96,9 +95,6 @@ public class AppMainActivity extends Activity implements OnPageChangeListener, T
             if (position == BLACK_FRAGMENT) {
                 return mBlackListFragment;
             }
-            if (position == OTHER_FRAGMENT) {
-                return mOtherListFragment;
-            }
             return null;
         }
     }
@@ -130,7 +126,7 @@ public class AppMainActivity extends Activity implements OnPageChangeListener, T
         if (position == OTHER_FRAGMENT) {
             this.setTitle(R.string.call_log);
         }
-        mTabContainer.setCurrentTab(position);
+        //mTabContainer.setCurrentTab(position);
         /*
         Tab tab = getActionBar().getTabAt(position);
         getActionBar().selectTab(tab);
