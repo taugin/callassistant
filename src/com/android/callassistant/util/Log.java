@@ -1,14 +1,15 @@
 package com.android.callassistant.util;
 
-import android.content.Context;
-
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import android.content.Context;
 
 public class Log {
 
     public static final String TAG = "taugin";
     private static final boolean DEBUG = true;
+    private static final boolean PRIVATE_TAG = false;
 
     private static Log sLog;
     private Context mContext;
@@ -24,28 +25,62 @@ public class Log {
 
     public static void d(String tag, String message) {
         if (DEBUG) {
-            android.util.Log.d(tag, message);
+            String extraString = getMethodNameAndLineNumber();
+            tag = PRIVATE_TAG ? tag : getTag();
+            android.util.Log.d(tag, extraString + message);
         }
     }
 
     public static void v(String tag, String message) {
         if (DEBUG) {
-            android.util.Log.v(tag, message);
+            String extraString = getMethodNameAndLineNumber();
+            tag = PRIVATE_TAG ? tag : getTag();
+            android.util.Log.v(tag, extraString + message);
         }
     }
 
     public static void i(String tag, String message) {
         if (DEBUG) {
-            android.util.Log.i(tag, message);
+            String extraString = getMethodNameAndLineNumber();
+            tag = PRIVATE_TAG ? tag : getTag();
+            android.util.Log.i(tag, extraString + message);
         }
     }
 
     public static void e(String tag, String message) {
         if (DEBUG) {
-            android.util.Log.e(tag, message);
+            String extraString = getMethodNameAndLineNumber();
+            tag = PRIVATE_TAG ? tag : getTag();
+            android.util.Log.e(tag, extraString + message);
         }
     }
 
+    
+    private static String getMethodNameAndLineNumber() {
+        StackTraceElement element[] = Thread.currentThread().getStackTrace();
+        if (element != null && element.length >= 4) {
+            String methodName = element[4].getMethodName();
+            int lineNumber = element[4].getLineNumber();
+            return String.format("%s : %d ---> ", methodName, lineNumber);
+        }
+        return null;
+    }
+    
+    private static String getTag() {
+        StackTraceElement element[] = Thread.currentThread().getStackTrace();
+        if (element != null && element.length >= 4) {
+            String className = element[4].getClassName();
+            if (className == null) {
+                return null;
+            }
+            int index = className.lastIndexOf(".");
+            if (index != -1) {
+                className = className.substring(index + 1);
+            }
+            return className;
+        }
+        return null;
+    }
     public void recordOperation(String operation) {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
         String time = sdf.format(new Date(System.currentTimeMillis())) + " : ";

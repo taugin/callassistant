@@ -450,4 +450,10 @@ public class BlackListFragment extends ListFragment implements OnClickListener, 
             mActionMode = null;
         }
     }
+
+    @Override
+    public void onFragmentSelected(int pos) {
+        // TODO Auto-generated method stub
+        
+    }
 }

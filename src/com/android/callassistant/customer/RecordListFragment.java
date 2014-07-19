@@ -360,7 +360,7 @@ public class RecordListFragment extends ListFragment implements OnCheckedChangeL
         }
         getActivity().startActionMode(this);
         int position = (Integer) v.getTag();
-        Log.d(Log.TAG, "onLongClick position = " + position);
+        Log.d(Log.TAG, "position = " + position);
         return true;
     }
 
@@ -374,7 +374,7 @@ public class RecordListFragment extends ListFragment implements OnCheckedChangeL
 
     @Override
     public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-        Log.d(Log.TAG, "onCreateActionMode");
+        Log.d(Log.TAG, "");
         mActionMode = mode;
         mode.setTitle(R.string.action_delete);
         mode.getMenuInflater().inflate(R.menu.action_mode_menu, menu);
@@ -384,7 +384,7 @@ public class RecordListFragment extends ListFragment implements OnCheckedChangeL
 
     @Override
     public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-        Log.d(Log.TAG, "onPrepareActionMode");
+        Log.d(Log.TAG, "");
         mViewState = VIEW_STATE_DELETE;
         mListAdapter.notifyDataSetChanged();
         return true;
@@ -392,7 +392,7 @@ public class RecordListFragment extends ListFragment implements OnCheckedChangeL
 
     @Override
     public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-        Log.d(Log.TAG, "onActionItemClicked");
+        Log.d(Log.TAG, "");
         switch(item.getItemId()) {
         case R.id.action_selectall:
             int count = mListAdapter.getCount();
@@ -417,7 +417,7 @@ public class RecordListFragment extends ListFragment implements OnCheckedChangeL
 
     @Override
     public void onDestroyActionMode(ActionMode mode) {
-        Log.d(Log.TAG, "onDestroyActionMode");
+        Log.d(Log.TAG, "");
         selectAll(false);
         mViewState = VIEW_STATE_NORMAL;
         mListAdapter.notifyDataSetChanged();
@@ -450,5 +450,10 @@ public class RecordListFragment extends ListFragment implements OnCheckedChangeL
             getListView().setFilterText(newText);
         }
         return false;
+    }
+
+    @Override
+    public void onFragmentSelected(int pos) {
+        
     }
 }

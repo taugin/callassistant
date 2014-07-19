@@ -102,7 +102,7 @@ public class AppMainActivity extends Activity implements OnPageChangeListener, T
     @Override
     public void onPageScrollStateChanged(int state) {
         int position = mPager.getCurrentItem();
-        Log.d(Log.TAG, "onPageScrollStateChanged state = " + state + " , position = " + position);
+        Log.d(Log.TAG, "state = " + state + " , position = " + position);
         FragmentListener mode = (FragmentListener) mAdapter.getItem(position);
         if (state == 1) {
             mode.finishActionModeIfNeed();
@@ -116,15 +116,15 @@ public class AppMainActivity extends Activity implements OnPageChangeListener, T
 
     @Override
     public void onPageSelected(int position) {
-        Log.d(Log.TAG, "onPageSelected position = " + position);
+        Log.d(Log.TAG, "position = " + position);
         if (position == RECORD_FRAGMENT) {
-            this.setTitle(R.string.call_log);
+            setTitle(R.string.call_log);
         }
         if (position == BLACK_FRAGMENT) {
-            this.setTitle(R.string.black_name);
+            setTitle(R.string.black_name);
         }
         if (position == OTHER_FRAGMENT) {
-            this.setTitle(R.string.call_log);
+            setTitle(R.string.call_log);
         }
         //mTabContainer.setCurrentTab(position);
         /*
