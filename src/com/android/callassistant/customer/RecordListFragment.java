@@ -64,7 +64,6 @@ public class RecordListFragment extends ListFragment implements OnCheckedChangeL
     private MenuItem mMenuItem;
     private SearchView mSearchView;
 
-    
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -449,11 +448,19 @@ public class RecordListFragment extends ListFragment implements OnCheckedChangeL
         } else {
             getListView().setFilterText(newText);
         }
-        return false;
+        return true;
     }
 
     @Override
     public void onFragmentSelected(int pos) {
         
+    }
+
+    @Override
+    public boolean isSearching() {
+        if (mSearchView != null) {
+            return !mSearchView.isIconified();
+        }
+        return false;
     }
 }

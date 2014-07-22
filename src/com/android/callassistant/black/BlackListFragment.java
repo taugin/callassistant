@@ -62,6 +62,7 @@ public class BlackListFragment extends ListFragment implements OnClickListener, 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d(Log.TAG, "");
         setHasOptionsMenu(true);
         mViewState = VIEW_STATE_NORMAL;
     }
@@ -69,21 +70,23 @@ public class BlackListFragment extends ListFragment implements OnClickListener, 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        Log.d(Log.TAG, "");
         mBlackList = new ArrayList<BlackInfo>();
         mListAdapter = new BlackListAdapter(getActivity(), mBlackList);
         getListView().setAdapter(mListAdapter);
         setListShown(true);
         setEmptyText(getResources().getText(R.string.empty_black_name));
         getActivity().getContentResolver().registerContentObserver(DBConstant.BLOCK_URI, true, mBlockObserver);
+        if (mHandler.hasMessages(UPDATE_LIST)) {
+            mHandler.removeMessages(UPDATE_LIST);
+        }
+        mHandler.sendEmptyMessageDelayed(UPDATE_LIST, 0);
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        if (mHandler.hasMessages(UPDATE_LIST)) {
-            mHandler.removeMessages(UPDATE_LIST);
-        }
-        mHandler.sendEmptyMessageDelayed(UPDATE_LIST, 500);
+        Log.d(Log.TAG, "");
     }
 
     @Override
@@ -455,5 +458,10 @@ public class BlackListFragment extends ListFragment implements OnClickListener, 
     public void onFragmentSelected(int pos) {
         // TODO Auto-generated method stub
         
+    }
+
+    @Override
+    public boolean isSearching() {
+        return false;
     }
 }

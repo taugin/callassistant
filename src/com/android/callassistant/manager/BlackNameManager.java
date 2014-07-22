@@ -28,9 +28,10 @@ public class BlackNameManager {
     }
 
     public boolean isBlack(String phoneNumber) {
+        /*
         if (PreferenceManager.getDefaultSharedPreferences(mContext).getBoolean("key_block_all", false)) {
             return true;
-        }
+        }*/
         return isBlackInDB(phoneNumber);
     }
 

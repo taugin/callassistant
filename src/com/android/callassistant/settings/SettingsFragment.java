@@ -22,6 +22,7 @@ public class SettingsFragment extends PreferenceFragment implements
         findPreference(Constant.KEY_WARNING_TONE).setOnPreferenceChangeListener(this);
         findPreference(Constant.KEY_FLIP_MUTE).setOnPreferenceChangeListener(this);
         findPreference(Constant.KEY_BLOCK_ALL).setOnPreferenceChangeListener(this);
+        getPreferenceScreen().removePreference(findPreference(Constant.KEY_BLOCK_ALL));
         findPreference(Constant.KEY_RECORD_CONTENT).setOnPreferenceChangeListener(this);
     }
 

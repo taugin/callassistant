@@ -3,60 +3,36 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
-    <android.support.v4.view.ViewPager
-        android:id="@+id/view_pager"
+    <FrameLayout
+        android:id="@+id/fragment_content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="1"/>
+        android:layout_weight="1" />
 
-    <View style="@style/horizontal_line"
-        android:layout_marginBottom="1dp"
-        android:visibility="gone"/>
-    <com.android.callassistant.view.TabContainer
-        android:id="@+id/function_tab"
+    <View
+        style="@style/horizontal_line"
+        />
+
+    <RadioGroup
+        android:id="@+id/tab_group"
         android:layout_width="match_parent"
-        android:layout_height="48dp"
+        android:layout_height="wrap_content"
         android:layout_weight="0"
-        android:layout_marginBottom="1dp"
-        android:background="@android:color/white"
-        android:visibility="gone"
         android:orientation="horizontal" >
 
-        <LinearLayout
-            android:id="@+id/tab_button_container"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" >
+        <RadioButton
+            android:id="@+id/call_log_radio"
+            android:layout_marginLeft="2dp"
+            style="@style/tab_radio_button"
+            android:text="@string/call_log"
+            />
 
-            <view class="com.android.callassistant.view.TabContainer$TabButton"
-                android:id="@+id/tab_subscribed"
-                style="@style/tab_button"
-                android:text="@string/call_log" />
+        <RadioButton
+            android:id="@+id/black_radio"
+            android:layout_marginRight="2dp"
+            style="@style/tab_radio_button"
+            android:text="@string/black_name"
+            />
+    </RadioGroup>
 
-            <view class="com.android.callassistant.view.TabContainer$TabButton"
-                android:id="@+id/tab_bundle"
-                style="@style/tab_button"
-                android:text="@string/black_name" />
-
-            <view class="com.android.callassistant.view.TabContainer$TabButton"
-                android:id="@+id/tab_custom"
-                style="@style/tab_button"
-                android:text="@string/call_log" />
-        </LinearLayout>
-        <LinearLayout
-            android:id="@+id/tab_slide_container"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="horizontal"
-            android:weightSum="3.0"
-            >
-            <Button
-                android:id="@+id/tab_slide_button"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1.0"
-                android:text="@string/call_log"
-                android:background="@drawable/pressed_state_shape_rect"
-                />
-        </LinearLayout>
-    </com.android.callassistant.view.TabContainer>
 </LinearLayout>

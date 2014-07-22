@@ -77,6 +77,11 @@ public class Log {
             if (index != -1) {
                 className = className.substring(index + 1);
             }
+            index = className.indexOf('$');
+            if (index != -1) {
+                className = className.substring(0, index);
+            }
+            //android.util.Log.d("taugin", "className = " + className);
             return className;
         }
         return null;
