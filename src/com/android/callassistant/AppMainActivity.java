@@ -41,7 +41,6 @@ public class AppMainActivity extends Activity implements
         mFragmentMap.put(R.id.call_log_radio, mRecordListFragment);
         mFragmentMap.put(R.id.black_radio, mBlackListFragment);
         mFragmentManager = getFragmentManager();
-        setTitle(R.string.call_log);
 
         mRadioGroup = (RadioGroup) findViewById(R.id.tab_group);
         mRadioGroup.setOnCheckedChangeListener(this);

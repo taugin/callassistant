@@ -64,6 +64,7 @@ public class BlackListFragment extends ListFragment implements OnClickListener, 
         super.onCreate(savedInstanceState);
         Log.d(Log.TAG, "");
         setHasOptionsMenu(true);
+        getActivity().setTitle(R.string.black_name);
         mViewState = VIEW_STATE_NORMAL;
     }
 

@@ -68,6 +68,7 @@ public class RecordListFragment extends ListFragment implements OnCheckedChangeL
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+        getActivity().setTitle(R.string.call_log);
         mViewState = VIEW_STATE_NORMAL;
     }
 
