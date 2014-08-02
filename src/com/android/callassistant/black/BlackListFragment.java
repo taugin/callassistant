@@ -37,6 +37,7 @@ import android.widget.TextView;
 
 import com.android.callassistant.R;
 import com.android.callassistant.info.BlackInfo;
+import com.android.callassistant.info.ContactInfo;
 import com.android.callassistant.manager.RecordFileManager;
 import com.android.callassistant.provider.DBConstant;
 import com.android.callassistant.util.FragmentListener;
@@ -386,6 +387,9 @@ public class BlackListFragment extends ListFragment implements OnClickListener, 
         getActivity().startActionMode(this);
         int position = (Integer) v.getTag();
         Log.d(Log.TAG, "onLongClick position = " + position);
+        BlackInfo info = mListAdapter.getItem(position);
+        info.checked = true;
+        mListAdapter.notifyDataSetChanged();
         return true;
     }
 

@@ -4,7 +4,7 @@
         android:id="@+id/action_ok"
         android:orderInCategory="101"
         android:showAsAction="always"
-        android:title="@android:string/ok"/>
+        android:title="@string/action_delete"/>
     <item
         android:id="@+id/action_selectall"
         android:orderInCategory="101"

@@ -361,6 +361,9 @@ public class RecordListFragment extends ListFragment implements OnCheckedChangeL
         getActivity().startActionMode(this);
         int position = (Integer) v.getTag();
         Log.d(Log.TAG, "position = " + position);
+        ContactInfo info = mListAdapter.getItem(position);
+        info.checked = true;
+        mListAdapter.notifyDataSetChanged();
         return true;
     }
 
