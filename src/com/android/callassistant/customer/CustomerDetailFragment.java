@@ -1,8 +1,13 @@
 package com.android.callassistant.customer;
 
-import android.app.Fragment;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+
+import android.app.ListFragment;
 import android.content.ContentUris;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.database.ContentObserver;
 import android.net.Uri;
@@ -15,7 +20,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,29 +34,32 @@ import com.android.callassistant.manager.RecordFileManager;
 import com.android.callassistant.provider.DBConstant;
 import com.android.callassistant.util.Log;
 
-import java.util.ArrayList;
-
-public class CustomerDetailFragment extends Fragment implements OnClickListener, TextWatcher {
+public class CustomerDetailFragment extends ListFragment implements OnClickListener, TextWatcher {
 
     private int mContactId;
     private ContactInfo mContact;
-    private ArrayList<RecordInfo> mRecordList;
+    private ArrayList<RecordInfo> mCallLogList;
     private TextView mPhoneNumberView;
     private EditText mCustomerNameView;
-    private CallLogListView mCallLogListView;
     private View mEditSave;
+    private DetailAdapter mDetailAdapter;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.custom_detail_layout, null);
-        mPhoneNumberView = (TextView) view.findViewById(R.id.customer_number);
-        mCustomerNameView = (EditText) view.findViewById(R.id.customer_name);
+        View view = super.onCreateView(inflater, container, savedInstanceState);
+        View headerView = inflater.inflate(R.layout.custom_detail_layout, null);
+        mPhoneNumberView = (TextView) headerView.findViewById(R.id.customer_number);
+        mCustomerNameView = (EditText) headerView.findViewById(R.id.customer_name);
         mCustomerNameView.addTextChangedListener(this);
-        mCallLogListView = (CallLogListView) view.findViewById(R.id.call_log_listview);
-        View dialNumber = view.findViewById(R.id.dial_number);
+        View dialNumber = headerView.findViewById(R.id.dial_number);
         dialNumber.setOnClickListener(this);
-        mEditSave = view.findViewById(R.id.edit_save);
+        mEditSave = headerView.findViewById(R.id.edit_save);
         mEditSave.setOnClickListener(this);
+        ListView listView = (ListView) view.findViewById(android.R.id.list);
+        listView.addHeaderView(headerView);
+        mCallLogList = new ArrayList<RecordInfo>();
+        mDetailAdapter = new DetailAdapter(getActivity(), mCallLogList);
+        listView.setAdapter(mDetailAdapter);
         return view;
     }
 
@@ -60,13 +71,14 @@ public class CustomerDetailFragment extends Fragment implements OnClickListener,
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         Log.d(Log.TAG, "CustomerDetailFragment onActivityCreated mBaseId = " + mContactId);
-        mRecordList = new ArrayList<RecordInfo>();
+        setListShown(true);
         updateUI();
         getActivity().getContentResolver().registerContentObserver(DBConstant.RECORD_URI, true, mRecordObserver);
     }
 
     private void updateUI() {
-        mRecordList = RecordFileManager.getInstance(getActivity()).getRecordsFromDB(mRecordList, mContactId);
+        mCallLogList = RecordFileManager.getInstance(getActivity()).getRecordsFromDB(mCallLogList, mContactId);
+        mDetailAdapter.notifyDataSetChanged();
         mContact = RecordFileManager.getInstance(getActivity()).getSingleContact(mContactId);
         if (mContact == null) {
             return ;
@@ -79,19 +91,16 @@ public class CustomerDetailFragment extends Fragment implements OnClickListener,
         }
         mCustomerNameView.setEnabled(!mContact.contactModifyName);
         mCustomerNameView.setSelection(len);
-        mCallLogListView.setCallLogList(mRecordList);
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        mCallLogListView.onPause();
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        mCallLogListView.onDestroy();
         getActivity().getContentResolver().unregisterContentObserver(mRecordObserver);
     }
 
@@ -118,6 +127,22 @@ public class CustomerDetailFragment extends Fragment implements OnClickListener,
             Intent intent = new Intent(Intent.ACTION_CALL);
             intent.setData(Uri.parse("tel:" + mContact.contactNumber));
             getActivity().startActivity(intent);
+        } else if (v.getId() == R.id.delete_file) {
+            int position = (Integer) v.getTag();
+            Log.d(Log.TAG, "position = " + position);
+            RecordInfo info = mCallLogList.get(position);
+            ArrayList<RecordInfo> list = new ArrayList<RecordInfo>();
+            list.add(info);
+            int ret = RecordFileManager.getInstance(getActivity()).deleteRecordFiles(list);
+            if (ret > 0) {
+                mCallLogList.remove(info);
+                mDetailAdapter.notifyDataSetChanged();
+            }
+        } else if (v.getId() == R.id.media_control) {
+            int position = (Integer) v.getTag();
+            Log.d(Log.TAG, "position = " + position);
+            RecordInfo info = mCallLogList.get(position);
+            playAudio(info.recordFile);
         }
     }
 
@@ -157,4 +182,96 @@ public class CustomerDetailFragment extends Fragment implements OnClickListener,
         }
         
     }
+    class ViewHolder {
+        ImageView callFlag;
+        TextView callDate;
+        TextView callDuration;
+        View deleteFile;
+        View mediaControl;
+    }
+    class DetailAdapter extends ArrayAdapter<RecordInfo> {
+
+        private Context mContext;
+        public DetailAdapter(Context context, ArrayList<RecordInfo> list) {
+            super(context, 0, list);
+            mContext = context;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            ViewHolder holder = null;
+            if (convertView == null) {
+                convertView = LayoutInflater.from(mContext).inflate(R.layout.call_log_item, null);
+                holder = new ViewHolder();
+                holder.callFlag = (ImageView) convertView.findViewById(R.id.call_log_flag);
+                holder.callDate = (TextView) convertView.findViewById(R.id.call_date);
+                holder.callDuration = (TextView) convertView.findViewById(R.id.call_duration);
+                holder.deleteFile = convertView.findViewById(R.id.delete_file);
+                holder.deleteFile.setOnClickListener(CustomerDetailFragment.this);
+                holder.mediaControl = convertView.findViewById(R.id.media_control);
+                holder.mediaControl.setOnClickListener(CustomerDetailFragment.this);
+                convertView.setTag(holder);
+            } else {
+                holder = (ViewHolder) convertView.getTag();
+            }
+            holder.deleteFile.setTag(position);
+            holder.mediaControl.setTag(position);
+            RecordInfo info = getItem(position);
+            if (info != null) {
+                int resId = 0;
+                if (info.callFlag == DBConstant.FLAG_INCOMING) {
+                    resId = R.drawable.ic_incoming;
+                } else if (info.callFlag == DBConstant.FLAG_OUTGOING) {
+                    resId = R.drawable.ic_outgoing;
+                } else if (info.callFlag == DBConstant.FLAG_MISSCALL){
+                    resId = R.drawable.ic_missed_call;
+                } else {
+                    resId = R.drawable.ic_block_call;
+                }
+                holder.callFlag.setImageResource(resId);
+                
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                long updateTime = 0;
+                if (info.callFlag >= DBConstant.FLAG_OUTGOING) {
+                    updateTime = info.recordStart;
+                } else {
+                    updateTime = info.recordRing;
+                }
+                holder.callDate.setText(sdf.format(new Date(updateTime)));
+                
+                holder.callDuration.setText(getTimeExperence(info.recordStart == 0 ? 0 : info.recordEnd - info.recordStart));
+                
+                if (info.recordFile == null) {
+                    holder.mediaControl.setVisibility(View.INVISIBLE);
+                } else {
+                    holder.mediaControl.setVisibility(View.VISIBLE);
+                }
+            }
+            return convertView;
+        }
+        private String getTimeExperence(long timeExperence) {
+            int allsec = Math.round(timeExperence / (float)1000);
+            int min = allsec / 60;
+            int sec = allsec % 60;
+            int hour = min / 60;
+            if (hour > 0) {
+                min = min % 60;
+            }
+            String hTag = getResources().getText(R.string.hour_tag).toString();
+            String mTag = getResources().getText(R.string.min_tag).toString();
+            String sTag = getResources().getText(R.string.sec_tag).toString();
+            String sHour = hour > 0 ? hour + hTag : "";
+            String sMin = min > 0 ? min + mTag : "";
+            String sSec = sec + sTag;
+            return String.valueOf(sHour + sMin + sSec);
+        }
+    }
+
+    private void playAudio(String audioPath) {
+        Intent intent = new Intent();
+        intent.setAction(Intent.ACTION_VIEW);
+        intent.setDataAndType(Uri.parse("file://" + audioPath), "audio/amr");
+        startActivity(intent);
+    }
+
 }

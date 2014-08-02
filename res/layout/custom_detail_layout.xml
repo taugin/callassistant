@@ -1,112 +1,126 @@
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="wrap_content"
+    android:orientation="vertical" >
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical" >
+        android:layout_height="@dimen/listview_item_height"
+        android:orientation="horizontal" >
+
+        <TextView
+            style="@style/customer_detail_label"
+            android:text="@string/customer_number" />
+
+        <TextView
+            android:id="@+id/customer_number"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:text="@string/app_name"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <View style="@style/vertical_line" />
 
         <LinearLayout
-            android:layout_width="match_parent"
+            android:id="@+id/dial_number"
+            android:layout_width="@dimen/listview_item_height"
             android:layout_height="@dimen/listview_item_height"
-            android:orientation="horizontal" >
+            android:layout_weight="0"
+            android:background="@drawable/item_background"
+            android:gravity="center" >
 
-            <TextView
-                style="@style/customer_detail_label"
-                android:text="@string/customer_number" />
-
-            <TextView
-                android:id="@+id/customer_number"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:gravity="center_vertical"
-                android:text="@string/app_name"
-                android:textAppearance="?android:attr/textAppearanceMedium" />
-
-            <View style="@style/vertical_line" />
-
-            <LinearLayout
-                android:id="@+id/dial_number"
-                android:layout_width="@dimen/listview_item_height"
-                android:layout_height="@dimen/listview_item_height"
-                android:layout_weight="0"
-                android:background="@drawable/item_background"
-                android:gravity="center" >
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/ic_dial_number" />
-            </LinearLayout>
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_dial_number" />
         </LinearLayout>
-
-        <View style="@style/horizontal_line" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/listview_item_height"
-            android:orientation="horizontal" >
-
-            <TextView
-                style="@style/customer_detail_label"
-                android:text="@string/customer_name" />
-
-            <EditText
-                android:id="@+id/customer_name"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:gravity="center_vertical"
-                android:text="@string/app_name"
-                android:textAppearance="?android:attr/textAppearanceMedium" />
-
-            <View style="@style/vertical_line" />
-
-            <LinearLayout
-                android:id="@+id/edit_save"
-                android:layout_width="@dimen/listview_item_height"
-                android:layout_height="@dimen/listview_item_height"
-                android:layout_weight="0"
-                android:background="@drawable/item_background"
-                android:gravity="center" >
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/ic_edit" />
-            </LinearLayout>
-        </LinearLayout>
-
-        <View style="@style/horizontal_line" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/listview_item_height"
-            android:orientation="horizontal" >
-
-            <TextView
-                style="@style/customer_detail_label"
-                android:text="@string/customer_state" />
-
-            <TextView
-                android:id="@+id/customer_state"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:gravity="center_vertical"
-                android:text="@string/app_name"
-                android:textAppearance="?android:attr/textAppearanceMedium" />
-        </LinearLayout>
-
-        <View style="@style/horizontal_line" />
-
-        <com.android.callassistant.customer.CallLogListView
-            android:id="@+id/call_log_listview"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" 
-            />
     </LinearLayout>
 
-</ScrollView>
+    <View style="@style/horizontal_line" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/listview_item_height"
+        android:orientation="horizontal" >
+
+        <TextView
+            style="@style/customer_detail_label"
+            android:text="@string/customer_name" />
+
+        <EditText
+            android:id="@+id/customer_name"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:text="@string/app_name"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <View style="@style/vertical_line" />
+
+        <LinearLayout
+            android:id="@+id/edit_save"
+            android:layout_width="@dimen/listview_item_height"
+            android:layout_height="@dimen/listview_item_height"
+            android:layout_weight="0"
+            android:background="@drawable/item_background"
+            android:gravity="center" >
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_edit" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <View style="@style/horizontal_line" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/listview_item_height"
+        android:orientation="horizontal" >
+
+        <TextView
+            style="@style/customer_detail_label"
+            android:text="@string/customer_state" />
+
+        <TextView
+            android:id="@+id/customer_state"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:text="@string/app_name"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+    </LinearLayout>
+    <View style="@style/horizontal_line" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+
+        <TextView
+            style="@style/calllog_label"
+            android:text="@string/call_log" />
+
+        <View style="@style/vertical_line" />
+
+        <com.android.callassistant.view.CustomLinearLayout
+            android:layout_width="@dimen/listview_item_height"
+            android:layout_height="@dimen/listview_item_height"
+            android:layout_weight="0"
+            android:gravity="center"
+            android:clickable="true"
+            android:background="@drawable/item_background">
+
+            <CheckBox
+                android:id="@+id/call_log_show_control"
+                android:tag="CustomLinearLayoutTag"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:button="@drawable/calllog_control_selector" />
+        </com.android.callassistant.view.CustomLinearLayout>
+    </LinearLayout>
+</LinearLayout>

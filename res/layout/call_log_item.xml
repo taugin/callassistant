@@ -1,8 +1,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingLeft="30dp"
-    android:orientation="vertical" >
+    android:orientation="vertical"
+    android:paddingLeft="30dp" >
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -35,26 +35,43 @@
                 style="@style/calllog_label"
                 android:text="@string/app_name" />
         </LinearLayout>
-    <LinearLayout
-        android:id="@+id/media_control"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:background="@drawable/item_background"
-        android:clickable="true"
-        android:focusable="true"
-        android:gravity="center_vertical" >
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="center_vertical"
-            android:layout_margin="5dp"
-            android:layout_weight="0"
-            android:background="#00000000"
-            android:paddingTop="3dp"
-            android:src="@drawable/media_control_drawable" />
+        <LinearLayout
+            android:id="@+id/delete_file"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="@drawable/item_background"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center_vertical" >
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_vertical"
+                android:layout_margin="5dp"
+                android:layout_weight="0"
+                android:background="#00000000"
+                android:paddingTop="3dp"
+                android:src="@drawable/delete_file" />
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/media_control"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="@drawable/item_background"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center_vertical" >
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_vertical"
+                android:layout_margin="5dp"
+                android:layout_weight="0"
+                android:background="#00000000"
+                android:paddingTop="3dp"
+                android:src="@drawable/media_control_drawable" />
         </LinearLayout>
     </LinearLayout>
-
-    <View style="@style/horizontal_line" />
-
 </LinearLayout>

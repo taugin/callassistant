@@ -9,7 +9,7 @@ public class Log {
 
     public static final String TAG = "taugin";
     private static final boolean DEBUG = true;
-    private static final boolean PRIVATE_TAG = false;
+    private static final boolean PRIVATE_TAG = true;
 
     private static Log sLog;
     private Context mContext;

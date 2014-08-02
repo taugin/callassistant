@@ -37,17 +37,15 @@ public class RecordFileManager {
         return Environment.getExternalStorageDirectory() + "/" + Constant.FILE_RECORD_FOLDER + "/" + fileName;
     }
     
-    private boolean deleteRecordFromDB(ArrayList<RecordInfo> list) {
+    private int deleteRecordFromDB(ArrayList<RecordInfo> list) {
         if (list == null || list.size() == 0) {
-            return false;
+            return 0;
         }
         StringBuilder builder = new StringBuilder();
         builder.append("(");
         for (RecordInfo info : list) {
-            if (info.checked) {
-                builder.append(info.recordId);
-                builder.append(",");
-            }
+            builder.append(info.recordId);
+            builder.append(",");
         }
         builder.append(")");
         builder.deleteCharAt(builder.length() - 2);
@@ -56,14 +54,15 @@ public class RecordFileManager {
         Log.d(Log.TAG, "where = " + where);
         int ret = mContext.getContentResolver().delete(DBConstant.RECORD_URI, where, null);
         Log.d(Log.TAG, "deleteRecordFromDB ret = " + ret);
-        return ret > 0;
+        return ret;
     }
-    public void deleteRecordFiles(ArrayList<RecordInfo> list) {
+    public int deleteRecordFiles(ArrayList<RecordInfo> list) {
         String recordFile = null;
         int count = list.size();
         RecordInfo info = null;
-        if (!deleteRecordFromDB(list)) {
-            return ;
+        int ret = deleteRecordFromDB(list);
+        if (ret <= 0) {
+            return 0;
         }
         for (int index = count - 1; index >=0; index --) {
             info = list.get(index);
@@ -71,12 +70,11 @@ public class RecordFileManager {
                 continue;
             }
             Log.d(Log.TAG, "info = " + info.recordFile);
-            if (info.checked) {
-                recordFile =  Environment.getExternalStorageDirectory() + "/" + Constant.FILE_RECORD_FOLDER + "/" + info.recordFile;
-                deleteRecordFile(recordFile);
-                list.remove(info);
-            }
+            recordFile =  Environment.getExternalStorageDirectory() + "/" + Constant.FILE_RECORD_FOLDER + "/" + info.recordFile;
+            deleteRecordFile(recordFile);
+            list.remove(info);
         }
+        return ret;
     }
 
     public boolean deleteRecordFile(String file) {
