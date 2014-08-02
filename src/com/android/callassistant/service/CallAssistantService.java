@@ -73,7 +73,6 @@ public class CallAssistantService extends Service {
             return START_STICKY;
         }
         if (Constant.ACTION_INCOMING_PHONE.equals(intent.getAction())) {
-            //callFlag = CallFlag.INCOMING;
             String phoneNumber = intent.getStringExtra(Constant.EXTRA_PHONE_NUMBER);
             int state = intent.getIntExtra(Constant.EXTRA_PHONE_STATE, TelephonyManager.CALL_STATE_IDLE);
             TmpStorageManager.inCallRing(this, phoneNumber, DBConstant.FLAG_INCOMING, System.currentTimeMillis());

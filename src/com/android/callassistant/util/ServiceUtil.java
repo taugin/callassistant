@@ -14,7 +14,7 @@ import com.android.callassistant.provider.DBConstant;
 
 public class ServiceUtil {
 
-    public static int addOrThrowBaseInfo(Context context, String phoneNumber, long time) {
+    public static int addOrThrowContact(Context context, String phoneNumber, long time) {
         Cursor c = null;
         int _id = -1;
         int count = 0;
@@ -32,8 +32,8 @@ public class ServiceUtil {
                 c.close();
             }
         }
-        Log.d(Log.TAG, "addOrThrowBaseInfo = id = " + _id);
-        String name = getBaseNameFromContact(context, phoneNumber);
+        Log.d(Log.TAG, "addOrThrowContact = id = " + _id);
+        String name = getNameFromContact(context, phoneNumber);
         Log.d(Log.TAG, "name = " + name);
         if (_id != -1) {
             ContentValues values = new ContentValues();
@@ -77,7 +77,7 @@ public class ServiceUtil {
         } else if (callFlag == DBConstant.FLAG_OUTGOING) {
             updateTime = startTime;
         }
-        int _id = addOrThrowBaseInfo(context, phoneNumber, updateTime);
+        int _id = addOrThrowContact(context, phoneNumber, updateTime);
 
         if (callBlock) {
             callFlag = DBConstant.FLAG_BLOCKCALL;
@@ -100,7 +100,7 @@ public class ServiceUtil {
         Log.d(Log.TAG, "ret = " + ret);
     }
     
-    private static String getBaseNameFromContact(Context context, String phoneNumber) {
+    private static String getNameFromContact(Context context, String phoneNumber) {
         Uri uri = Uri.withAppendedPath(ContactsContract.CommonDataKinds.Phone.CONTENT_FILTER_URI, phoneNumber);
         Cursor c = null;
         try {
