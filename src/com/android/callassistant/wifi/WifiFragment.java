@@ -1,14 +1,16 @@
 package com.android.callassistant.wifi;
 
-import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.List;
 
 import android.app.ActionBar;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ListFragment;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.NetworkInfo;
@@ -27,6 +29,7 @@ import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -34,7 +37,7 @@ import android.widget.TextView;
 import com.android.callassistant.R;
 import com.android.callassistant.util.Log;
 
-public class WifiFragment extends ListFragment implements OnCheckedChangeListener, OnItemClickListener, OnLongClickListener {
+public class WifiFragment extends ListFragment implements OnCheckedChangeListener, OnItemClickListener, OnLongClickListener, OnClickListener {
 
     private WifiManager mWifiManager;
     private CheckBox mWifiSwitcher;
@@ -42,6 +45,7 @@ public class WifiFragment extends ListFragment implements OnCheckedChangeListene
     private List<ScanResult> mScanList;
     private ScanResult mScanResult;
     private ApListAdapter mApListAdapter;
+    private EditText mPassword;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -77,8 +81,6 @@ public class WifiFragment extends ListFragment implements OnCheckedChangeListene
         mScanList = new ArrayList<ScanResult>();
         mApListAdapter = new ApListAdapter(getActivity(), mScanList);
         listView.setAdapter(mApListAdapter);
-        listView.setOnItemClickListener(this);
-        listView.setOnLongClickListener(this);
         return view;
     }
 
@@ -86,6 +88,8 @@ public class WifiFragment extends ListFragment implements OnCheckedChangeListene
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         setListShown(true);
+        getListView().setOnItemClickListener(this);
+        getListView().setOnLongClickListener(this);
     }
 
     @Override
@@ -200,7 +204,6 @@ public class WifiFragment extends ListFragment implements OnCheckedChangeListene
                 holder.ssid.setText(result.SSID != null ? result.SSID.trim() : "");
                 // holder.extra.setText(result.capabilities != null ? result.capabilities.trim() : "");
                 String extra;
-                mWifiInfo = mWifiManager.getConnectionInfo();
                 if (mWifiInfo != null) {
                     String ssid = mWifiInfo.getSSID();
                     ssid = ssid.replaceAll("\"", "");
@@ -241,12 +244,35 @@ public class WifiFragment extends ListFragment implements OnCheckedChangeListene
     }
     @Override
     public boolean onLongClick(View v) {
+        Log.d(Log.TAG, "onLongClick v = " + v);
         return false;
     }
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position,
             long id) {
+        Log.d(Log.TAG, "itemClick position = " + position);
+        ScanResult result = mScanList.get(position);
+        showConfigDlg(result);
+        
+    }
+    private void showConfigDlg(ScanResult result) {
+        mScanResult = result;
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        View view = LayoutInflater.from(getActivity()).inflate(R.layout.wifi_config, null);
+        TextView tv = (TextView) view.findViewById(R.id.ssid);
+        tv.setText(result.SSID);
+        mPassword = (EditText) view.findViewById(R.id.password);
+        builder.setView(view);
+        builder.setPositiveButton(R.string.ok, this);
+        builder.setNegativeButton(R.string.cancel, null);
+        AlertDialog dialog = builder.create();
+        mPassword.setText("");
+        dialog.show();
+    }
+
+    @Override
+    public void onClick(DialogInterface dialog, int which) {
         
     }
 }
