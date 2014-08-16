@@ -216,11 +216,20 @@ public class WifiFragment extends ListFragment implements OnCheckedChangeListene
                 } else {
                     extra = getSecury(result.capabilities);
                 }
-                holder.extra.setText(extra);
+                holder.extra.setText(toString(result));
                 int strenghLen = WifiManager.calculateSignalLevel(result.level, 5);
                 holder.signal.getDrawable().setLevel(strenghLen);
             }
             return convertView;
+        }
+        private String toString(ScanResult result) {
+            StringBuffer sb = new StringBuffer();
+            sb.append("SSID : ");
+            sb.append(result.SSID);
+            sb.append("\n");
+            sb.append("BSSID : ");
+            sb.append(result.BSSID);
+            return sb.toString();
         }
     }
     private String getSecury(String capabilities) {

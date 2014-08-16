@@ -62,7 +62,8 @@ public class DBHelper extends SQLiteOpenHelper {
             "CREATE TRIGGER DELETE_RECORD_TRIGGER AFTER DELETE ON " + DBConstant.TABLE_RECORD
           + " FOR EACH ROW "
           + " BEGIN "
-          + " UPDATE " + DBConstant.TABLE_CONTACTS + " SET " + DBConstant.CONTACT_CALL_LOG_COUNT + "=" + DBConstant.CONTACT_CALL_LOG_COUNT + "-1;"
+          + " UPDATE " + DBConstant.TABLE_CONTACTS + " SET " + DBConstant.CONTACT_CALL_LOG_COUNT + "=" + DBConstant.CONTACT_CALL_LOG_COUNT + "-1 "
+          + " WHERE " + DBConstant.TABLE_CONTACTS + "." + DBConstant._ID + "=" + "OLD." + DBConstant.RECORD_CONTACT_ID + ";"
           + " END;";
     private static final String DROP_TRIGGER_RECORD = "DROP TRIGGER DELETE_RECORD_TRIGGER";
     private Context mContext;
