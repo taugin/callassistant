@@ -33,6 +33,12 @@ public class RecordManager {
         File recordDir = new File(Environment.getExternalStorageDirectory() + "/" + Constant.FILE_RECORD_FOLDER);
         if (!recordDir.exists()) {
             recordDir.mkdirs();
+            File noMedia = new File(recordDir + "/.nomedia");
+            try {
+                noMedia.createNewFile();
+            } catch (IOException e) {
+                logv("create .nomedia file failure");
+            }
         }
         mMediaRecorder.setOutputFile(fileName);
         logv("RecordManager prepare recorder file : " + fileName);
