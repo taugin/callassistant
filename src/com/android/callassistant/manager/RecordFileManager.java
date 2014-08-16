@@ -57,7 +57,6 @@ public class RecordFileManager {
         return ret;
     }
     public int deleteRecordFiles(ArrayList<RecordInfo> list) {
-        String recordFile = null;
         int count = list.size();
         RecordInfo info = null;
         int ret = deleteRecordFromDB(list);
@@ -69,9 +68,8 @@ public class RecordFileManager {
             if (info == null) {
                 continue;
             }
-            Log.d(Log.TAG, "info = " + info.recordFile);
-            recordFile =  Environment.getExternalStorageDirectory() + "/" + Constant.FILE_RECORD_FOLDER + "/" + info.recordFile;
-            deleteRecordFile(recordFile);
+            Log.d(Log.TAG, "info.recordFile = " + info.recordFile);
+            deleteRecordFile(info.recordFile);
             list.remove(info);
         }
         return ret;
