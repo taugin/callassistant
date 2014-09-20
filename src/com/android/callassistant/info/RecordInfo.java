@@ -1,5 +1,7 @@
 package com.android.callassistant.info;
 
+import com.android.callassistant.util.Log;
+
 public class RecordInfo implements Comparable<RecordInfo> {
     public static int checkedNumber = 0;
     public int recordId;
@@ -15,6 +17,14 @@ public class RecordInfo implements Comparable<RecordInfo> {
 
     @Override
     public int compareTo(RecordInfo another) {
-        return Long.valueOf(another.recordStart - recordStart).intValue();
+        Log.d(Log.TAG, "another.recordStart = " + another.recordStart + " , recordStart = " + recordStart);
+        //return Long.valueOf(another.recordStart - recordStart).intValue();
+        if (another.recordStart - recordStart > 0) {
+            return 1;
+        } else if (another.recordStart - recordStart < 0) {
+            return -1;
+        } else {
+            return 0;
+        }
     }
 }

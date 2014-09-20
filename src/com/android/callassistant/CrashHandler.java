@@ -39,7 +39,7 @@ public class CrashHandler implements UncaughtExceptionHandler {
             logdir = Environment.getExternalStorageDirectory()
                     .getAbsolutePath()
                     + File.separator
-                    + ".callassistant"
+                    + "callassistant"
                     + File.separator + "log";
 
             File file = new File(logdir);

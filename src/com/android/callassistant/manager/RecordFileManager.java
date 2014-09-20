@@ -198,7 +198,7 @@ public class RecordFileManager {
         }
         Log.d(Log.TAG, "getRecordsFromDB selection = " + selection);
         try {
-            c = mContext.getContentResolver().query(DBConstant.RECORD_URI, null, selection, null, DBConstant._ID + " DESC");
+            c = mContext.getContentResolver().query(DBConstant.RECORD_URI, null, selection, null, DBConstant.RECORD_START + " DESC");
             if (c != null) {
                 if (c.moveToFirst()) {
                     RecordInfo info = null;
@@ -226,7 +226,7 @@ public class RecordFileManager {
                 c.close();
             }
         }
-        Collections.sort(list);
+        // Collections.sort(list);
         return list;
     }
 
