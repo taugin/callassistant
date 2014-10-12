@@ -109,7 +109,7 @@ public class ServiceUtil {
                 return c.getString(c.getColumnIndex(Contacts.DISPLAY_NAME));
             }
         } catch (Exception e) {
-            Log.d("taugin2", e.getLocalizedMessage());
+            Log.d(Log.TAG, "error : " + e);
         } finally {
             if (c != null) {
                 c.close();

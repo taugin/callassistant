@@ -2,10 +2,7 @@ package com.android.callassistant.manager;
 
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.Intent;
 import android.database.Cursor;
-import android.net.Uri;
-import android.preference.PreferenceManager;
 import android.text.TextUtils;
 
 import com.android.callassistant.provider.DBConstant;
@@ -55,7 +52,7 @@ public class BlackNameManager {
     }
     public boolean isMMINunber(String phoneNumber) {
         String mmiNumber = phoneNumber.replaceAll("#", "%23");
-        Log.d(Log.TAG, "isMMINunber mmiNumber = " + mmiNumber);
+        Log.d(Log.TAG, "mmiNumber = " + mmiNumber);
         if (Constant.ENABLE_SERVICE.equals("tel:" + mmiNumber)) {
             return true;
         }

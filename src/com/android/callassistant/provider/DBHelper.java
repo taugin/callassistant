@@ -82,7 +82,7 @@ public class DBHelper extends SQLiteOpenHelper {
             db.execSQL(CREATE_BLOCK_TABLE);
             db.execSQL(TRIGGER_ON_DELETE_RECORD);
         }catch(SQLException e){
-            Log.d(Log.TAG, "create table failed e = " + e.getLocalizedMessage());
+            Log.d(Log.TAG, "error : " + e);
         }
     }
 

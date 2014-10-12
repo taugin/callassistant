@@ -32,12 +32,10 @@ public class CallNotifier extends Handler {
         return sCallNotifier;
     }
     private CallNotifier() {
-        Log.d("taugin4", "CallNotifier");
         mCM = CallManager.getInstance();
         updateCallNotifierRegistrationsAfterRadioTechnologyChange();
     }
     protected void registerForNotifications() {
-        Log.d("taugin4", "registerForNotifications");
         mCM.registerForNewRingingConnection(this, PHONE_NEW_RINGING_CONNECTION, null);
         mCM.registerForPreciseCallStateChanged(this, PHONE_STATE_CHANGED, null);
         mCM.registerForDisconnect(this, PHONE_DISCONNECT, null);
@@ -49,7 +47,6 @@ public class CallNotifier extends Handler {
     }
     
     void updateCallNotifierRegistrationsAfterRadioTechnologyChange() {
-        Log.d("taugin4", "updateCallNotifierRegistrationsAfterRadioTechnologyChange");
         // Unregister all events from the old obsolete phone
         mCM.unregisterForNewRingingConnection(this);
         mCM.unregisterForPreciseCallStateChanged(this);
@@ -68,41 +65,41 @@ public class CallNotifier extends Handler {
     public void handleMessage(Message msg) {
         switch (msg.what) {
             case PHONE_NEW_RINGING_CONNECTION:
-                Log.d("taugin4", "PHONE_NEW_RINGING_CONNECTION");
+                Log.d(Log.TAG, "PHONE_NEW_RINGING_CONNECTION");
                 break;
 
             case PHONE_INCOMING_RING:
-                Log.d("taugin4", "PHONE_INCOMING_RING");
+                Log.d(Log.TAG, "PHONE_INCOMING_RING");
                 // repeat the ring when requested by the RIL, and when the user has NOT
                 // specifically requested silence.
                 break;
 
             case PHONE_STATE_CHANGED:
-                Log.d("taugin4", "PHONE_STATE_CHANGED");
+                Log.d(Log.TAG, "PHONE_STATE_CHANGED");
                 break;
 
             case PHONE_DISCONNECT:
-                Log.d("taugin4", "PHONE_DISCONNECT");
+                Log.d(Log.TAG, "PHONE_DISCONNECT");
                 break;
 
             case PHONE_CDMA_CALL_WAITING:
-                Log.d("taugin4", "PHONE_CDMA_CALL_WAITING");
+                Log.d(Log.TAG, "PHONE_CDMA_CALL_WAITING");
                 break;
 
             case PHONE_STATE_DISPLAYINFO:
-                Log.d("taugin4", "PHONE_STATE_DISPLAYINFO");
+                Log.d(Log.TAG, "PHONE_STATE_DISPLAYINFO");
                 break;
 
             case PHONE_STATE_SIGNALINFO:
-                Log.d("taugin4", "PHONE_STATE_SIGNALINFO");
+                Log.d(Log.TAG, "PHONE_STATE_SIGNALINFO");
                 break;
 
             case SUPP_SERVICE_NOTIFY:
-                Log.d("taugin4", "SUPP_SERVICE_NOTIFY");
+                Log.d(Log.TAG, "SUPP_SERVICE_NOTIFY");
 
                 if (msg.obj != null && ((AsyncResult) msg.obj).result != null) {
                     SuppServiceNotification suppSvcNotification = (SuppServiceNotification)((AsyncResult) msg.obj).result;
-                    Log.d("taugin4", "suppSvcNotification.notificationType = " + suppSvcNotification.notificationType + ", suppSvcNotification.code = " + suppSvcNotification.code);
+                    Log.d(Log.TAG, "suppSvcNotification.notificationType = " + suppSvcNotification.notificationType + ", suppSvcNotification.code = " + suppSvcNotification.code);
                 }
                 break;
 

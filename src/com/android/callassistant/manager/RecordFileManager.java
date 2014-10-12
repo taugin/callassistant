@@ -3,7 +3,6 @@ package com.android.callassistant.manager;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 
 import android.annotation.SuppressLint;
@@ -65,7 +64,7 @@ public class RecordFileManager {
         String where = DBConstant._ID + " IN " + area;
         Log.d(Log.TAG, "where = " + where);
         int ret = mContext.getContentResolver().delete(DBConstant.RECORD_URI, where, null);
-        Log.d(Log.TAG, "deleteRecordFromDB ret = " + ret);
+        Log.d(Log.TAG, "ret = " + ret);
         return ret;
     }
     public int deleteRecordFiles(ArrayList<RecordInfo> list) {
@@ -179,7 +178,7 @@ public class RecordFileManager {
                         info.contactLogCount = c.getInt(c.getColumnIndex(DBConstant.CONTACT_CALL_LOG_COUNT));
                         info.contactUpdate = c.getLong(c.getColumnIndex(DBConstant.CONTACT_UPDATE));
                         info.blocked = BlackNameManager.getInstance(mContext).isBlackInDB(info.contactNumber);
-                        Log.d(Log.TAG, "getBaseInfoFromDB info.blocked = " + info.blocked);
+                        Log.d(Log.TAG, "info.blocked = " + info.blocked);
                         list.add(info);
                     } while(c.moveToNext());
                 }
@@ -208,7 +207,7 @@ public class RecordFileManager {
         if (id != -1) {
             selection = DBConstant.RECORD_CONTACT_ID + "=" + id;
         }
-        Log.d(Log.TAG, "getRecordsFromDB selection = " + selection);
+        Log.d(Log.TAG, "selection = " + selection);
         try {
             c = mContext.getContentResolver().query(DBConstant.RECORD_URI, null, selection, null, DBConstant.RECORD_START + " DESC");
             if (c != null) {
@@ -320,7 +319,7 @@ public class RecordFileManager {
         builder.deleteCharAt(builder.length() - 2);
         String area = builder.toString();
         String where = DBConstant._ID + " IN " + area;
-        Log.d(Log.TAG, "deleteBlackInfoFromDB where = " + where);
+        Log.d(Log.TAG, "where = " + where);
         mContext.getContentResolver().delete(DBConstant.BLOCK_URI, where, null);
 
         for (int index = list.size() - 1; index >=0; index--) {

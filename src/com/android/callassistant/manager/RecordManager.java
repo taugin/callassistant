@@ -3,12 +3,12 @@ package com.android.callassistant.manager;
 import java.io.File;
 import java.io.IOException;
 
-import com.android.callassistant.util.Constant;
-
 import android.content.Context;
 import android.media.MediaRecorder;
 import android.os.Environment;
-import android.util.Log;
+
+import com.android.callassistant.util.Constant;
+import com.android.callassistant.util.Log;
 
 public class RecordManager {
     private MediaRecorder mMediaRecorder;
@@ -45,10 +45,10 @@ public class RecordManager {
         try {
             mMediaRecorder.prepare();
         } catch (IllegalStateException e) {
-            logd(e.getLocalizedMessage());
+            logd("error : " + e);
             stopRecorder();
         } catch (IOException e) {
-            logd(e.getLocalizedMessage());
+            logd("error : " + e);
             stopRecorder();
         }
     }
@@ -75,12 +75,12 @@ public class RecordManager {
     }
     
     private void logd(String msg) {
-        Log.d("taugin", msg);
+        Log.d(Log.TAG, msg);
     }
     private void logv(String msg) {
-        Log.v("taugin", msg);
+        Log.v(Log.TAG, msg);
     }
     private void logw(String msg) {
-        Log.w("taugin", msg);
+        Log.w(Log.TAG, msg);
     }
 }

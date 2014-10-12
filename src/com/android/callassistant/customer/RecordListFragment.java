@@ -303,7 +303,8 @@ public class RecordListFragment extends ListFragment implements OnCheckedChangeL
             ContactInfo info = mListAdapter.getItem(position);
             mCheckBox.setTag(position);
             mCheckBox.setOnClickListener(this);
-            Log.d(Log.TAG, "function_menu info.blocked = " + info.blocked + " , position = " + position);
+            Log.d(Log.TAG, "info.blocked = " + info.blocked + " , position = "
+                    + position);
             mCheckBox.setChecked(info.blocked);
 
             if (!mPopupWindow.isShowing()) {
@@ -380,7 +381,6 @@ public class RecordListFragment extends ListFragment implements OnCheckedChangeL
 
     @Override
     public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-        Log.d(Log.TAG, "");
         mActionMode = mode;
         mode.setTitle(R.string.action_delete);
         mode.getMenuInflater().inflate(R.menu.action_mode_menu, menu);
@@ -390,7 +390,6 @@ public class RecordListFragment extends ListFragment implements OnCheckedChangeL
 
     @Override
     public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-        Log.d(Log.TAG, "");
         mViewState = VIEW_STATE_DELETE;
         mListAdapter.notifyDataSetChanged();
         return true;
@@ -398,7 +397,6 @@ public class RecordListFragment extends ListFragment implements OnCheckedChangeL
 
     @Override
     public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-        Log.d(Log.TAG, "");
         switch(item.getItemId()) {
         case R.id.action_selectall:
             int count = mListAdapter.getCount();
@@ -423,7 +421,6 @@ public class RecordListFragment extends ListFragment implements OnCheckedChangeL
 
     @Override
     public void onDestroyActionMode(ActionMode mode) {
-        Log.d(Log.TAG, "");
         selectAll(false);
         mViewState = VIEW_STATE_NORMAL;
         mListAdapter.notifyDataSetChanged();
@@ -431,7 +428,7 @@ public class RecordListFragment extends ListFragment implements OnCheckedChangeL
     }
     
     public void finishActionModeIfNeed() {
-        Log.d("taugin", "mActionMode = " + mActionMode);
+        Log.d(Log.TAG, "mActionMode = " + mActionMode);
         if (mActionMode != null) {
             mActionMode.finish();
             mActionMode = null;
@@ -449,7 +446,7 @@ public class RecordListFragment extends ListFragment implements OnCheckedChangeL
 
     @Override
     public boolean onQueryTextChange(String newText) {
-        Log.d("taugin", "newText = " + newText);
+        Log.d(Log.TAG, "newText = " + newText);
         if (TextUtils.isEmpty(newText)) {
             getListView().clearTextFilter();
         } else {

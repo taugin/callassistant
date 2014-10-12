@@ -253,7 +253,7 @@ public class WifiFragment extends ListFragment implements OnCheckedChangeListene
     }
     @Override
     public boolean onLongClick(View v) {
-        Log.d(Log.TAG, "onLongClick v = " + v);
+        Log.d(Log.TAG, "v = " + v);
         return false;
     }
 

@@ -1,5 +1,7 @@
 package com.android.callassistant.provider;
 
+import java.util.ArrayList;
+
 import android.content.ContentProvider;
 import android.content.ContentProviderOperation;
 import android.content.ContentProviderResult;
@@ -13,8 +15,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 
 import com.android.callassistant.util.Log;
-
-import java.util.ArrayList;
 
 public class CallAssistantProvider extends ContentProvider {
 
@@ -44,7 +44,6 @@ public class CallAssistantProvider extends ContentProvider {
     }
     @Override
     public boolean onCreate() {
-        Log.d(TAG, "CallAssistantProvider onCreate");
         mDBHelper = new DBHelper(getContext());
         if (mDBHelper != null) {
             return true;
@@ -133,7 +132,7 @@ public class CallAssistantProvider extends ContentProvider {
                 throw new IllegalArgumentException("Unknown URI " + uri);
             }
         }catch(SQLException e){
-            Log.e(Log.TAG, "The item has inserted into the database ! : " + e.getLocalizedMessage());
+            Log.e(Log.TAG, "The item has inserted into the database ! : " + "error : " + e);
             Uri resultUri = ContentUris.withAppendedId(uri, 0);
             return resultUri;
         }

@@ -70,7 +70,7 @@ public class CustomerDetailFragment extends ListFragment implements OnClickListe
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        Log.d(Log.TAG, "CustomerDetailFragment onActivityCreated mBaseId = " + mContactId);
+        Log.d(Log.TAG, "onActivityCreated mBaseId = " + mContactId);
         setListShown(true);
         updateUI();
         getActivity().getContentResolver().registerContentObserver(DBConstant.RECORD_URI, true, mRecordObserver);

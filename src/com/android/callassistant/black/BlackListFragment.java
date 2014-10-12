@@ -37,7 +37,6 @@ import android.widget.TextView;
 
 import com.android.callassistant.R;
 import com.android.callassistant.info.BlackInfo;
-import com.android.callassistant.info.ContactInfo;
 import com.android.callassistant.manager.RecordFileManager;
 import com.android.callassistant.provider.DBConstant;
 import com.android.callassistant.util.FragmentListener;
@@ -63,7 +62,6 @@ public class BlackListFragment extends ListFragment implements OnClickListener, 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d(Log.TAG, "");
         setHasOptionsMenu(true);
         getActivity().setTitle(R.string.black_name);
         mViewState = VIEW_STATE_NORMAL;
@@ -72,7 +70,6 @@ public class BlackListFragment extends ListFragment implements OnClickListener, 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        Log.d(Log.TAG, "");
         mBlackList = new ArrayList<BlackInfo>();
         mListAdapter = new BlackListAdapter(getActivity(), mBlackList);
         getListView().setAdapter(mListAdapter);
@@ -112,7 +109,7 @@ public class BlackListFragment extends ListFragment implements OnClickListener, 
     }
 
     private void updateUI() {
-        Log.d("taugin", "updateUI");
+        Log.d(Log.TAG, "");
         mBlackList = RecordFileManager.getInstance(getActivity()).getBlackListFromDB(mBlackList);
         mListAdapter.notifyDataSetChanged();
     }
@@ -309,8 +306,8 @@ public class BlackListFragment extends ListFragment implements OnClickListener, 
             //Intent intent = new Intent(getActivity(), CustomerDetailActivity.class);
             //intent.putExtra(DBConstant._ID, info._id);
             //startActivity(intent);
-            Log.d("taugin", "position = " + position);
-            Log.d("taugin", "info = " + info.blackNumber);
+            Log.d(Log.TAG, "position = " + position);
+            Log.d(Log.TAG, "info = " + info.blackNumber);
         } else if (v.getId() == R.id.check_box_container) {
             int position = (Integer) v.getTag();
             BlackInfo info = mListAdapter.getItem(position);
@@ -359,7 +356,7 @@ public class BlackListFragment extends ListFragment implements OnClickListener, 
 
         @Override
         public void onChange(boolean selfChange, Uri uri) {
-            Log.d(Log.TAG, "onChange selfChange = " + selfChange + " , uri = " + uri);
+            Log.d(Log.TAG, "selfChange = " + selfChange + " , uri = " + uri);
             if (mHandler.hasMessages(UPDATE_LIST)) {
                 mHandler.removeMessages(UPDATE_LIST);
             }
@@ -386,7 +383,7 @@ public class BlackListFragment extends ListFragment implements OnClickListener, 
         }
         getActivity().startActionMode(this);
         int position = (Integer) v.getTag();
-        Log.d(Log.TAG, "onLongClick position = " + position);
+        Log.d(Log.TAG, "position = " + position);
         BlackInfo info = mListAdapter.getItem(position);
         info.checked = true;
         mListAdapter.notifyDataSetChanged();
@@ -403,7 +400,6 @@ public class BlackListFragment extends ListFragment implements OnClickListener, 
 
     @Override
     public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-        Log.d(Log.TAG, "onCreateActionMode");
         mActionMode = mode;
         mode.setTitle(R.string.action_delete);
         mode.getMenuInflater().inflate(R.menu.action_mode_menu, menu);
@@ -413,7 +409,6 @@ public class BlackListFragment extends ListFragment implements OnClickListener, 
 
     @Override
     public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-        Log.d(Log.TAG, "onPrepareActionMode");
         mViewState = VIEW_STATE_DELETE;
         mListAdapter.notifyDataSetChanged();
         return true;
@@ -421,7 +416,6 @@ public class BlackListFragment extends ListFragment implements OnClickListener, 
 
     @Override
     public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-        Log.d(Log.TAG, "onActionItemClicked");
         switch(item.getItemId()) {
         case R.id.action_selectall:
             int count = mListAdapter.getCount();
@@ -446,7 +440,6 @@ public class BlackListFragment extends ListFragment implements OnClickListener, 
 
     @Override
     public void onDestroyActionMode(ActionMode mode) {
-        Log.d(Log.TAG, "onDestroyActionMode");
         selectAll(false);
         mViewState = VIEW_STATE_NORMAL;
         mListAdapter.notifyDataSetChanged();

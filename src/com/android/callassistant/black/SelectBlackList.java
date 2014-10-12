@@ -93,6 +93,7 @@ public class SelectBlackList extends ListActivity implements OnItemClickListener
         }
     }
 
+    @SuppressWarnings("unchecked")
     private void importBlackList() {
         ArrayList<ContentProviderOperation> operationList = new ArrayList<ContentProviderOperation>();
         SparseBooleanArray array = getListView().getCheckedItemPositions();
@@ -108,15 +109,15 @@ public class SelectBlackList extends ListActivity implements OnItemClickListener
                 builder.withValue(DBConstant.BLOCK_NUMBER, holder.phoneNumber);
                 ContentProviderOperation operater = builder.build();
                 operationList.add(operater);
-                Log.d("taugin33", holder.phoneNumber);
+                Log.d(Log.TAG, holder.phoneNumber);
             }
         }
         try {
             getContentResolver().applyBatch(DBConstant.AUTHORITIES, operationList);
         } catch (RemoteException e) {
-            Log.d("taugin", e.getLocalizedMessage());
+            Log.d(Log.TAG, "error : " + e);
         } catch (OperationApplicationException e) {
-            Log.d("taugin", e.getLocalizedMessage());
+            Log.d(Log.TAG, "error : " + e);
         }
     }
 

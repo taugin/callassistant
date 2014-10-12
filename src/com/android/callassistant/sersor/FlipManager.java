@@ -1,17 +1,11 @@
 package com.android.callassistant.sersor;
 
-import android.app.Instrumentation;
 import android.content.Context;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.hardware.input.InputManager;
 import android.media.AudioManager;
-import android.os.SystemClock;
-import android.view.InputDevice;
-import android.view.KeyCharacterMap;
-import android.view.KeyEvent;
 
 import com.android.callassistant.util.Log;
 
@@ -102,6 +96,6 @@ public class FlipManager implements SensorEventListener {
 
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
-        Log.d(Log.TAG, "onAccuracyChanged sensor = " + sensor + " , accuracy = " + accuracy);
+        Log.d(Log.TAG, "sensor = " + sensor + " , accuracy = " + accuracy);
     }
 }

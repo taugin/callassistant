@@ -74,19 +74,19 @@ public class RadioLogMatcher {
         commandLine.add("time");
         InputStream inputStream = Runtime.getRuntime().exec(commandLine.toArray( new String[commandLine.size()])).getInputStream();
         //InputStream inputStream = Runtime.getRuntime().exec("logcat -d -v time -b radio").getInputStream();
-        Log.d("taugin", "localInputStream = " + inputStream);
+        Log.d(Log.TAG, "localInputStream = " + inputStream);
         InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
         BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("------------- radio log -------------\n");
         String str1 = null;
         str1 = bufferedReader.readLine();
-        Log.d("taugin", "readRadioLog --------------------------------------------------------" + str1);
+        Log.d(Log.TAG, "readRadioLog --------------------------------------------------------" + str1);
         while ((str1 = bufferedReader.readLine()) != null) {
           String str2 = str1.replaceAll("([0-9]{4})[0-9]{7}\\b", "\\1*******");
           stringBuilder.append(str2);
           stringBuilder.append("\n");
-          Log.d("taugin", stringBuilder.toString());
+          Log.d(Log.TAG, stringBuilder.toString());
         }
         File file = new File("/sdcard/radio.log");
         FileOutputStream fos = new FileOutputStream(file);
@@ -94,7 +94,7 @@ public class RadioLogMatcher {
         fos.close();
         return stringBuilder.toString();
       } catch (Exception e) {
-          Log.d("taugin", e.getLocalizedMessage());
+          Log.d(Log.TAG, "error : " + e);
       }
       return null;
     }

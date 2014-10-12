@@ -7,7 +7,7 @@ import android.content.Context;
 
 public class Log {
 
-    public static final String TAG = "taugin";
+    public static final String TAG = "callassistant";
     private static final boolean DEBUG = true;
     private static final boolean PRIVATE_TAG = true;
 
@@ -55,6 +55,14 @@ public class Log {
         }
     }
 
+    public static void w(String tag, String message) {
+        if (DEBUG) {
+            String extraString = getMethodNameAndLineNumber();
+            tag = PRIVATE_TAG ? tag : getTag();
+            android.util.Log.w(tag, extraString + message);
+        }
+    }
+
     
     private static String getMethodNameAndLineNumber() {
         StackTraceElement element[] = Thread.currentThread().getStackTrace();
@@ -82,7 +90,7 @@ public class Log {
             if (index != -1) {
                 className = className.substring(0, index);
             }
-            //android.util.Log.d("taugin", "className = " + className);
+            //android.util.Log.d(Log.TAG, "className = " + className);
             return className;
         }
         return null;
@@ -102,7 +110,7 @@ public class Log {
             if (index != -1) {
                 className = className.substring(0, index);
             }
-            //android.util.Log.d("taugin", "className = " + className);
+            //android.util.Log.d(Log.TAG, "className = " + className);
             return className;
         }
         return null;
@@ -110,7 +118,6 @@ public class Log {
     public void recordOperation(String operation) {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
         String time = sdf.format(new Date(System.currentTimeMillis())) + " : ";
-        d("taugin1", time + operation);
         //Runtime.getRuntime().exec("cat " + operation + " > ")
     }
 }

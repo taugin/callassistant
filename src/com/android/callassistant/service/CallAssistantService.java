@@ -98,7 +98,7 @@ public class CallAssistantService extends Service {
             Log.getLog(getBaseContext()).recordOperation("Outgoing call : " + phoneNumber);
         } else if (Constant.ACTION_PHONE_STATE.equals(intent.getAction())) {
             int state = intent.getIntExtra(Constant.EXTRA_PHONE_STATE, TelephonyManager.CALL_STATE_IDLE);
-            Log.d(Log.TAG, "onStartCommand state = " + stateToString(state));
+            Log.d(Log.TAG, "state = " + stateToString(state));
             onCallStateChanged(state);
         }
         return START_STICKY;
@@ -283,7 +283,7 @@ public class CallAssistantService extends Service {
         }
         @Override
         public void onChange(boolean selfChange, Uri uri) {
-            Log.d(Log.TAG, "CallLogObserver uri = " + uri);
+            Log.d(Log.TAG, "uri = " + uri);
         }
     }
     private String stateToString(int state) {

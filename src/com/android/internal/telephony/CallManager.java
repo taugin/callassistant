@@ -7,67 +7,67 @@ import com.android.callassistant.util.Log;
 public class CallManager {
     
     public static CallManager getInstance() {
-        Log.d(Log.TAG, "CallManager getInstance");
+        Log.d(Log.TAG, "getInstance");
         return null;
     }
     public void registerForNewRingingConnection(Handler h, int what, Object obj){
-        Log.d(Log.TAG, "registerForNewRingingConnection");
+        Log.d(Log.TAG, "");
     }
     
     public void registerForPreciseCallStateChanged(Handler h, int what, Object obj){
-        Log.d(Log.TAG, "registerForPreciseCallStateChanged");
+        Log.d(Log.TAG, "");
     }
     
     public void registerForDisconnect(Handler h, int what, Object obj) {
-        Log.d(Log.TAG, "registerForDisconnect");
+        Log.d(Log.TAG, "");
     }
     
     public void registerForDisplayInfo(Handler h, int what, Object obj){
-        Log.d(Log.TAG, "registerForDisplayInfo");
+        Log.d(Log.TAG, "");
     }
     
     public void registerForSignalInfo(Handler h, int what, Object obj){
-        Log.d(Log.TAG, "registerForSignalInfo");
+        Log.d(Log.TAG, "");
     }
     
     public void registerForSuppServiceNotification(Handler h, int what, Object obj){
-        Log.d(Log.TAG, "registerForSuppServiceNotification");
+        Log.d(Log.TAG, "");
     }
     
     public void registerForIncomingRing(Handler h, int what, Object obj){
-        Log.d(Log.TAG, "registerForIncomingRing");
+        Log.d(Log.TAG, "");
     }
     
     public void registerForCallWaiting(Handler h, int what, Object obj){
-        Log.d(Log.TAG, "registerForCallWaiting");
+        Log.d(Log.TAG, "");
     }
     
     public void unregisterForNewRingingConnection(Handler h){
-        Log.d(Log.TAG, "unregisterForNewRingingConnection");
+        Log.d(Log.TAG, "");
     }
     
     public void unregisterForPreciseCallStateChanged(Handler h){
-        Log.d(Log.TAG, "unregisterForPreciseCallStateChanged");
+        Log.d(Log.TAG, "");
     }
     public void unregisterForDisconnect(Handler h){
-        Log.d(Log.TAG, "unregisterForDisconnect");
+        Log.d(Log.TAG, "");
     }
     
     public void unregisterForIncomingRing(Handler h){
-        Log.d(Log.TAG, "unregisterForIncomingRing");
+        Log.d(Log.TAG, "");
     }
     public void unregisterForCallWaiting(Handler h){
-        Log.d(Log.TAG, "unregisterForCallWaiting");
+        Log.d(Log.TAG, "");
     }
     public void unregisterForDisplayInfo(Handler h) {
-        Log.d(Log.TAG, "unregisterForDisplayInfo");
+        Log.d(Log.TAG, "");
     }
     
     public void unregisterForSignalInfo(Handler h){
-        Log.d(Log.TAG, "unregisterForSignalInfo");
+        Log.d(Log.TAG, "");
     }
     
     public void unregisterForSuppServiceNotification(Handler h){
-        Log.d(Log.TAG, "unregisterForSuppServiceNotification");
+        Log.d(Log.TAG, "");
     }
 }
