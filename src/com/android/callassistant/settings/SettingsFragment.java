@@ -1,19 +1,22 @@
 package com.android.callassistant.settings;
 
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
+import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceFragment;
 
+import com.android.callassistant.App;
 import com.android.callassistant.R;
 import com.android.callassistant.util.Constant;
 import com.android.callassistant.util.Log;
 
 public class SettingsFragment extends PreferenceFragment implements
-        OnPreferenceChangeListener {
+        OnPreferenceChangeListener, OnPreferenceClickListener {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -24,6 +27,8 @@ public class SettingsFragment extends PreferenceFragment implements
         findPreference(Constant.KEY_BLOCK_ALL).setOnPreferenceChangeListener(this);
         getPreferenceScreen().removePreference(findPreference(Constant.KEY_BLOCK_ALL));
         findPreference(Constant.KEY_RECORD_CONTENT).setOnPreferenceChangeListener(this);
+        findPreference(Constant.KEY_CHECK_LOG).setOnPreferenceClickListener(
+                this);
     }
 
     @Override
@@ -98,7 +103,31 @@ public class SettingsFragment extends PreferenceFragment implements
         }
         Intent i = new Intent(Intent.ACTION_CALL);
         i.setData(Uri.parse(forwordNumber));
-        startActivity(i);
+        startActivityCatchException(i);
     }
 
+    @Override
+    public boolean onPreferenceClick(Preference preference) {
+        if (preference.getKey().equals(Constant.KEY_CHECK_LOG)) {
+            App app = (App) getActivity().getApplication();
+            String logFile = app.getLogFile();
+            if (logFile != null) {
+                Uri uri = Uri.parse("file://" + logFile);
+                Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                intent.setClassName("com.android.htmlviewer",
+                        "com.android.htmlviewer.HTMLViewerActivity");
+                startActivityCatchException(intent);
+            }
+            return true;
+        }
+        return false;
+    }
+
+    private void startActivityCatchException(Intent intent) {
+        try {
+            startActivity(intent);
+        } catch (ActivityNotFoundException e) {
+            Log.d(Log.TAG, "error : " + e);
+        }
+    }
 }

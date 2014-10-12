@@ -23,4 +23,5 @@ public class Constant {
     public static final String KEY_FLIP_MUTE = "key_flip_mute";
     public static final String KEY_BLOCK_ALL = "key_block_all";
     public static final String KEY_RECORD_CONTENT = "key_record_content";
+    public static final String KEY_CHECK_LOG = "key_check_log";
 }

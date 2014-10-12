@@ -2,6 +2,7 @@ package com.android.callassistant;
 
 import java.util.HashMap;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
@@ -26,6 +27,7 @@ public class AppMainActivity extends Activity implements
     private FragmentManager mFragmentManager;
     private RadioGroup mRadioGroup;
 
+    @SuppressLint("UseSparseArrays")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

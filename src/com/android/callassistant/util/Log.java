@@ -61,11 +61,32 @@ public class Log {
         if (element != null && element.length >= 4) {
             String methodName = element[4].getMethodName();
             int lineNumber = element[4].getLineNumber();
-            return String.format("%s : %d ---> ", methodName, lineNumber);
+            String className = element[4].getClassName();
+            return String.format("%s.%s : %d ---> ", getClassName(), methodName, lineNumber);
         }
         return null;
     }
     
+    private static String getClassName() {
+        StackTraceElement element[] = Thread.currentThread().getStackTrace();
+        if (element != null && element.length >= 5) {
+            String className = element[5].getClassName();
+            if (className == null) {
+                return null;
+            }
+            int index = className.lastIndexOf(".");
+            if (index != -1) {
+                className = className.substring(index + 1);
+            }
+            index = className.indexOf('$');
+            if (index != -1) {
+                className = className.substring(0, index);
+            }
+            //android.util.Log.d("taugin", "className = " + className);
+            return className;
+        }
+        return null;
+    }
     private static String getTag() {
         StackTraceElement element[] = Thread.currentThread().getStackTrace();
         if (element != null && element.length >= 4) {

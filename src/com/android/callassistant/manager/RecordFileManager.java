@@ -1,9 +1,12 @@
 package com.android.callassistant.manager;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 
+import android.annotation.SuppressLint;
 import android.content.ContentUris;
 import android.content.Context;
 import android.database.Cursor;
@@ -32,11 +35,20 @@ public class RecordFileManager {
         mContext = context;
     }
 
+    @SuppressLint("SimpleDateFormat")
     public String getProperName(String phoneNumber, long time) {
-        String fileName = "recorder_" + time + "_" + phoneNumber + ".amr";
-        return Environment.getExternalStorageDirectory() + "/" + Constant.FILE_RECORD_FOLDER + "/" + fileName;
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmssSSS");
+        String fileName = "recorder_" + phoneNumber + "_"
+                + sdf.format(new Date(time)) + ".amr";
+        return fileName;
     }
     
+    public String getProperFile(String phoneNumber, long time) {
+        String fileName = getProperName(phoneNumber, time);
+        return Environment.getExternalStorageDirectory() + "/"
+                + Constant.FILE_RECORD_FOLDER + "/" + fileName;
+    }
+
     private int deleteRecordFromDB(ArrayList<RecordInfo> list) {
         if (list == null || list.size() == 0) {
             return 0;
@@ -321,6 +333,7 @@ public class RecordFileManager {
     }
 
     private boolean recordExists(String recordFile) {
+        Log.d(Log.TAG, "recordFile = " + recordFile);
         if (recordFile == null) {
             return false;
         }

@@ -39,4 +39,5 @@
     <string name="min_tag">m</string>
     <string name="sec_tag">s</string>
     <string name="input_number">InputNumber</string>
+    <string name="check_log">Check Log</string>
 </resources> 

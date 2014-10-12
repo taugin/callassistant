@@ -39,4 +39,5 @@
     <string name="min_tag">分</string>
     <string name="sec_tag">秒</string>
     <string name="input_number">输入号码</string>
+    <string name="check_log">查看日志</string>
 </resources>

@@ -222,38 +222,41 @@ public class RecordListFragment extends ListFragment implements OnCheckedChangeL
 
             ContactInfo info = getItem(position);
 
-            CharSequence chars = getListView().getTextFilter();
-            String filter = null;
-            int len = 0;
-            if (chars != null) {
-                filter = chars.toString();
-            }
-            SpannableString span = new SpannableString(info.contactNumber);
-            if (filter != null) {
-                len = filter.length();
-            }
-            span.setSpan(new ForegroundColorSpan(Color.RED), 0, len, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-
             if (info != null) {
-                if (!TextUtils.isEmpty(info.contactName)) {
-                    viewHolder.displayName.setText(info.contactName);
-                    viewHolder.displayNumber.setText(span);
-                } else {
-                    viewHolder.displayNumber.setText("");
-                    viewHolder.displayName.setText(span);
+                CharSequence chars = getListView().getTextFilter();
+                String filter = null;
+                int len = 0;
+                if (chars != null) {
+                    filter = chars.toString();
                 }
-                String callLog = String.format("%d%s", info.contactLogCount, RecordListFragment.this.getResources().getString(R.string.call_log_count));
-                viewHolder.callState.setText(callLog);
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                viewHolder.callLogDate.setText(sdf.format(new Date(info.contactUpdate)));
-                viewHolder.checkBox.setChecked(info.checked);
-            }
-            if (mViewState == VIEW_STATE_NORMAL) {
-                viewHolder.functionMenu.setVisibility(View.VISIBLE);
-                viewHolder.checkBox.setVisibility(View.INVISIBLE);
-            } else if (mViewState == VIEW_STATE_DELETE) {
-                viewHolder.functionMenu.setVisibility(View.INVISIBLE);
-                viewHolder.checkBox.setVisibility(View.VISIBLE);
+
+                String contactName = info.contactNumber != null ? info.contactNumber : "";
+                SpannableString span = new SpannableString(contactName);
+                if (filter != null) {
+                    len = filter.length();
+                }
+                span.setSpan(new ForegroundColorSpan(Color.RED), 0, len, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                if (info != null) {
+                    if (!TextUtils.isEmpty(info.contactName)) {
+                        viewHolder.displayName.setText(info.contactName);
+                        viewHolder.displayNumber.setText(span);
+                    } else {
+                        viewHolder.displayNumber.setText("");
+                        viewHolder.displayName.setText(span);
+                    }
+                    String callLog = String.format("%d%s", info.contactLogCount, RecordListFragment.this.getResources().getString(R.string.call_log_count));
+                    viewHolder.callState.setText(callLog);
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                    viewHolder.callLogDate.setText(sdf.format(new Date(info.contactUpdate)));
+                    viewHolder.checkBox.setChecked(info.checked);
+                }
+                if (mViewState == VIEW_STATE_NORMAL) {
+                    viewHolder.functionMenu.setVisibility(View.VISIBLE);
+                    viewHolder.checkBox.setVisibility(View.INVISIBLE);
+                } else if (mViewState == VIEW_STATE_DELETE) {
+                    viewHolder.functionMenu.setVisibility(View.INVISIBLE);
+                    viewHolder.checkBox.setVisibility(View.VISIBLE);
+                }
             }
             return convertView;
         }

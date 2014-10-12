@@ -1,5 +1,8 @@
 package com.android.callassistant.service;
 
+import java.io.File;
+import java.util.List;
+
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningTaskInfo;
 import android.app.Notification;
@@ -15,21 +18,15 @@ import android.preference.PreferenceManager;
 import android.telephony.TelephonyManager;
 
 import com.android.callassistant.R;
-import com.android.callassistant.call.CallNotifier;
 import com.android.callassistant.manager.BlackNameManager;
 import com.android.callassistant.manager.RecordFileManager;
-import com.android.callassistant.manager.Telephony;
 import com.android.callassistant.manager.RecordManager;
 import com.android.callassistant.manager.TmpStorageManager;
 import com.android.callassistant.provider.DBConstant;
 import com.android.callassistant.sersor.FlipManager;
 import com.android.callassistant.util.Constant;
 import com.android.callassistant.util.Log;
-import com.android.callassistant.util.RadioLogMatcher;
 import com.android.callassistant.util.ServiceUtil;
-
-import java.io.File;
-import java.util.List;
 
 public class CallAssistantService extends Service {
 
@@ -189,9 +186,13 @@ public class CallAssistantService extends Service {
 
             String phoneNumber = TmpStorageManager.getPhoneNumber(this);
             String fileName = RecordFileManager.getInstance(CallAssistantService.this).getProperName(phoneNumber, time);
-            TmpStorageManager.recordName(this, "recorder_" + time + "_" + phoneNumber + ".amr", fileName);
+            Log.d(Log.TAG, "fileName = " + fileName);
+            String filePath = RecordFileManager.getInstance(
+                    CallAssistantService.this).getProperFile(phoneNumber, time);
+            Log.d(Log.TAG, "filePath = " + filePath);
+            TmpStorageManager.recordName(this, fileName, filePath);
             if (needRecord()) {
-                mRecordManager.initRecorder(fileName);
+                mRecordManager.initRecorder(filePath);
                 mRecordManager.startRecorder();
                 showNotification();
             }
@@ -214,6 +215,7 @@ public class CallAssistantService extends Service {
     private void stopRecord() {
         ensureRecordManager();
         String fileName = TmpStorageManager.getRecordFile(this);
+        Log.d(Log.TAG, "fileName = " + fileName);
         if (needRecord()) {
             if (mRecordManager.recording()) {
                 mRecordManager.stopRecorder();

@@ -7,7 +7,7 @@
         <item>Shutdown</item>
         <item>Busy Now</item>
     </string-array>
-    <string-array name="warning_tone_value">
+    <string-array name="warning_tone_value" translatable="false">
         <item>empty</item>
         <item>stop</item>
         <item>shutdown</item>
@@ -19,7 +19,7 @@
         <item>Record Outgoing Call</item>
         <item>Record Nothing</item>
     </string-array>
-    <string-array name="record_content_value">
+    <string-array name="record_content_value" translatable="false">
         <item>all</item>
         <item>incoming</item>
         <item>outgoing</item>
