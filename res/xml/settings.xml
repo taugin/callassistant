@@ -30,4 +30,7 @@
     <Preference
         android:key="key_check_log"
         android:title="@string/check_log"/>
+    <Preference
+        android:key="key_check_upgrade"
+        android:title="@string/check_upgrade"/>
 </PreferenceScreen>

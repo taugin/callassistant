@@ -40,4 +40,9 @@
     <string name="sec_tag">s</string>
     <string name="input_number">InputNumber</string>
     <string name="check_log">Check Log</string>
+    <string name="check_upgrade">Check Upgrade</string>
+    <string name="no_newversion_tip">Your version is lastest !</string>
+    <string name="new_version_tiptitle">New Version</string>
+    <string name="new_version_tipcontent">New Version ,upgrade ?</string>
+    <string name="btn_download">Download</string>
 </resources> 

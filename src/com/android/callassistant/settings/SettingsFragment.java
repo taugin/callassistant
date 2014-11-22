@@ -12,6 +12,7 @@ import android.preference.PreferenceFragment;
 
 import com.android.callassistant.App;
 import com.android.callassistant.R;
+import com.android.callassistant.upgrade.UpgradeManager;
 import com.android.callassistant.util.Constant;
 import com.android.callassistant.util.Log;
 
@@ -28,6 +29,8 @@ public class SettingsFragment extends PreferenceFragment implements
         getPreferenceScreen().removePreference(findPreference(Constant.KEY_BLOCK_ALL));
         findPreference(Constant.KEY_RECORD_CONTENT).setOnPreferenceChangeListener(this);
         findPreference(Constant.KEY_CHECK_LOG).setOnPreferenceClickListener(
+                this);
+        findPreference(Constant.KEY_CHECK_UPGRADE).setOnPreferenceClickListener(
                 this);
     }
 
@@ -118,6 +121,9 @@ public class SettingsFragment extends PreferenceFragment implements
                         "com.android.htmlviewer.HTMLViewerActivity");
                 startActivityCatchException(intent);
             }
+            return true;
+        } else if (preference.getKey().equals(Constant.KEY_CHECK_UPGRADE)) {
+            UpgradeManager.get(getActivity()).checkUpgrade();
             return true;
         }
         return false;

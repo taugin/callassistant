@@ -40,4 +40,9 @@
     <string name="sec_tag">秒</string>
     <string name="input_number">输入号码</string>
     <string name="check_log">查看日志</string>
+    <string name="check_upgrade">检查更新</string>
+    <string name="no_newversion_tip">您的版本已经是最新的！</string>
+    <string name="new_version_tiptitle">新版本升级</string>
+    <string name="new_version_tipcontent">您有新的版本，是否需要升级</string>
+    <string name="btn_download">下载</string>
 </resources>
