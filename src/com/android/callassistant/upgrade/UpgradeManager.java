@@ -1,5 +1,7 @@
 package com.android.callassistant.upgrade;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -11,14 +13,17 @@ import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.DialogInterface.OnClickListener;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.android.callassistant.R;
@@ -36,12 +41,19 @@ public class UpgradeManager implements Runnable, OnClickListener {
     private static final int MSG_DISMISS_PROGRESS_DIALOG = 1;
     private static final int MSG_SHOW_TOAST = 2;
     private static final int MSG_SHOW_NEWVERSION_DIALOG = 3;
+    private static final int MSG_UPDATE_PROGRESS_BAR = 4;
+    private static final int MSG_SET_PROGRESS_BAR_MAX = 5;
 
     private static UpgradeManager sUpgradeManager = null;
     private Context mContext;
     private int mAction = -1;
     private ProgressDialog mProgressDialog = null;
     private Handler mHandler = null;
+
+    private ProgressBar mProgressBar;
+    private Button mDownload;
+    private Button mCancel;
+    private UpgradeInfo mUpgradeInfo;
 
     private UpgradeManager(Context context) {
         mContext = context;
@@ -79,6 +91,46 @@ public class UpgradeManager implements Runnable, OnClickListener {
         return null;
     }
 
+    private void download() {
+        Message msg = null;
+        try {
+            msg = mHandler.obtainMessage(MSG_SET_PROGRESS_BAR_MAX);
+            msg.obj = mUpgradeInfo.file_size;
+            mHandler.sendMessage(msg);
+            URL url = new URL(mUpgradeInfo.app_url);
+            HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
+            conn.setDoInput(true);
+            conn.setDoOutput(true);
+            Log.d(Log.TAG, "setTimeout");
+            conn.setConnectTimeout(10000);
+            conn.connect();
+            Log.d(Log.TAG, "conn.getResponseCode() = " + conn.getResponseCode());
+            if (conn.getResponseCode() != 200) {
+                return;
+            }
+            InputStream inStream = conn.getInputStream();
+            byte buf[] = new byte[1024];
+            int read = 0;
+            File tmpFile = File.createTempFile("tmp", ".apk");
+            Log.d(Log.TAG, "tmpFile = " + tmpFile);
+            FileOutputStream fos = new FileOutputStream(tmpFile);
+            long totalRead = 0;
+            while ((read = inStream.read(buf)) > 0) {
+                totalRead += read;
+                msg = mHandler.obtainMessage(MSG_UPDATE_PROGRESS_BAR);
+                msg.obj = totalRead;
+                mHandler.sendMessage(msg);
+                fos.write(buf, 0, read);
+            }
+            Log.d(Log.TAG, "totalRead = " + totalRead);
+            fos.close();
+            inStream.close();
+        } catch (MalformedURLException e) {
+            Log.d(Log.TAG, "error : " + e);
+        } catch (IOException e) {
+            Log.d(Log.TAG, "error : " + e);
+        }
+    }
     private void upgradeCheck() {
         String config = getUpgradeConfig();
         if (TextUtils.isEmpty(config)) {
@@ -86,19 +138,28 @@ public class UpgradeManager implements Runnable, OnClickListener {
         }
         Gson gson = new Gson();
         UpgradeInfo info = gson.fromJson(config, UpgradeInfo.class);
+        mUpgradeInfo = info;
         Log.d(Log.TAG, info.toString());
         int versionCode = getAppVer();
         mHandler.sendEmptyMessage(MSG_DISMISS_PROGRESS_DIALOG);
-        if (versionCode >= info.version_code) {
+        if (versionCode >= info.version_code && false) {
             mHandler.sendEmptyMessage(MSG_SHOW_TOAST);
             return;
         }
+        mHandler.sendEmptyMessage(MSG_SHOW_NEWVERSION_DIALOG);
     }
 
     private void newVersionDialog() {
+        LayoutInflater inflater = LayoutInflater.from(mContext);
+        View view = inflater.inflate(R.layout.upgrade_layout, null);
+        mProgressBar = (ProgressBar) view.findViewById(R.id.progress_bar);
+        mDownload = (Button) view.findViewById(R.id.download);
+        mDownload.setOnClickListener(this);
+        mCancel = (Button) view.findViewById(R.id.cancel);
+        mCancel.setOnClickListener(this);
         AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
         builder.setTitle(R.string.new_version_tiptitle);
-        builder.setMessage(R.string.new_version_tipcontent);
+        builder.setView(view);
         builder.create().show();
     }
 
@@ -108,12 +169,16 @@ public class UpgradeManager implements Runnable, OnClickListener {
         new Thread(this).start();
     }
 
+    private void startDownload() {
+        mAction = ACTION_DOWNLOAD;
+        new Thread(this).start();
+    }
     @Override
     public void run() {
         if (ACTION_FETCH_CONFIG == mAction) {
             upgradeCheck();
         } else {
-
+            download();
         }
     }
 
@@ -130,12 +195,6 @@ public class UpgradeManager implements Runnable, OnClickListener {
         return -1;
     }
 
-    @Override
-    public void onClick(DialogInterface dialog, int which) {
-
-    }
-
-    
     @SuppressLint("HandlerLeak")
     private void init() {
         mHandler = new Handler(mContext.getMainLooper()) {
@@ -164,8 +223,29 @@ public class UpgradeManager implements Runnable, OnClickListener {
                     Toast.makeText(mContext, R.string.no_newversion_tip,
                             Toast.LENGTH_LONG).show();
                     break;
+                case MSG_SET_PROGRESS_BAR_MAX: {
+                    Long integer = (Long) msg.obj;
+                    mProgressBar.setMax(integer.intValue());
+                }
+                    break;
+                case MSG_UPDATE_PROGRESS_BAR: {
+                    Long integer = (Long) msg.obj;
+                    mProgressBar.setProgress(integer.intValue());
+                }
+                    break;
                 }
             }
         };
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+        case R.id.download:
+            startDownload();
+            break;
+        case R.id.cancel:
+            break;
+        }
     }
 }
