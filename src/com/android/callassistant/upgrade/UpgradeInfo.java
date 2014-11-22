@@ -7,7 +7,7 @@ public class UpgradeInfo {
     public long file_size;
 
     public String toString() {
-        String str = "";
+        String str = "\n";
         str += "app_name     : " + app_url + "\n";
         str += "app_url      : " + app_name + "\n";
         str += "version_code : " + version_code + "\n";

@@ -4,15 +4,20 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLConnection;
 
+import javax.net.ssl.HttpsURLConnection;
+
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.os.Handler;
+import android.os.Message;
 import android.text.TextUtils;
 import android.widget.Toast;
 
@@ -22,14 +27,20 @@ import com.google.gson.Gson;
 
 public class UpgradeManager implements Runnable, OnClickListener {
 
-    private static final String CONFIG_PATH = "https://github.com/taugin/callassistant/tree/master/release_version/config.json";
+    private static final String CONFIG_PATH = "https://raw.githubusercontent.com/taugin/callassistant/master/release_version/config.json";
 
     private static final int ACTION_FETCH_CONFIG = 0;
     private static final int ACTION_DOWNLOAD = 1;
 
+    private static final int MSG_SHOW_PROGRESS_DIALOG = 0;
+    private static final int MSG_DISMISS_PROGRESS_DIALOG = 1;
+    private static final int MSG_SHOW_TOAST = 2;
+    private static final int MSG_SHOW_NEWVERSION_DIALOG = 3;
+
     private static UpgradeManager sUpgradeManager = null;
     private Context mContext;
     private int mAction = -1;
+    private ProgressDialog mProgressDialog = null;
 
     private UpgradeManager(Context context) {
         mContext = context;
@@ -45,7 +56,7 @@ public class UpgradeManager implements Runnable, OnClickListener {
     public String getUpgradeConfig() {
         try {
             URL url = new URL(CONFIG_PATH);
-            URLConnection conn = url.openConnection();
+            HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
             conn.setConnectTimeout(10000);
             conn.connect();
             InputStream inStream = conn.getInputStream();
@@ -56,7 +67,7 @@ public class UpgradeManager implements Runnable, OnClickListener {
                 builder.append(new String(buf, 0, read));
             }
             inStream.close();
-            Log.d(Log.TAG, "config = " + builder.toString());
+            Log.d(Log.TAG, "config = \n" + builder.toString());
             return builder.toString();
         } catch (MalformedURLException e) {
             Log.d(Log.TAG, "error : " + e);
@@ -67,6 +78,7 @@ public class UpgradeManager implements Runnable, OnClickListener {
     }
 
     private void upgradeCheck() {
+        mHandler.sendEmptyMessage(MSG_DISMISS_PROGRESS_DIALOG);
         String config = getUpgradeConfig();
         if (TextUtils.isEmpty(config)) {
             return;
@@ -76,12 +88,9 @@ public class UpgradeManager implements Runnable, OnClickListener {
         Log.d(Log.TAG, info.toString());
         int versionCode = getAppVer();
         if (versionCode >= info.version_code) {
-            Toast.makeText(mContext, R.string.no_newversion_tip,
-                    Toast.LENGTH_LONG).show();
+            mHandler.sendEmptyMessage(MSG_SHOW_TOAST);
             return;
         }
-
-        newVersionDialog();
     }
 
     private void newVersionDialog() {
@@ -93,6 +102,7 @@ public class UpgradeManager implements Runnable, OnClickListener {
 
     public void checkUpgrade() {
         mAction = ACTION_FETCH_CONFIG;
+        mHandler.sendEmptyMessage(MSG_SHOW_PROGRESS_DIALOG);
         new Thread(this).start();
     }
 
@@ -120,7 +130,38 @@ public class UpgradeManager implements Runnable, OnClickListener {
 
     @Override
     public void onClick(DialogInterface dialog, int which) {
-        // TODO Auto-generated method stub
 
     }
+
+    
+    @SuppressLint("HandlerLeak")
+    private Handler mHandler = new Handler(mContext.getMainLooper()) {
+        public void handleMessage(Message msg) {
+            switch(msg.what) {
+            case MSG_SHOW_PROGRESS_DIALOG:
+                if (mProgressDialog == null) {
+                    String content = mContext.getResources().getString(
+                            R.string.loading);
+                    mProgressDialog = ProgressDialog.show(mContext, null,
+                            content,
+                            true, false);
+                    Log.d(Log.TAG, "show progress dialog");
+                }
+                break;
+            case MSG_DISMISS_PROGRESS_DIALOG:
+                if (mProgressDialog != null && mProgressDialog.isShowing()) {
+                    mProgressDialog.dismiss();
+                    mProgressDialog = null;
+                }
+                break;
+            case MSG_SHOW_NEWVERSION_DIALOG:
+                newVersionDialog();
+                break;
+            case MSG_SHOW_TOAST:
+                Toast.makeText(mContext, R.string.no_newversion_tip,
+                        Toast.LENGTH_LONG).show();
+                break;
+            }
+        }
+    };
 }
