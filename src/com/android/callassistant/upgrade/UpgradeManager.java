@@ -41,9 +41,11 @@ public class UpgradeManager implements Runnable, OnClickListener {
     private Context mContext;
     private int mAction = -1;
     private ProgressDialog mProgressDialog = null;
+    private Handler mHandler = null;
 
     private UpgradeManager(Context context) {
         mContext = context;
+        init();
     }
 
     public static UpgradeManager get(Context context) {
@@ -78,7 +80,6 @@ public class UpgradeManager implements Runnable, OnClickListener {
     }
 
     private void upgradeCheck() {
-        mHandler.sendEmptyMessage(MSG_DISMISS_PROGRESS_DIALOG);
         String config = getUpgradeConfig();
         if (TextUtils.isEmpty(config)) {
             return;
@@ -87,6 +88,7 @@ public class UpgradeManager implements Runnable, OnClickListener {
         UpgradeInfo info = gson.fromJson(config, UpgradeInfo.class);
         Log.d(Log.TAG, info.toString());
         int versionCode = getAppVer();
+        mHandler.sendEmptyMessage(MSG_DISMISS_PROGRESS_DIALOG);
         if (versionCode >= info.version_code) {
             mHandler.sendEmptyMessage(MSG_SHOW_TOAST);
             return;
@@ -135,33 +137,35 @@ public class UpgradeManager implements Runnable, OnClickListener {
 
     
     @SuppressLint("HandlerLeak")
-    private Handler mHandler = new Handler(mContext.getMainLooper()) {
-        public void handleMessage(Message msg) {
-            switch(msg.what) {
-            case MSG_SHOW_PROGRESS_DIALOG:
-                if (mProgressDialog == null) {
-                    String content = mContext.getResources().getString(
-                            R.string.loading);
-                    mProgressDialog = ProgressDialog.show(mContext, null,
-                            content,
-                            true, false);
-                    Log.d(Log.TAG, "show progress dialog");
+    private void init() {
+        mHandler = new Handler(mContext.getMainLooper()) {
+            public void handleMessage(Message msg) {
+                switch (msg.what) {
+                case MSG_SHOW_PROGRESS_DIALOG:
+                    if (mProgressDialog == null) {
+                        String content = mContext.getResources().getString(
+                                R.string.loading);
+                        mProgressDialog = ProgressDialog.show(mContext, null,
+                                content, true, false);
+                        mProgressDialog.show();
+                        Log.d(Log.TAG, "show progress dialog");
+                    }
+                    break;
+                case MSG_DISMISS_PROGRESS_DIALOG:
+                    if (mProgressDialog != null && mProgressDialog.isShowing()) {
+                        mProgressDialog.dismiss();
+                        mProgressDialog = null;
+                    }
+                    break;
+                case MSG_SHOW_NEWVERSION_DIALOG:
+                    newVersionDialog();
+                    break;
+                case MSG_SHOW_TOAST:
+                    Toast.makeText(mContext, R.string.no_newversion_tip,
+                            Toast.LENGTH_LONG).show();
+                    break;
                 }
-                break;
-            case MSG_DISMISS_PROGRESS_DIALOG:
-                if (mProgressDialog != null && mProgressDialog.isShowing()) {
-                    mProgressDialog.dismiss();
-                    mProgressDialog = null;
-                }
-                break;
-            case MSG_SHOW_NEWVERSION_DIALOG:
-                newVersionDialog();
-                break;
-            case MSG_SHOW_TOAST:
-                Toast.makeText(mContext, R.string.no_newversion_tip,
-                        Toast.LENGTH_LONG).show();
-                break;
             }
-        }
-    };
+        };
+    }
 }
