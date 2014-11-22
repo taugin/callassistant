@@ -8,8 +8,8 @@ public class UpgradeInfo {
 
     public String toString() {
         String str = "\n";
-        str += "app_name     : " + app_url + "\n";
-        str += "app_url      : " + app_name + "\n";
+        str += "app_url     : " + app_url + "\n";
+        str += "app_name      : " + app_name + "\n";
         str += "version_code : " + version_code + "\n";
         str += "file_size    : " + file_size + "\n";
         return str;
