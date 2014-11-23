@@ -195,7 +195,7 @@ public class UpgradeManager implements Runnable, OnClickListener {
         mUpgradeInfo = info;
         Log.d(Log.TAG, info.toString());
         int versionCode = getAppVer();
-        if (versionCode >= info.version_code && false) {
+        if (versionCode >= info.version_code) {
             mHandler.sendEmptyMessage(MSG_SHOW_TOAST);
             return;
         }
