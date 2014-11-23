@@ -2,6 +2,9 @@ package com.android.callassistant.settings;
 
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.ListPreference;
@@ -48,6 +51,8 @@ public class SettingsFragment extends PreferenceFragment implements
         if (index != -1) {
             preference.setSummary(preference.getEntries()[index]);
         }
+        String versionLabel = getResources().getString(R.string.version);
+        findPreference(Constant.KEY_CHECK_UPGRADE).setSummary(versionLabel + getAppVer());
     }
 
     @Override
@@ -135,5 +140,18 @@ public class SettingsFragment extends PreferenceFragment implements
         } catch (ActivityNotFoundException e) {
             Log.d(Log.TAG, "error : " + e);
         }
+    }
+    
+    private int getAppVer() {
+        try {
+            PackageManager pm = getActivity().getPackageManager();
+            PackageInfo pi = pm.getPackageInfo(getActivity().getPackageName(), 0);
+            return pi.versionCode;
+        } catch (NameNotFoundException e) {
+            Log.e(Log.TAG, "error : " + e);
+        } catch (Exception e) {
+            Log.e(Log.TAG, "error : " + e);
+        }
+        return -1;
     }
 }
