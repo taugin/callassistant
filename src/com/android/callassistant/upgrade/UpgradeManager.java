@@ -36,7 +36,7 @@ import com.google.gson.Gson;
 
 public class UpgradeManager implements Runnable, OnClickListener {
 
-    private static final String CONFIG_PATH = "https://raw.githubusercontent.com/taugin/callassistant/master/release_version/config.json";
+    private static final String CONFIG_PATH = "https://raw.githubusercontent.com/taugin/versionrelease/master/callassistant/config.json";
 
     private static final int ACTION_FETCH_CONFIG = 0;
     private static final int ACTION_DOWNLOAD = 1;
@@ -227,7 +227,7 @@ public class UpgradeManager implements Runnable, OnClickListener {
             AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
             String title = mContext.getResources().getString(R.string.new_version_tiptitle);
             title += mUpgradeInfo.version_name;
-            builder.setTitle(R.string.new_version_tiptitle);
+            builder.setTitle(title);
             builder.setView(view);
 
             mAlertDialog = builder.create();
