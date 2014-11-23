@@ -128,7 +128,8 @@ public class SettingsFragment extends PreferenceFragment implements
             }
             return true;
         } else if (preference.getKey().equals(Constant.KEY_CHECK_UPGRADE)) {
-            UpgradeManager.get(getActivity()).checkUpgrade();
+            UpgradeManager manager = new UpgradeManager(getActivity());
+            manager.checkUpgrade();
             return true;
         }
         return false;

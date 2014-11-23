@@ -1,12 +1,18 @@
 package com.android.callassistant;
 
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.io.Writer;
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import android.os.Environment;
 
 import com.android.callassistant.util.Log;
 
@@ -38,7 +44,7 @@ public class CrashHandler implements UncaughtExceptionHandler {
     public void uncaughtException(Thread thread, Throwable ex) {
         final String logFile = mApp.getLogFile();
         if (logFile != null) {
-            printExceptionToFile(thread, ex, logFile);
+            saveCrashInfo2File(ex);
         }
         mDefaultExceptionHandler.uncaughtException(thread, ex);
     }
@@ -57,23 +63,6 @@ public class CrashHandler implements UncaughtExceptionHandler {
             String methodName = null;
             int lineNumber = -1;
             String msg = "";
-            /*
-            for (int i = 0; i < stackTrace.length; i++) {
-                msg = tag + "\t";
-                fileName = stackTrace[i].getFileName();
-                className = stackTrace[i].getClassName();
-                methodName = stackTrace[i].getMethodName();
-                lineNumber = stackTrace[i].getLineNumber();
-                msg += "at ";
-                msg += className;
-                msg += "." + methodName;
-                if (lineNumber < 0) {
-                    msg += "(" + fileName + ")";
-                } else {
-                    msg += "(" + fileName + ":" + lineNumber + ")";
-                }
-                fw.write(msg + "\n");
-            }*/
             Throwable caused = ex.getCause();
             stackTrace = caused.getStackTrace();
             for (int i = 0; i < stackTrace.length; i++) {
@@ -98,7 +87,39 @@ public class CrashHandler implements UncaughtExceptionHandler {
             Log.e(Log.TAG, "load file failed..." + e);
         }
     }
-
+    private void saveCrashInfo2File(Throwable ex) {
+        StringBuffer sb = new StringBuffer();
+        try {
+            Writer writer = new StringWriter();
+            PrintWriter printWriter = new PrintWriter(writer);
+            ex.printStackTrace(printWriter);
+            Throwable cause = ex.getCause();
+            while (cause != null) {
+                cause.printStackTrace(printWriter);
+                cause = cause.getCause();
+            }
+            printWriter.close();
+            String result = writer.toString();
+            sb.append(result);
+            try {
+                if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+                    final String logFile = mApp.getLogFile();
+                    File dir = new File(logFile);
+                    if (!dir.exists()) {
+                        dir.mkdirs();
+                    }
+                    Log.d(Log.TAG, "path = " + (logFile));
+                    FileOutputStream fos = new FileOutputStream(logFile);
+                    fos.write(sb.toString().getBytes());
+                    fos.close();
+                }
+            } catch (Exception e) {
+                Log.e(Log.TAG, "load file failed..." + e);
+            }
+        } catch (OutOfMemoryError e) {
+            Log.e(Log.TAG, "load file failed..." + e);
+        }
+    }
     private void printExceptionToFile(Thread thread, Throwable ex,
             String logFile) {
         try {

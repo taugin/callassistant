@@ -49,7 +49,6 @@ public class UpgradeManager implements Runnable, OnClickListener {
     private static final int MSG_SET_PROGRESS_BAR_MAX = 5;
     private static final int MSG_DISMISS_ALERTDIALOG = 6;
 
-    private static UpgradeManager sUpgradeManager = null;
     private Context mContext;
     private int mAction = -1;
     private ProgressDialog mProgressDialog = null;
@@ -65,16 +64,9 @@ public class UpgradeManager implements Runnable, OnClickListener {
     private UpgradeInfo mUpgradeInfo;
     private AlertDialog mAlertDialog;
 
-    private UpgradeManager(Context context) {
+    public UpgradeManager(Context context) {
         mContext = context;
         init();
-    }
-
-    public static UpgradeManager get(Context context) {
-        if (sUpgradeManager == null) {
-            sUpgradeManager = new UpgradeManager(context);
-        }
-        return sUpgradeManager;
     }
 
     public String getUpgradeConfig() {
